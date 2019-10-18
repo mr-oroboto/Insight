@@ -3,6 +3,8 @@
 #include <SDL2/SDL.h>
 #include <GL/glew.h>                    // must be included before gl.h (which is via SDL_opengl.h)
 #include "DisplayManager.h"
+#include "FrameQueue.h"
+#include "Frame.h"
 
 #define WINDOW_FULLSCREEN false
 #define WINDOW_X_POS 100
@@ -60,6 +62,16 @@ int main(int argc, char *argv[])
         cout << "Failed to initialise OpenGL" << endl;
         return -1;
     }
+
+    FrameQueue* frameQueue = new FrameQueue(dm, true);
+    Frame* frame = frameQueue->newFrame();
+
+    frame->addObject(Primitive::Type::CUBE, glm::vec3(0, 0, 0));
+    frame->addObject(Primitive::Type::TRIANGLE, glm::vec3(2, 0, 0));
+
+    frameQueue->enqueueFrame(frame);
+    frameQueue->setReady();
+    frameQueue->setActive();
 
     while (true)
     {

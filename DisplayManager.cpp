@@ -9,6 +9,7 @@
 #include <glm/gtc/matrix_transform.hpp> // makes view and projection matrices easier to generate
 #include <glm/gtc/type_ptr.hpp>         // convert matrix to float
 #include "shaders/ShaderCollection.h"
+#include "FrameQueue.h"
 
 DisplayManager::DisplayManager()
 {
@@ -176,19 +177,29 @@ void DisplayManager::drawScene()
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);               // clear screen to black, otherwise we'll paint over the last frame which looks weird
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // also clear the colour buffer if we've got GL_DEPTH_TEST enabled (this fixes the glitchy graphics)
 
-    /**
-     * Model Transform
-     */
-    glm::mat4 modelTransform = glm::mat4(1.0f);      // identity matrix
+    if (frameQueue)
+    {
+        frameQueue->drawCurrentFrame(time);
+    }
+}
 
-    // Multiply the identity matrix by a rotation transform matrix (see open.gl/transformations) of 180 deg around z-axis
-//    modelTransform = glm::rotate(modelTransform, time * glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+PrimitiveCollection* DisplayManager::getPrimitiveCollection()
+{
+    return primitives;
+}
 
-    glUniformMatrix4fv(uniModelTransform, 1 /* number of matrices to upload */, GL_FALSE, glm::value_ptr(modelTransform));
-    (primitives->selectPrimitive(PrimitiveCollection::Type::CUBE))->draw();
+void DisplayManager::setFrameQueue(FrameQueue* queue)
+{
+    // If we already have a FrameQueue, destroy it.
+    if (frameQueue)
+    {
+        delete frameQueue;
+    }
 
-//    // draw another cube, translated
-     modelTransform = glm::translate(modelTransform, glm::vec3(2.0f, 0.0, 0.0f));
-     glUniformMatrix4fv(uniModelTransform, 1 /* number of matrices to upload */, GL_FALSE, glm::value_ptr(modelTransform));
-    (primitives->selectPrimitive(PrimitiveCollection::Type::TRIANGLE))->draw();
+    frameQueue = queue;
+}
+
+GLuint DisplayManager::getModelTransformUniform()
+{
+    return uniModelTransform;
 }
