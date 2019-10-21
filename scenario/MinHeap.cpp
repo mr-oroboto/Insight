@@ -10,55 +10,26 @@ MinHeap::~MinHeap()
 
 void MinHeap::run()
 {
-    MinHeapArray minHeap;
-    HeapDecorator decorator(&minHeap);
-
-    Frame* frame = nullptr;
     FrameQueue* frameQueue = new FrameQueue(displayManager, true);
     frameQueue->setFrameRate(1);
 
-    frame = frameQueue->newFrame();
-    minHeap.insert(4);
-    decorator.decorate(frame);
-    frameQueue->enqueueFrame(frame);
+    HeapDecorator* decorator = new HeapDecorator(frameQueue);
+    MinHeapArray minHeap(decorator);
 
-    frame = frameQueue->newFrame();
-    minHeap.insert(50);
-    decorator.decorate(frame);
-    frameQueue->enqueueFrame(frame);
+    int heapValues[] = {
+            4, 50, 7, 90, 55, 87, 2, 16
+    };
 
-    frame = frameQueue->newFrame();
-    minHeap.insert(7);
-    decorator.decorate(frame);
-    frameQueue->enqueueFrame(frame);
-
-    frame = frameQueue->newFrame();
-    minHeap.insert(90);
-    decorator.decorate(frame);
-    frameQueue->enqueueFrame(frame);
-
-    frame = frameQueue->newFrame();
-    minHeap.insert(55);
-    decorator.decorate(frame);
-    frameQueue->enqueueFrame(frame);
-
-    frame = frameQueue->newFrame();
-    minHeap.insert(87);
-    decorator.decorate(frame);
-    frameQueue->enqueueFrame(frame);
-
-    frame = frameQueue->newFrame();
-    minHeap.insert(2);
-    decorator.decorate(frame);
-    frameQueue->enqueueFrame(frame);
-
-    frame = frameQueue->newFrame();
-    minHeap.insert(16);
-    decorator.decorate(frame);
-    frameQueue->enqueueFrame(frame);
+    for (size_t i = 0; i < sizeof(heapValues) / sizeof(int); i++)
+    {
+        int heapValue = heapValues[i];
+        minHeap.insert(heapValue);
+    }
 
     minHeap.validate();
 
     frameQueue->setReady();
     frameQueue->setActive();
+
+    delete decorator;
 }

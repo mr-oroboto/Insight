@@ -47,6 +47,8 @@ bool FrameQueue::enqueueFrame(Frame* frame)
     }
 
     queue.push(frame);
+
+    return true;
 }
 
 /**

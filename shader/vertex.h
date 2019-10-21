@@ -14,11 +14,21 @@ const char* ShaderCollection::vertexSource = R"glsl(
     uniform mat4 model;
     uniform mat4 view;
     uniform mat4 projection;
+    uniform int doOverrideColour;
+    uniform vec3 overrideColour;
 
     void main()
     {
         gl_Position = projection * view * model * vec4(position, 1.0);   // simple matrix * column vector
-        colour = inColour;
+
+        if (doOverrideColour == 1)
+        {
+           colour = overrideColour;
+        }
+        else
+        {
+           colour = inColour;
+        }
     }
 )glsl";
 

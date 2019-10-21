@@ -3,11 +3,12 @@
 
 #include <iostream>
 #include <vector>
+#include "../decorator/HeapDecorator.h"
 
 class HeapArray
 {
 public:
-    HeapArray() {}
+    HeapArray(HeapDecorator* dec);
 
     void insert(int d);
     bool validate();
@@ -24,6 +25,7 @@ protected:
     virtual bool shouldSwapInHeapifyDown(int node, int comparisonNodeValue) = 0;
 
     std::vector<int> store;
+    HeapDecorator* decorator;
 
 private:
     void heapifyUp(size_t nodeIndex);
@@ -33,6 +35,8 @@ private:
 class MaxHeapArray : public HeapArray
 {
 public:
+    MaxHeapArray(HeapDecorator* dec) : HeapArray(dec) {}
+
     int max();
     int extractMax() { return extract(); }
 
@@ -44,6 +48,8 @@ protected:
 class MinHeapArray : public HeapArray
 {
 public:
+    MinHeapArray(HeapDecorator* dec) : HeapArray(dec) {}
+
     int min();
     int extractMin() { return extract(); }
 

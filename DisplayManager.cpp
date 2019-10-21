@@ -11,7 +11,9 @@
 
 DisplayManager::DisplayManager()
 {
-
+    initialised = false;
+    frameQueue = nullptr;
+    primitives = nullptr;
 }
 
 DisplayManager::~DisplayManager()
@@ -22,13 +24,17 @@ DisplayManager::~DisplayManager()
     }
 }
 
-bool DisplayManager::initialise(GLfloat wndWidth, GLfloat wndHeight)
+bool DisplayManager::initialise(GLfloat wndWidthPx, GLfloat wndHeightPx)
 {
     if (initialised)
     {
         return true;
     }
 
+    wndWidth = wndWidthPx;
+    wndHeight = wndHeightPx;
+
+    setPerspective(1.0f, 50.0f, 45.0f);
     setCameraLocation(6.5, 6.5, 1.5);
 
     try
@@ -94,13 +100,21 @@ bool DisplayManager::initialise(GLfloat wndWidth, GLfloat wndHeight)
 
         // Create a projection transformation matrix to apply our perspective to the eye co-ordinates and turn them into
         // clipping co-ordinates. This is essentially our way to mapping 3D space to 2D space of the screen.
-        glm::mat4 projectionTransform = glm::perspective(
-                glm::radians(45.0f),    // vertical field-of-view (see open.gl/transformations)
-                wndWidth / wndHeight,   // aspect ratio of the screen
-                1.0f,                   // near clipping plane (any vertex closer to camera than this disappears)
-                50.0f                   // far clipping plane (any vertex further from camera than this disappears)
-        );
         glUniformMatrix4fv(uniProjectionTransform, 1, GL_FALSE, glm::value_ptr(projectionTransform));
+
+        reference = glGetUniformLocation(shaderProgram, "doOverrideColour");
+        if (reference < 0)
+        {
+            throw "Can't find model colour override toggle in shader program";
+        }
+        uniModelDoOverrideColour = static_cast<GLuint>(reference);
+
+        reference = glGetUniformLocation(shaderProgram, "overrideColour");
+        if (reference < 0)
+        {
+            throw "Can't find model override colour in shader program";
+        }
+        uniModelOverrideColour = static_cast<GLuint>(reference);
 
         glEnable(GL_DEPTH_TEST);
 
@@ -144,6 +158,14 @@ void DisplayManager::teardown()
         delete primitives;
         primitives = nullptr;
     }
+
+    if (frameQueue)
+    {
+        delete frameQueue;
+        frameQueue = nullptr;
+    }
+
+    initialised = false;
 }
 
 void DisplayManager::setCameraLocation(GLfloat x, GLfloat y, GLfloat z)
@@ -153,10 +175,18 @@ void DisplayManager::setCameraLocation(GLfloat x, GLfloat y, GLfloat z)
     cameraZ = z;
 }
 
+void DisplayManager::setPerspective(GLfloat nearPlane, GLfloat farPlane, GLfloat fov)
+{
+    projectionTransform = glm::perspective(
+            glm::radians(fov),    // vertical field-of-view (see open.gl/transformations)
+            wndWidth / wndHeight, // aspect ratio of the screen
+            nearPlane,            // near clipping plane (any vertex closer to camera than this disappears)
+            farPlane              // far clipping plane (any vertex further from camera than this disappears)
+    );
+}
+
 void DisplayManager::drawScene()
 {
-    std::cout << "camera at (" << cameraX << "," << cameraY << "," << cameraZ << ")" << std::endl;
-
     /**
      * View Transform
      */
@@ -195,4 +225,14 @@ void DisplayManager::setFrameQueue(FrameQueue* queue)
 GLuint DisplayManager::getModelTransformUniform()
 {
     return uniModelTransform;
+}
+
+GLuint DisplayManager::getModelDoOverrideColourUniform()
+{
+    return uniModelDoOverrideColour;
+}
+
+GLuint DisplayManager::getModelOverrideColourUniform()
+{
+    return uniModelOverrideColour;
 }

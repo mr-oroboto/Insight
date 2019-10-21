@@ -12,13 +12,17 @@ public:
     ~DisplayManager();
 
     void setFrameQueue(FrameQueue *queue);
-    bool initialise(GLfloat wndWidth, GLfloat wndHeight);
+    bool initialise(GLfloat wndWidthPx, GLfloat wndHeightPx);
     void drawScene();
 
     void setCameraLocation(GLfloat x, GLfloat y, GLfloat z);
+    void setPerspective(GLfloat nearPlane, GLfloat farPlane, GLfloat fov);
 
     PrimitiveCollection* getPrimitiveCollection();
+
     GLuint getModelTransformUniform();
+    GLuint getModelDoOverrideColourUniform();
+    GLuint getModelOverrideColourUniform();
 
 private:
     void teardown();
@@ -37,6 +41,12 @@ private:
     GLuint uniModelTransform;
     GLuint uniViewTransform;
     GLuint uniProjectionTransform;
+    GLuint uniModelDoOverrideColour;
+    GLuint uniModelOverrideColour;
+
+    GLfloat wndWidth;
+    GLfloat wndHeight;
+    glm::mat4 projectionTransform;
 
     GLfloat cameraX;
     GLfloat cameraY;

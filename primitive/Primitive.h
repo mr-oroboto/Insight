@@ -2,6 +2,7 @@
 #define INSIGHT_PRIMITIVE_H
 
 #include <GL/glew.h>
+#include <glm/glm.hpp>
 
 class Primitive
 {

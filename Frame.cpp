@@ -17,9 +17,9 @@ Frame::~Frame()
     }
 }
 
-void Frame::addObject(Primitive::Type type, glm::vec3 worldPosition)
+void Frame::addObject(Primitive::Type type, glm::vec3 worldPosition, glm::vec3 colour)
 {
-    SceneObject* object = new SceneObject(displayManager, type, worldPosition);
+    SceneObject* object = new SceneObject(displayManager, type, worldPosition, colour);
     objects.push_back(object);
 }
 

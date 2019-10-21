@@ -1,15 +1,26 @@
 #include "HeapDecorator.h"
-#include "../primitive/Primitive.h"
-#include "../Frame.h"
+#include "../adt/HeapArray.h"
 
-bool HeapDecorator::decorate(Frame *frame)
+void HeapDecorator::setHeap(HeapArray* heapArray)
+{
+    heap = heapArray;
+}
+
+void HeapDecorator::setHightlightedNodeValue(int nodeValue)
+{
+    highlightedNodeValue = nodeValue;
+}
+
+bool HeapDecorator::decorate()
 {
     bool success = true;
 
-    currentFrame = frame;
+    currentFrame = frameQueue->newFrame();
 
     glm::vec3 lastNodePosition = glm::vec3(0, 0, 5);
     dft(0, lastNodePosition, false);
+
+    frameQueue->enqueueFrame(currentFrame);
 
     return success;
 }
@@ -42,7 +53,17 @@ void HeapDecorator::dft(size_t nodeIndex, glm::vec3 lastNodePosition, bool isLef
 
     // Draw the node
     int nodeValue = heap->nodeValue(nodeIndex);
-    currentFrame->addObject(Primitive::Type::CUBE, nodePosition);
+    glm::vec3 nodeColour;
+    if (nodeValue == highlightedNodeValue)
+    {
+        nodeColour = glm::vec3(1, 0, 0);
+    }
+    else
+    {
+        nodeColour = glm::vec3(0.8, 0.8, 0.8);
+    }
+
+    currentFrame->addObject(Primitive::Type::CUBE, nodePosition, nodeColour);
 
     if (rightIndex >= 0)
     {

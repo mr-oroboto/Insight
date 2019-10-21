@@ -13,7 +13,7 @@ public:
     Frame(DisplayManager* dm);
     ~Frame();
 
-    void addObject(Primitive::Type type, glm::vec3 worldPosition);
+    void addObject(Primitive::Type type, glm::vec3 worldPosition, glm::vec3 colour);
     void draw(GLfloat secsSinceStart, GLfloat secsSinceLastFrame);
 
 protected:

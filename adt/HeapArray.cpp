@@ -1,6 +1,12 @@
 #include "HeapArray.h"
 #include <assert.h>
 
+HeapArray::HeapArray(HeapDecorator* dec)
+{
+    decorator = dec;
+    decorator->setHeap(this);
+}
+
 int HeapArray::nodeValue(size_t nodeIndex)
 {
     assert(nodeIndex < store.size());
@@ -71,6 +77,9 @@ void HeapArray::insert(int d)
     size_t insertIndex = store.size();
     store.push_back(d);
 
+    decorator->setHightlightedNodeValue(d);
+    decorator->decorate();
+
     heapifyUp(insertIndex);
 }
 
@@ -86,6 +95,9 @@ void HeapArray::heapifyUp(size_t nodeIndex)
             int temp = store[parentIdx];
             store[parentIdx] = store[nodeIndex];
             store[nodeIndex] = temp;
+
+            decorator->decorate();
+
             heapifyUp(parentIdx);
         }
     }
@@ -124,6 +136,9 @@ void HeapArray::heapifyDown(size_t nodeIndex)
             int temp = store[nodeIndex];
             store[nodeIndex] = store[idxOfNodeToSwapWith];
             store[idxOfNodeToSwapWith] = temp;
+
+            decorator->decorate();
+
             heapifyDown(idxOfNodeToSwapWith);
         }
     }
@@ -157,8 +172,9 @@ int HeapArray::extract()
     std::cout << "swapping " << root << " with " << nodeToRemove << std::endl;
 
     store[0] = nodeToRemove;
-
     store.pop_back();
+
+    decorator->decorate();
 
     heapifyDown(0);
 

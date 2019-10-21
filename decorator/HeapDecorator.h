@@ -2,19 +2,24 @@
 #define INSIGHT_HEAPDECORATOR_H
 
 #include "Decorator.h"
-#include "../adt/HeapArray.h"
+
+class HeapArray;
 
 class HeapDecorator : public Decorator
 {
 public:
-    HeapDecorator(HeapArray* h) : heap(h) {}
+    HeapDecorator(FrameQueue* frameQueue) : Decorator(frameQueue) {}
 
-    bool decorate(Frame* frame);
+    void setHeap(HeapArray* heap);
+    void setHightlightedNodeValue(int nodeValue);
+
+    bool decorate();
 
 protected:
     void dft(size_t nodeIndex, glm::vec3 lastNodePosition, bool isLeftOfParent);
 
     HeapArray* heap;
+    int highlightedNodeValue;
 };
 
 

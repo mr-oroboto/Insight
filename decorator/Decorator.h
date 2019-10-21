@@ -2,18 +2,19 @@
 #define INSIGHT_DECORATOR_H
 
 #include <glm/glm.hpp>
-
-class Frame;
+#include "../FrameQueue.h"
+#include "../Frame.h"
 
 class Decorator
 {
 public:
-    Decorator();
+    Decorator(FrameQueue* queue) : frameQueue(queue) { currentFrame = nullptr; }
     virtual ~Decorator();
 
-    virtual bool decorate(Frame* frame) = 0;
+    virtual bool decorate() = 0;
 
 protected:
+    FrameQueue* frameQueue;
     Frame* currentFrame;
 };
 
