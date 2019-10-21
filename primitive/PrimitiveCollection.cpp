@@ -5,22 +5,22 @@
 
 PrimitiveCollection::PrimitiveCollection(GLuint positionAttribute, GLuint colourAttribute)
 {
-    primitives[Type::CUBE] = new Cube(positionAttribute, colourAttribute);
-    primitives[Type::TRIANGLE] = new Triangle(positionAttribute, colourAttribute);
+    primitives[Primitive::Type::CUBE] = new Cube(positionAttribute, colourAttribute);
+    primitives[Primitive::Type::TRIANGLE] = new Triangle(positionAttribute, colourAttribute);
 }
 
 PrimitiveCollection::~PrimitiveCollection()
 {
     std::cout << "PrimitiveCollection::~PrimitiveCollection()" << std::endl;
 
-    delete primitives[Type::CUBE];
-    primitives[Type::CUBE] = nullptr;
+    delete primitives[Primitive::Type::CUBE];
+    primitives[Primitive::Type::CUBE] = nullptr;
 
-    delete primitives[Type::TRIANGLE];
-    primitives[Type::TRIANGLE] = nullptr;
+    delete primitives[Primitive::Type::TRIANGLE];
+    primitives[Primitive::Type::TRIANGLE] = nullptr;
 }
 
-Primitive* PrimitiveCollection::selectPrimitive(Type primitive)
+Primitive* PrimitiveCollection::selectPrimitive(Primitive::Type primitive)
 {
     if (primitives.find(primitive) == primitives.end() || primitives[primitive] == nullptr)
     {

@@ -1,14 +1,12 @@
 #include "DisplayManager.h"
 
-#include <string>
-#include <chrono>
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp> // makes view and projection matrices easier to generate
 #include <glm/gtc/type_ptr.hpp>         // convert matrix to float
-#include "shaders/ShaderCollection.h"
+#include "shader/ShaderCollection.h"
 #include "FrameQueue.h"
 
 DisplayManager::DisplayManager()
@@ -100,7 +98,7 @@ bool DisplayManager::initialise(GLfloat wndWidth, GLfloat wndHeight)
                 glm::radians(45.0f),    // vertical field-of-view (see open.gl/transformations)
                 wndWidth / wndHeight,   // aspect ratio of the screen
                 1.0f,                   // near clipping plane (any vertex closer to camera than this disappears)
-                10.0f                   // far clipping plane (any vertex further from camera than this disappears)
+                50.0f                   // far clipping plane (any vertex further from camera than this disappears)
         );
         glUniformMatrix4fv(uniProjectionTransform, 1, GL_FALSE, glm::value_ptr(projectionTransform));
 
@@ -157,11 +155,6 @@ void DisplayManager::setCameraLocation(GLfloat x, GLfloat y, GLfloat z)
 
 void DisplayManager::drawScene()
 {
-    static auto t_start = std::chrono::high_resolution_clock::now();
-
-    auto t_now = std::chrono::high_resolution_clock::now();
-    float time = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
-
     std::cout << "camera at (" << cameraX << "," << cameraY << "," << cameraZ << ")" << std::endl;
 
     /**
@@ -179,7 +172,7 @@ void DisplayManager::drawScene()
 
     if (frameQueue)
     {
-        frameQueue->drawCurrentFrame(time);
+        frameQueue->drawCurrentFrame();
     }
 }
 

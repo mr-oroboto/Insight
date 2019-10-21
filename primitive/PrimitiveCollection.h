@@ -8,20 +8,13 @@
 class PrimitiveCollection
 {
 public:
-    PrimitiveCollection() {}
     PrimitiveCollection(GLuint positionAttribute, GLuint colourAttribute);
-    virtual ~PrimitiveCollection();
+    ~PrimitiveCollection();
 
-    enum Type
-    {
-        CUBE = 0,
-        TRIANGLE
-    };
-
-    Primitive* selectPrimitive(Type primitive);
+    Primitive* selectPrimitive(Primitive::Type primitive);
 
 private:
-    std::unordered_map<Type, Primitive*> primitives;
+    std::unordered_map<Primitive::Type, Primitive*> primitives;
 };
 
 #endif //INSIGHT_PRIMITIVECOLLECTION_H

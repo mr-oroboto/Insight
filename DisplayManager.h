@@ -2,7 +2,7 @@
 #define INSIGHT_DISPLAYMANAGER_H
 
 #include <GL/glew.h>                    // must be included before gl.h (which is via SDL_opengl.h)
-#include "primitives/PrimitiveCollection.h"
+#include "primitive/PrimitiveCollection.h"
 
 class FrameQueue;
 

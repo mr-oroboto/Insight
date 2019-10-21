@@ -1,9 +1,15 @@
 #include "FrameQueue.h"
 #include <iostream>
+#include <chrono>
+#include <thread>
+
+#define FRAMEQUEUE_DEFAULT_FPS 30
 
 FrameQueue::FrameQueue(DisplayManager* dm, bool repeats)
 {
     ready = false;
+
+    setFrameRate(FRAMEQUEUE_DEFAULT_FPS);
 
     displayManager = dm;
     repeating = repeats;
@@ -79,13 +85,37 @@ bool FrameQueue::setReady()
     return true;
 }
 
-void FrameQueue::drawCurrentFrame(float time)
+void FrameQueue::setFrameRate(GLfloat fps)
 {
-    // @todo: fix
+    frameRate = fps;
+    secsPerFrame = 1 / frameRate;
+
+    firstFrameDrawnAt = lastFrameDrawnAt = std::chrono::high_resolution_clock::now();
+}
+
+void FrameQueue::drawCurrentFrame()
+{
+    auto t_now = std::chrono::high_resolution_clock::now();
+
+    GLfloat secsSinceStart = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(t_now - firstFrameDrawnAt).count();
+    GLfloat secsSinceLastFrame = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(t_now - lastFrameDrawnAt).count();
+
     Frame* frame = queue.front();
 
     if (frame)
     {
-        frame->draw(time);
+        frame->draw(secsSinceStart, secsSinceLastFrame);
+
+        if (secsSinceLastFrame >= secsPerFrame)
+        {
+            // Remove the frame so we draw the next frame
+            queue.pop();
+            lastFrameDrawnAt = t_now;
+
+            if (repeating)
+            {
+                queue.push(frame);
+            }
+        }
     }
 }

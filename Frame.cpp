@@ -23,10 +23,10 @@ void Frame::addObject(Primitive::Type type, glm::vec3 worldPosition)
     objects.push_back(object);
 }
 
-void Frame::draw(float time)
+void Frame::draw(GLfloat secsSinceStart, GLfloat secsSinceLastFrame)
 {
     for (SceneObject* object : objects)
     {
-        object->draw(time);
+        object->draw(secsSinceStart, secsSinceLastFrame);
     }
 }

@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 #include "DisplayManager.h"
-#include "primitives/Primitive.h"
+#include "primitive/Primitive.h"
 
 class SceneObject
 {
@@ -11,7 +11,7 @@ public:
     SceneObject(DisplayManager* dm, Primitive::Type type, glm::vec3 worldPos);
     ~SceneObject();
 
-    void draw(float time);
+    void draw(GLfloat secsSinceStart, GLfloat secsSinceLastFrame);
 
 protected:
     DisplayManager* displayManager;

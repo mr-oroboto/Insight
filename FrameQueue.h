@@ -3,6 +3,7 @@
 
 #include "Frame.h"
 #include <queue>
+#include <chrono>
 
 class DisplayManager;
 
@@ -17,12 +18,19 @@ public:
 
     bool setActive();
     bool setReady();
+    void setFrameRate(GLfloat fps);
 
-    void drawCurrentFrame(float time);
+    void drawCurrentFrame();
 
 protected:
     bool repeating;
     bool ready;
+
+    GLfloat frameRate;
+    GLfloat secsPerFrame;
+
+    std::chrono::high_resolution_clock::time_point lastFrameDrawnAt;
+    std::chrono::high_resolution_clock::time_point firstFrameDrawnAt;
 
     DisplayManager* displayManager;
     std::queue<Frame*> queue;

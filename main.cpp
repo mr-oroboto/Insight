@@ -5,6 +5,7 @@
 #include "DisplayManager.h"
 #include "FrameQueue.h"
 #include "Frame.h"
+#include "scenario/MinHeap.h"
 
 #define WINDOW_FULLSCREEN false
 #define WINDOW_X_POS 100
@@ -23,8 +24,8 @@ int main(int argc, char *argv[])
     SDL_Window* window = nullptr;
     SDL_Event windowEvent;
 
-    GLfloat cameraX = 6.5f, cameraY = 6.5f, cameraZ = 1.5f;
-    GLfloat cameraIncrement = 0.05f;
+    GLfloat cameraX = 0.0f, cameraY = 17.0f, cameraZ = 0.0f;
+    GLfloat cameraIncrement = 1.0f;
     GLfloat cameraSphereRadius = 6.5f;
     GLfloat cameraTheta = 0.0f;
 
@@ -63,15 +64,8 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    FrameQueue* frameQueue = new FrameQueue(dm, true);
-    Frame* frame = frameQueue->newFrame();
-
-    frame->addObject(Primitive::Type::CUBE, glm::vec3(0, 0, 0));
-    frame->addObject(Primitive::Type::TRIANGLE, glm::vec3(2, 0, 0));
-
-    frameQueue->enqueueFrame(frame);
-    frameQueue->setReady();
-    frameQueue->setActive();
+    MinHeap minHeap(dm);
+    minHeap.run();
 
     while (true)
     {
@@ -90,32 +84,34 @@ int main(int argc, char *argv[])
                  */
                 if (windowEvent.key.keysym.sym == SDLK_UP)
                 {
-                    if ((cameraZ += 0.01f) > 3.0f)
-                    {
-                        cameraZ = 3.0f;
-                    }
+                    cameraZ += cameraIncrement;
                 }
                 else if (windowEvent.key.keysym.sym == SDLK_DOWN)
                 {
-                    if ((cameraZ -= 0.01f) < -3.0f)
-                    {
-                        cameraZ = -3.0f;
-                    }
+                    cameraZ -= cameraIncrement;
                 }
                 else if (windowEvent.key.keysym.sym == SDLK_LEFT)
                 {
                     cameraTheta += cameraIncrement;
 
-                    cameraX = cameraSphereRadius * sin(cameraTheta);
-                    cameraY = cameraSphereRadius * cos(cameraTheta);
+                    cameraX = 0;
+                    cameraY -= cameraIncrement;
+
+//                    cameraX = cameraSphereRadius * sin(cameraTheta);
+//                    cameraY = cameraSphereRadius * cos(cameraTheta);
                 }
                 else if (windowEvent.key.keysym.sym == SDLK_RIGHT)
                 {
                     cameraTheta -= cameraIncrement;
 
-                    cameraX = cameraSphereRadius * sin(cameraTheta);
-                    cameraY = cameraSphereRadius * cos(cameraTheta);
+                    cameraX = 0;
+                    cameraY += cameraIncrement;
+
+//                    cameraX = cameraSphereRadius * sin(cameraTheta);
+//                    cameraY = cameraSphereRadius * cos(cameraTheta);
                 }
+
+                dm->setCameraLocation(cameraX, cameraY, cameraZ);
             }
         }
 

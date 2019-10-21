@@ -10,6 +10,12 @@ public:
     Primitive(GLuint positionAttribute, GLuint colourAttribute) {}
     virtual ~Primitive();
 
+    enum Type
+    {
+        CUBE = 0,
+        TRIANGLE
+    };
+
     void setActive();
     virtual void draw() = 0;
 

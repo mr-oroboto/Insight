@@ -10,7 +10,7 @@ include_directories(${SDL2_INCLUDE_DIR} ${GLEW_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES main.cpp DisplayManager.cpp DisplayManager.h shaders/vertex.h shaders/fragment.h primitives/Cube.h primitives/PrimitiveCollection.h shaders/ShaderCollection.h primitives/PrimitiveCollection.cpp primitives/Primitive.h primitives/Cube.cpp primitives/Primitive.cpp primitives/Triangle.cpp primitives/Triangle.h)
+set(SOURCE_FILES main.cpp DisplayManager.cpp DisplayManager.h shader/vertex.h shader/fragment.h primitive/Cube.h primitive/PrimitiveCollection.h shader/ShaderCollection.h primitive/PrimitiveCollection.cpp primitive/Primitive.h primitive/Cube.cpp primitive/Primitive.cpp primitive/Triangle.cpp primitive/Triangle.h FrameQueue.cpp FrameQueue.h Frame.cpp Frame.h SceneObject.cpp SceneObject.h decorator/HeapDecorator.cpp decorator/HeapDecorator.h decorator/Decorator.cpp decorator/Decorator.h adt/HeapArray.cpp adt/HeapArray.h scenario/MinHeap.cpp scenario/MinHeap.h scenario/Scenario.cpp scenario/Scenario.h)
 
 add_executable(Insight ${SOURCE_FILES})
 
