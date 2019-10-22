@@ -6,6 +6,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp> // makes view and projection matrices easier to generate
 #include <glm/gtc/type_ptr.hpp>         // convert matrix to float
+#include <ft2build.h>
+#include FT_FREETYPE_H
 #include "shader/ShaderCollection.h"
 #include "FrameQueue.h"
 
@@ -39,6 +41,11 @@ bool DisplayManager::initialise(GLfloat wndWidthPx, GLfloat wndHeightPx)
 
     try
     {
+        if ( ! initialiseFreeType())
+        {
+            throw "Failed to initialise FreeType";
+        }
+
         vertexShader = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vertexShader, 1, &ShaderCollection::vertexSource, NULL);
         glCompileShader(vertexShader);
@@ -147,6 +154,193 @@ bool DisplayManager::shaderInitialised(GLuint shader)
     return true;
 }
 
+bool DisplayManager::initialiseFreeType()
+{
+    bool success = false;
+
+    FT_Library ft;
+    FT_Face face;
+
+    try
+    {
+        if (FT_Init_FreeType(&ft))
+        {
+            throw "Failed to initialise FreeType";
+        }
+
+        if (FT_New_Face(ft, "/home/sysop/ClionProjects/Insight/font/Vera.ttf", 0, &face))
+        {
+            throw "Failed to find fonts";
+        }
+
+        FT_Set_Pixel_Sizes(face, 64 /* pensize */, 0);
+
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);  // disable 4 byte alignment
+
+        for (GLubyte c = 0; c < 128; c++) {
+            if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
+                std::cerr << "Failed to load glyph for '" << c << "'" << std::endl;
+                continue;
+            }
+
+            GLuint texture;
+            glGenTextures(1, &texture);
+            glBindTexture(GL_TEXTURE_2D, texture);
+            glTexImage2D(GL_TEXTURE_2D,
+                         0,
+                         GL_RED,                                // internalFormat
+                         face->glyph->bitmap.width,
+                         face->glyph->bitmap.rows,
+                         0,
+                         GL_RED,                                // format, GL_RED as glyph bitmap is greyscale single byte
+                         GL_UNSIGNED_BYTE,
+                         face->glyph->bitmap.buffer
+            );
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+            Character character = {
+                    texture,
+                    glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
+                    glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
+                    face->glyph->advance.x
+            };
+
+            characters.insert(std::pair<GLchar, Character>(c, character));
+        }
+
+        textVertexShader = glCreateShader(GL_VERTEX_SHADER);
+        glShaderSource(textVertexShader, 1, &ShaderCollection::textVertexSource, NULL);
+        glCompileShader(textVertexShader);
+        if ( ! shaderInitialised(textVertexShader))
+        {
+            throw "Failed to initialise text vertex shader";
+        }
+
+        textFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+        glShaderSource(textFragmentShader, 1, &ShaderCollection::textFragmentSource, NULL);
+        glCompileShader(textFragmentShader);
+        if ( ! shaderInitialised(textFragmentShader))
+        {
+            throw "Failed to initialise text fragment shader";
+        }
+
+        textShaderProgram = glCreateProgram();
+        glAttachShader(textShaderProgram, textVertexShader);
+        glAttachShader(textShaderProgram, textFragmentShader);
+        glBindFragDataLocation(textShaderProgram, 0, "outColour");
+        glLinkProgram(textShaderProgram);
+        glUseProgram(textShaderProgram);
+
+        GLint vertexAttribute = glGetAttribLocation(textShaderProgram, "vertex");
+        if (vertexAttribute < 0)
+        {
+            throw "Can't find text vertex attribute in text shader program";
+        }
+
+        GLint reference = glGetUniformLocation(textShaderProgram, "projection");
+        if (reference < 0)
+        {
+            throw "Can't find text projection transform uniform in text shader program";
+        }
+        uniTextProjectionTransform = static_cast<GLuint>(reference);
+
+        textProjectionTransform = glm::ortho(0.0f,       // x == 0 is left of screen
+                                             wndWidth,   // right of screen
+                                             0.0f,       // y == 0 is bottom of screen
+                                             wndHeight   // top of screen
+        );
+        glUniformMatrix4fv(uniTextProjectionTransform, 1, GL_FALSE, glm::value_ptr(textProjectionTransform));
+
+        reference = glGetUniformLocation(textShaderProgram, "text");
+        if (reference < 0)
+        {
+            throw "Can't find glyph data uniform in text shader program";
+        }
+        uniTextGlyphData = static_cast<GLuint>(reference);
+
+        reference = glGetUniformLocation(textShaderProgram, "textColour");
+        if (reference < 0)
+        {
+            throw "Can't find text colour uniform in text shader program";
+        }
+        uniTextColour = static_cast<GLuint>(reference);
+
+        glGenVertexArrays(1, &textVao);
+        glBindVertexArray(textVao);
+
+        glGenBuffers(1, &textVbo);
+
+        glBindBuffer(GL_ARRAY_BUFFER, textVbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW);  // 2D quad needs 6 vertices with 4 attributes each
+
+        glEnableVertexAttribArray(static_cast<GLuint>(vertexAttribute));
+        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);        // how our vertex array data (which is dynamic) is laid out
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);   // @todo: do we need this? just so we don't accidentally add stuff to it in future...
+        glBindVertexArray(0);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        success = true;
+    }
+    catch (std::string exception)
+    {
+        std::cerr << exception << std::endl;
+    }
+
+    FT_Done_Face(face);
+    FT_Done_FreeType(ft);
+
+    return success;
+}
+
+void DisplayManager::drawText(std::string text, GLfloat x, GLfloat y, GLfloat z, bool ortho, GLfloat scale, glm::vec3 colour)
+{
+    glUseProgram(textShaderProgram);
+
+    glUniform3f(uniTextColour, colour.r, colour.g, colour.b);
+    glActiveTexture(GL_TEXTURE0);
+
+    glBindVertexArray(textVao);
+
+    std::string::const_iterator c;
+    for (c = text.begin(); c != text.end(); c++)
+    {
+        Character ch = characters[*c];
+
+        GLfloat xpos = x + ch.bearing.x * scale;
+        GLfloat ypos = y - (ch.size.y - ch.bearing.y) * scale;
+
+        GLfloat w = ch.size.x * scale;
+        GLfloat h = ch.size.y * scale;
+
+        GLfloat vertices[6][4] = {
+                { xpos,     ypos + h, 0.0, 0.0 },
+                { xpos,     ypos,     0.0, 1.0 },
+                { xpos + w, ypos,     1.0, 1.0 },
+
+                { xpos,     ypos + h, 0.0, 0.0 },
+                { xpos + w, ypos,     1.0, 1.0 },
+                { xpos + w, ypos + h, 1.0, 0.0 }
+        };
+
+        glBindTexture(GL_TEXTURE_2D, ch.textureId);
+        glBindBuffer(GL_ARRAY_BUFFER, textVbo);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        x += (ch.advance >> 6) * scale;
+    }
+
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 void DisplayManager::teardown()
 {
     glDeleteProgram(shaderProgram);
@@ -183,10 +377,14 @@ void DisplayManager::setPerspective(GLfloat nearPlane, GLfloat farPlane, GLfloat
             nearPlane,            // near clipping plane (any vertex closer to camera than this disappears)
             farPlane              // far clipping plane (any vertex further from camera than this disappears)
     );
+
+//  glUniformMatrix4fv(uniProjectionTransform, 1, GL_FALSE, glm::value_ptr(projectionTransform));
 }
 
 void DisplayManager::drawScene()
 {
+    glUseProgram(shaderProgram);
+
     /**
      * View Transform
      */

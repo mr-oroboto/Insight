@@ -20,6 +20,10 @@ bool HeapDecorator::decorate()
     glm::vec3 lastNodePosition = glm::vec3(0, 0, 5);
     dft(0, lastNodePosition, false);
 
+    char msg[64];
+    sprintf(msg, "%d", highlightedNodeValue);
+    currentFrame->addText(msg, 10, 10);
+
     frameQueue->enqueueFrame(currentFrame);
 
     return success;
