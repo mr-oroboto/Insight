@@ -37,7 +37,7 @@ bool DisplayManager::initialise(GLfloat wndWidthPx, GLfloat wndHeightPx)
     wndHeight = wndHeightPx;
 
     setPerspective(1.0f, 50.0f, 45.0f);
-    setCameraLocation(6.5, 6.5, 1.5);
+    setCameraLocation(0, 33, 0);
 
     try
     {
@@ -123,8 +123,6 @@ bool DisplayManager::initialise(GLfloat wndWidthPx, GLfloat wndHeightPx)
         }
         uniModelOverrideColour = static_cast<GLuint>(reference);
 
-        glEnable(GL_DEPTH_TEST);
-
         initialised = true;
     }
     catch (std::string e)
@@ -173,34 +171,36 @@ bool DisplayManager::initialiseFreeType()
             throw "Failed to find fonts";
         }
 
-        FT_Set_Pixel_Sizes(face, 64 /* pensize */, 0);
+        FT_Set_Pixel_Sizes(face, 0, 24);
 
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);  // disable 4 byte alignment
 
-        for (GLubyte c = 0; c < 128; c++) {
-            if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
+        for (GLubyte c = 0; c < 128; c++)
+        {
+            if (FT_Load_Char(face, c, FT_LOAD_RENDER))
+            {
                 std::cerr << "Failed to load glyph for '" << c << "'" << std::endl;
                 continue;
             }
 
             GLuint texture;
             glGenTextures(1, &texture);
-            glBindTexture(GL_TEXTURE_2D, texture);
+            glBindTexture(GL_TEXTURE_2D, texture);              // make the texture we just generated the active one
             glTexImage2D(GL_TEXTURE_2D,
                          0,
                          GL_RED,                                // internalFormat
-                         face->glyph->bitmap.width,
-                         face->glyph->bitmap.rows,
+                         face->glyph->bitmap.width,             // texture width  (mapped to 0..1 in texture co-ords)
+                         face->glyph->bitmap.rows,              // texture height (mapped to 0..1 in texture co-ords)
                          0,
                          GL_RED,                                // format, GL_RED as glyph bitmap is greyscale single byte
                          GL_UNSIGNED_BYTE,
-                         face->glyph->bitmap.buffer
+                         face->glyph->bitmap.buffer             // texture data
             );
 
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);    // how texture co-ords < 0 or > 1 are interpreted in x dimension
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);    // how texture co-ords < 0 or > 1 are interpreted in y dimension
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);       // how to scale texture down
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);       // how to scale texture up
 
             Character character = {
                     texture,
@@ -235,13 +235,26 @@ bool DisplayManager::initialiseFreeType()
         glLinkProgram(textShaderProgram);
         glUseProgram(textShaderProgram);
 
-        GLint vertexAttribute = glGetAttribLocation(textShaderProgram, "vertex");
-        if (vertexAttribute < 0)
+        GLint positionAttribute = glGetAttribLocation(textShaderProgram, "position");
+        if (positionAttribute < 0)
         {
-            throw "Can't find text vertex attribute in text shader program";
+            throw "Can't find text position attribute in text shader program";
         }
 
-        GLint reference = glGetUniformLocation(textShaderProgram, "projection");
+        GLint texCoordsAttribute = glGetAttribLocation(textShaderProgram, "inTexCoords");
+        if (texCoordsAttribute < 0)
+        {
+            throw "Can't find text texture co-ordinate attribute in text shader program";
+        }
+
+        GLint reference = glGetUniformLocation(textShaderProgram, "view");
+        if (reference < 0)
+        {
+            throw "Can't find text view transform uniform in text shader program";
+        }
+        uniTextViewTransform = static_cast<GLuint>(reference);
+
+        reference = glGetUniformLocation(textShaderProgram, "projection");
         if (reference < 0)
         {
             throw "Can't find text projection transform uniform in text shader program";
@@ -255,13 +268,6 @@ bool DisplayManager::initialiseFreeType()
         );
         glUniformMatrix4fv(uniTextProjectionTransform, 1, GL_FALSE, glm::value_ptr(textProjectionTransform));
 
-        reference = glGetUniformLocation(textShaderProgram, "text");
-        if (reference < 0)
-        {
-            throw "Can't find glyph data uniform in text shader program";
-        }
-        uniTextGlyphData = static_cast<GLuint>(reference);
-
         reference = glGetUniformLocation(textShaderProgram, "textColour");
         if (reference < 0)
         {
@@ -269,22 +275,31 @@ bool DisplayManager::initialiseFreeType()
         }
         uniTextColour = static_cast<GLuint>(reference);
 
-        glGenVertexArrays(1, &textVao);
+        glGenVertexArrays(1, &textVao);     // create a VAO for our texture vertex buffer (dynamically updated during drawing)
         glBindVertexArray(textVao);
 
         glGenBuffers(1, &textVbo);
-
         glBindBuffer(GL_ARRAY_BUFFER, textVbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW);  // 2D quad needs 6 vertices with 4 attributes each
+        glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 5, NULL, GL_DYNAMIC_DRAW);  // 2D quad (two triangles) needs 6 vertices with 5 attributes (3x pos, 2x tex co-ords) each
 
-        glEnableVertexAttribArray(static_cast<GLuint>(vertexAttribute));
-        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);        // how our vertex array data (which is dynamic) is laid out
+        glEnableVertexAttribArray(static_cast<GLuint>(positionAttribute));
+        glVertexAttribPointer(static_cast<GLuint>(positionAttribute),
+                              3,                  /* num of values to read from array per vertex */
+                              GL_FLOAT,           /* type of those values */
+                              GL_FALSE,           /* normalise to -1.0, 1.0 if not floats? */
+                              5 * sizeof(float),  /* stride: each (x,y,z) pos has texture co-ords (s,t) in between */
+                              0                   /* offset */);
+
+        glEnableVertexAttribArray(static_cast<GLuint>(texCoordsAttribute));
+        glVertexAttribPointer(static_cast<GLuint>(texCoordsAttribute),
+                              2,                         /* num of values to read from array per vertex */
+                              GL_FLOAT,                  /* type of those values */
+                              GL_FALSE,                  /* normalise to -1.0, 1.0 if not floats? */
+                              5 * sizeof(float),         /* stride: each (s,t) co-ords has vertex position (x,y,z) in between */
+                              (void*)(3 * sizeof(float)) /* offset */);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);   // @todo: do we need this? just so we don't accidentally add stuff to it in future...
         glBindVertexArray(0);
-
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         success = true;
     }
@@ -299,46 +314,101 @@ bool DisplayManager::initialiseFreeType()
     return success;
 }
 
-void DisplayManager::drawText(std::string text, GLfloat x, GLfloat y, GLfloat z, bool ortho, GLfloat scale, glm::vec3 colour)
+void DisplayManager::drawText(std::string text, glm::vec3 position, bool ortho, GLfloat scale, glm::vec3 colour)
 {
+    glEnable(GL_BLEND);                                 // this is disabled during any object rendering function
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  // because red channel is used as alpha in shaders
+
     glUseProgram(textShaderProgram);
 
-    glUniform3f(uniTextColour, colour.r, colour.g, colour.b);
-    glActiveTexture(GL_TEXTURE0);
+    if (ortho)
+    {
+        glm::mat4 viewTransform = glm::mat4(1.0f);
 
-    glBindVertexArray(textVao);
+        glUniformMatrix4fv(uniTextViewTransform, 1, GL_FALSE, glm::value_ptr(viewTransform));                   // identity matrix
+        glUniformMatrix4fv(uniTextProjectionTransform, 1, GL_FALSE, glm::value_ptr(textProjectionTransform));   // orthographic projection
+    }
+    else
+    {
+        glm::mat4 viewTransform = glm::lookAt(
+                glm::vec3(cameraX, cameraY, cameraZ),     // camera position within world co-ordinates
+                glm::vec3(0.0f, 0.0f, 0.0f),              // world co-ordinates to be center of the screen
+                glm::vec3(0.0f, 0.0f, 1.0f)               // the "up" axis (z, making xy plane the "ground")
+        );
+
+        glUniformMatrix4fv(uniTextViewTransform, 1, GL_FALSE, glm::value_ptr(viewTransform));
+        glUniformMatrix4fv(uniTextProjectionTransform, 1, GL_FALSE, glm::value_ptr(projectionTransform));       // normal perspective projection
+    }
+
+    glUniform3f(uniTextColour, colour.r, colour.g, colour.b);
+
+    glActiveTexture(GL_TEXTURE0);       // sampler in shader is bound to texture unit 0, make this texture unit active so we can bind our texture to it
+
+    glBindVertexArray(textVao);         // make our VBO and vertex attribute mapping active
 
     std::string::const_iterator c;
     for (c = text.begin(); c != text.end(); c++)
     {
         Character ch = characters[*c];
 
-        GLfloat xpos = x + ch.bearing.x * scale;
-        GLfloat ypos = y - (ch.size.y - ch.bearing.y) * scale;
+        GLfloat xpos = position.x + ch.bearing.x * scale;
+        GLfloat ypos = position.y;
+        GLfloat zpos = position.z;
 
         GLfloat w = ch.size.x * scale;
         GLfloat h = ch.size.y * scale;
 
-        GLfloat vertices[6][4] = {
-                { xpos,     ypos + h, 0.0, 0.0 },
-                { xpos,     ypos,     0.0, 1.0 },
-                { xpos + w, ypos,     1.0, 1.0 },
+        if (ortho)
+        {
+            ypos = position.y - (ch.size.y - ch.bearing.y) * scale;
 
-                { xpos,     ypos + h, 0.0, 0.0 },
-                { xpos + w, ypos,     1.0, 1.0 },
-                { xpos + w, ypos + h, 1.0, 0.0 }
-        };
+            GLfloat vertices[6][5] = {
+                    //  x          y       z     s    t     (where s and t are the texture co-ordinates to sample from)
+                    { xpos,     ypos + h, 0, 0.0, 0.0 }, // triangle 0 of 2D quad
+                    { xpos,     ypos,     0, 0.0, 1.0 },
+                    { xpos + w, ypos,     0, 1.0, 1.0 },
 
-        glBindTexture(GL_TEXTURE_2D, ch.textureId);
-        glBindBuffer(GL_ARRAY_BUFFER, textVbo);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+                    { xpos,     ypos + h, 0, 0.0, 0.0 }, // triangle 1 of 2D quad
+                    { xpos + w, ypos,     0, 1.0, 1.0 },
+                    { xpos + w, ypos + h, 0, 1.0, 0.0 }
+            };
+
+            glBindBuffer(GL_ARRAY_BUFFER, textVbo);
+            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+
+            position.x += (ch.advance >> 6) * scale;
+        }
+        else
+        {
+            zpos = position.z - (ch.size.y - ch.bearing.y) * scale;
+
+            // render onto a xz plane
+            GLfloat vertices[6][5] = {
+                    //  x          y       z     s    t     (where s and t are the texture co-ordinates to sample from)
+                    { xpos,     ypos, zpos + h, 1.0, 0.0 }, // triangle 0 of 2D quad
+                    { xpos,     ypos, zpos,     1.0, 1.0 },
+                    { xpos + w, ypos, zpos,     0.0, 1.0 },
+
+                    { xpos,     ypos, zpos + h, 1.0, 0.0 }, // triangle 1 of 2D quad
+                    { xpos + w, ypos, zpos,     0.0, 1.0 },
+                    { xpos + w, ypos, zpos + h, 0.0, 0.0 }
+            };
+
+            glBindBuffer(GL_ARRAY_BUFFER, textVbo);
+            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+
+            position.x -= (ch.advance >> 6) * scale;
+        }
+
+        glBindTexture(GL_TEXTURE_2D, ch.textureId); // bind the texture to texture unit 0 (made active above)
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glDrawArrays(GL_TRIANGLES, 0, 6);
-        x += (ch.advance >> 6) * scale;
     }
 
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
+
+    glDisable(GL_BLEND);
 }
 
 void DisplayManager::teardown()
@@ -346,6 +416,10 @@ void DisplayManager::teardown()
     glDeleteProgram(shaderProgram);
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+
+    glDeleteProgram(textShaderProgram);
+    glDeleteShader(textVertexShader);
+    glDeleteShader(textFragmentShader);
 
     if (primitives)
     {
@@ -367,6 +441,8 @@ void DisplayManager::setCameraLocation(GLfloat x, GLfloat y, GLfloat z)
     cameraX = x;
     cameraY = y;
     cameraZ = z;
+
+    std::cout << "camera at (" << x << ", " << y << ", " << z << ")" << std::endl;
 }
 
 void DisplayManager::setPerspective(GLfloat nearPlane, GLfloat farPlane, GLfloat fov)

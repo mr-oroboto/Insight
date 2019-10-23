@@ -19,6 +19,8 @@ public:
     int leftIndex(size_t nodeIndex);
     int rightIndex(size_t nodeIndex);
 
+    unsigned long nodeCount();
+
 protected:
     int extract();          // extract root (min or max)
     virtual bool shouldSwapInHeapifyUp(int nodeValue, int comparisonNodeValue) = 0;

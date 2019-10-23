@@ -8,10 +8,10 @@
 #include "scenario/MinHeap.h"
 
 #define WINDOW_FULLSCREEN false
-#define WINDOW_X_POS 100
-#define WINDOW_Y_POS 100
-#define WINDOW_X_SIZE 800
-#define WINDOW_Y_SIZE 600
+#define WINDOW_X_POS 10
+#define WINDOW_Y_POS 10
+#define WINDOW_X_SIZE 2560
+#define WINDOW_Y_SIZE 1440
 
 using namespace std;
 
@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
     SDL_Window* window = nullptr;
     SDL_Event windowEvent;
 
-    GLfloat cameraX = 0.0f, cameraY = 17.0f, cameraZ = 0.0f;
+    GLfloat cameraX = 0.0f, cameraY = 33.0f, cameraZ = 0.0f;
     GLfloat cameraIncrement = 1.0f;
     GLfloat cameraSphereRadius = 6.5f;
     GLfloat cameraTheta = 0.0f;

@@ -17,7 +17,7 @@ public:
     void setFrameQueue(FrameQueue *queue);
     bool initialise(GLfloat wndWidthPx, GLfloat wndHeightPx);
     void drawScene();
-    void drawText(std::string text, GLfloat x, GLfloat y, GLfloat z, bool ortho = true, GLfloat scale = 1.0f, glm::vec3 colour = glm::vec3(1.0f, 1.0f, 1.0f));
+    void drawText(std::string text, glm::vec3 position, bool ortho = true, GLfloat scale = 1.0f, glm::vec3 colour = glm::vec3(1.0f, 1.0f, 1.0f));
 
     void setCameraLocation(GLfloat x, GLfloat y, GLfloat z);
     void setPerspective(GLfloat nearPlane, GLfloat farPlane, GLfloat fov);
@@ -74,9 +74,9 @@ private:
     GLuint textVao;
     GLuint textVbo;
 
-    GLuint uniTextGlyphData;
-    GLuint uniTextColour;
+    GLuint uniTextViewTransform;
     GLuint uniTextProjectionTransform;
+    GLuint uniTextColour;
 };
 
 #endif //INSIGHT_DISPLAYMANAGER_H

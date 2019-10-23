@@ -7,6 +7,11 @@ HeapArray::HeapArray(HeapDecorator* dec)
     decorator->setHeap(this);
 }
 
+unsigned long HeapArray::nodeCount()
+{
+    return store.size();
+}
+
 int HeapArray::nodeValue(size_t nodeIndex)
 {
     assert(nodeIndex < store.size());

@@ -16,7 +16,7 @@ public:
     bool decorate();
 
 protected:
-    void dft(size_t nodeIndex, glm::vec3 lastNodePosition, bool isLeftOfParent);
+    void dft(size_t nodeIndex, unsigned long nodeLevel, glm::vec3 lastNodePosition, bool isLeftOfParent);
 
     HeapArray* heap;
     int highlightedNodeValue;

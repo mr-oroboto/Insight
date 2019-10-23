@@ -12,6 +12,7 @@ public:
     ~SceneObject();
 
     void draw(GLfloat secsSinceStart, GLfloat secsSinceLastFrame, bool useColour = true);
+    glm::vec3 getPosition();
 
 protected:
     DisplayManager* displayManager;
