@@ -10,20 +10,38 @@ public:
     Tesselation(GLuint positionAttribute, GLuint colourAttribute);
     ~Tesselation();
 
+    enum Type
+    {
+        FLAT = 0,
+        RAMPED,
+        SIN_LENGTH,
+        HILLS
+    };
+
+    void setIsolated();
+    void setBorderTop(bool border);
+    void setBorderBottom(bool border);
+    void setBorderLeft(bool border);
+    void setBorderRight(bool border);
+    void setZFreeSeed(GLfloat val);
+
     void setPreviousBottomRowBottomRightZ(std::vector<GLfloat> initialPreviousBottomRowBottomRightZ);
     void setPreviousRightColumnBottomRightZ(std::vector<GLfloat> initialPreviousRightColumnBottomRightZ);
-    void setIsolated(bool iso);
+
     void resetSeamVertices();
-    void setFreeZ(GLfloat val);
+    void initVertices();
+
+    void setRandomPeaks(bool peaks);
+    void setType(Type type);
 
     void draw();
 
     std::vector<GLfloat> getBottomRowBottomRightZ();
     std::vector<GLfloat> getRightColumnBottomRightZ();
-    GLfloat getFreeZ();
+    GLfloat getZFree();
 
 protected:
-    void initVertices();
+    Type tesselationType;
 
     GLfloat width;
     GLfloat length;
@@ -32,13 +50,18 @@ protected:
 
     GLfloat zMin;
     GLfloat zMax;
+    GLfloat zFreeSeed;
     GLfloat zFree;
     std::vector<GLfloat> prevRowBottomRightZ;
     std::vector<GLfloat> currentRowBottomRightZ;
     std::vector<GLfloat> prevRightColumnBottomRightZ;
     std::vector<GLfloat> currentRightColumnBottomRightZ;
 
-    bool isolated;
+    bool isBorderLeft;
+    bool isBorderRight;
+    bool isBorderTop;
+    bool isBorderBottom;
+    bool randomPeaks;
 
     GLuint totalVertices;
     GLuint verticesPerSubprimitive;

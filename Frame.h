@@ -19,9 +19,11 @@ public:
     void addLine(glm::vec3 from, glm::vec3 to, glm::vec3 colour);
 
     void draw(GLfloat secsSinceStart, GLfloat secsSinceLastFrame);
-    void drawTesselatedFloor();
 
 protected:
+    void drawTesselatedFloor();
+    void drawTesselatedFloorWithIsolatedTiles();
+
     struct Text
     {
         std::string text;

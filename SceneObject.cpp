@@ -78,7 +78,7 @@ void SceneObject::draw(GLfloat secsSinceStart, GLfloat secsSinceLastFrame, bool 
 
     glUniformMatrix4fv(displayManager->getModelTransformUniform(), 1 /* number of matrices to upload */, GL_FALSE, glm::value_ptr(modelTransform));
 
-    if (useColour && primitive->getType() != Primitive::Type::TESSELATION)
+    if (useColour)
     {
         glUniform1i(displayManager->getModelDoOverrideColourUniform(), 1);
         glUniform3f(displayManager->getModelOverrideColourUniform(), colour.r, colour.g, colour.b);

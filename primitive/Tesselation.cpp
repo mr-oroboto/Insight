@@ -7,12 +7,19 @@ Tesselation::Tesselation(GLuint positionAttribute, GLuint colourAttribute)
 {
     type = Primitive::TESSELATION;
 
-    isolated = true;
+    tesselationType = Type::FLAT;
+    randomPeaks = false;
+
+    isBorderLeft = true;
+    isBorderRight = true;
+    isBorderTop = true;
+    isBorderBottom = true;
 
     xIncrement = 0.5;
     yIncrement = 0.5;
     zMin = 0.05;
-    zMax = 0.3;
+    zMax = 0.1;
+    zFreeSeed = zFree = 0.0;
 
     width = 6.0f;
     length = width;                     // DRAGON: don't change this, we assume the tesselation is a square
@@ -94,26 +101,56 @@ void Tesselation::initVertices()
     GLuint currentColumn = 0, currentRow = 0;
     GLfloat x, y;
 
+
     for (y = 0.0f; y < length && currentVertices < totalVertices; y += yIncrement)
     {
         currentColumn = 0;
-        GLfloat startZ = zFree;
+
+        // Of the tile's four corners, we only get to choose the Z value of one of them (the bottom right corner), the
+        // rest come from the fact the tesselation itself is a border tile on that corner (ie. z = 0), or the tesselation
+        // is bordered by another tesselation, in which case we must smoothly flow on from that tesselation's values.
+        //
+        // All zFreeBottomRight values of the tile's left side start from the same seed value (which could also be from
+        // a neighbouring tesselation).
+        zFree = zFreeSeed;
 
         for (x = 0.0f; x < width && currentVertices < totalVertices; x += xIncrement)
         {
-            GLfloat r, g, b, zFixedTopLeft, zFixedTopRight, zFixedBottomLeft, zFreeBottomRight, zPeak;
+            GLfloat zFixedTopLeft, zFixedTopRight, zFixedBottomLeft, zFreeBottomRight, zPeak;
 
-            r = g = b = 0.4;
+            // Set our only free height variable, the other corners come from previous tiles (in this, or a past tesselation if not isolated)
+            switch (tesselationType)
+            {
+                case Type::HILLS:
+                    zFree += 0.1;
+                    zFreeBottomRight = sqrt(sin(zFree) * sin(zFree)) + sqrt(cos(zFree) * tan(zFree));
+                    break;
 
-            // set our only free height variable, the other corners come from previous tiles (in this, or a past tesselation if not isolated)
-//            zFreeBottomRight = sqrt(sin(x) * sin(x));
-            startZ += 0.1;
-            zFreeBottomRight = startZ;
+                case Type::RAMPED:
+                    zFree += 0.1;
+                    zFreeBottomRight = zFree;
+                    break;
+
+                case Type::SIN_LENGTH:
+                    zFree += 0.1;
+                    zFreeBottomRight = sqrt(sin(zFree) * sin(zFree));
+                    break;
+
+                case Type::FLAT:
+                default:
+                    zFreeBottomRight = zFree;
+                    break;
+            }
+
             currentRowBottomRightZ[currentColumn] = zFreeBottomRight;
 
-            if (currentColumn == 0)                                             // first column, pin left side to 0 (or right column of previous tesselation)
+            if (currentColumn == 0)
             {
-                if (isolated)
+                /**
+                 * First column, pin left side to 0 (or right column of previous tesselation)
+                 */
+
+                if (isBorderLeft)
                 {
                     zFixedTopLeft = 0;
                     zFixedBottomLeft = 0;
@@ -134,19 +171,23 @@ void Tesselation::initVertices()
 
                 zFixedTopRight = prevRowBottomRightZ[currentColumn];
             }
-            else if (currentColumn == subprimitivesPerRow - 1)                  // last column, pin right side to 0 if isolated
+            else if (currentColumn == subprimitivesPerRow - 1)
             {
+                /**
+                 * Last column, pin right side to 0 if isolated
+                 */
+
                 zFixedTopLeft = prevRowBottomRightZ[currentColumn - 1];
                 zFixedBottomLeft = currentRowBottomRightZ[currentColumn - 1];
 
-                if (isolated)
+                if (isBorderRight)
                 {
                     zFixedTopRight = 0;
                     zFreeBottomRight = 0;
                 }
                 else
                 {
-                    zFixedTopRight = prevRowBottomRightZ[currentColumn];        // zFreeBottomRight remains free (selected earlier)
+                    zFixedTopRight = prevRowBottomRightZ[currentColumn]; // zFreeBottomRight remains free (selected earlier)
                 }
 
                 currentRightColumnBottomRightZ[currentRow] = zFreeBottomRight;
@@ -158,9 +199,13 @@ void Tesselation::initVertices()
                 zFixedTopRight = prevRowBottomRightZ[currentColumn];
             }
 
-            if (currentRow == 0)                                                // first row, pin top to 0 if isolated
+            if (currentRow == 0)
             {
-                if (isolated)
+                /**
+                 * First row, pin top to 0 if isolated
+                 */
+
+                if (isBorderTop)
                 {
                     zFixedTopLeft = 0;
                     zFixedTopRight = 0;
@@ -180,17 +225,27 @@ void Tesselation::initVertices()
                 }
             }
 
-            if (currentRow == subprimitivesPerRow - 1)                          // last row assuming we have a square tile, pin bottom to 0 if isolated
+            if (currentRow == subprimitivesPerRow - 1)
             {
-                if (isolated)                                                   // no need to reset these if not isolated
+                /**
+                 * Last row assuming we have a square tile, pin bottom to 0 if isolated
+                 */
+
+                if (isBorderBottom)                                         // no need to reset these if not isolated
                 {
                     zFixedBottomLeft = 0;
                     zFreeBottomRight = 0;
                 }
             }
 
-//            zPeak = zFixedTopLeft + distribution(gen);
-            zPeak = zFixedTopLeft;
+            if (randomPeaks)
+            {
+                zPeak = zFixedTopLeft + distribution(gen);
+            }
+            else
+            {
+                zPeak = zFixedTopLeft;
+            }
 
             GLfloat tileVertices[12 * 8] = {
                      // x            y                                z      r     g     b     u     v
@@ -231,33 +286,49 @@ void Tesselation::initVertices()
 void Tesselation::setPreviousBottomRowBottomRightZ(std::vector<GLfloat> initialPreviousBottomRowBottomRightZ)
 {
     prevRowBottomRightZ = initialPreviousBottomRowBottomRightZ;
-    setIsolated(false);
+    setBorderTop(false);
 }
 
 void Tesselation::setPreviousRightColumnBottomRightZ(std::vector<GLfloat> initialPreviousRightColumnBottomRightZ)
 {
     prevRightColumnBottomRightZ = initialPreviousRightColumnBottomRightZ;
-    setIsolated(false);
+    setBorderLeft(false);
 }
 
-void Tesselation::setIsolated(bool iso)
+void Tesselation::setIsolated()
 {
-    isolated = iso;
-
-    if (isolated)
-    {
-        resetSeamVertices();
-    }
-
-    initVertices();
+    setBorderLeft(true);
+    setBorderRight(true);
+    setBorderTop(true);
+    setBorderBottom(true);
 }
 
-void Tesselation::setFreeZ(GLfloat val)
+void Tesselation::setBorderLeft(bool border)
 {
-    zFree = val;
+    isBorderLeft = border;
 }
 
-GLfloat Tesselation::getFreeZ()
+void Tesselation::setBorderRight(bool border)
+{
+    isBorderRight = border;
+}
+
+void Tesselation::setBorderTop(bool border)
+{
+    isBorderTop = border;
+}
+
+void Tesselation::setBorderBottom(bool border)
+{
+    isBorderBottom = border;
+}
+
+void Tesselation::setZFreeSeed(GLfloat val)
+{
+    zFreeSeed = val;
+}
+
+GLfloat Tesselation::getZFree()
 {
     return zFree;
 }
@@ -270,6 +341,16 @@ std::vector<GLfloat> Tesselation::getBottomRowBottomRightZ()
 std::vector<GLfloat> Tesselation::getRightColumnBottomRightZ()
 {
     return currentRightColumnBottomRightZ;
+}
+
+void Tesselation::setRandomPeaks(bool peaks)
+{
+    randomPeaks = peaks;
+}
+
+void Tesselation::setType(Type type)
+{
+    tesselationType = type;
 }
 
 void Tesselation::draw()

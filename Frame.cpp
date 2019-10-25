@@ -57,11 +57,10 @@ void Frame::draw(GLfloat secsSinceStart, GLfloat secsSinceLastFrame)
 {
     if (drawFloor)
     {
-//      addObject(Primitive::Type::QUAD, glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), 20.0);
         drawTesselatedFloor();
     }
 
-    if (drawReferenceAxes || true)
+    if (drawReferenceAxes)
     {
         glm::vec3 colour = glm::vec3(1);
         glm::vec3 from = glm::vec3(0, 0, 0);
@@ -116,57 +115,105 @@ void Frame::drawTesselatedFloor()
 {
     GLfloat z = -3.0f;
 
-    bool firstRow = true;
-    bool firstColumn = true;
-    std::vector<GLfloat> prevBottomRowBottomRightZ;
+    GLfloat floorWidth = 12.0;      // y-dimension
+    GLfloat floorLength = 12.0;     // x-dimension
+    GLfloat tileDimension = 6.0;    // assumes square tiles
+    GLfloat x, y;
+    GLuint tilesLong = floorLength / tileDimension;    // how many tiles wide (in y-dimension) is this surface?
+    GLuint tilesWide = floorWidth / tileDimension;
+
+    std::vector<std::vector<GLfloat>> prevBottomRowBottomRightZ(tilesWide);
     std::vector<GLfloat> prevRightColumnBottomRightZ;
+    GLuint currentColumn = 0;
+    GLuint currentRow = 0;
+    GLfloat lastZFree;
 
-    for (GLfloat y = 0.0f; y < 12.0f; y += 6.0)
+    for (y = 0.0f; y < floorWidth; y += tileDimension)
     {
-        firstColumn = true;
+        currentColumn = 0;
 
-        for (GLfloat x = 0.0f; x < 12.0f; x += 6.0)
+        for (x = 0.0f; x < floorLength; x += tileDimension)
         {
-            SceneObject* object = new SceneObject(displayManager, Primitive::Type::TESSELATION, glm::vec3(x, y, z),  glm::vec3(0.5, 0.5, 0.5));
+            SceneObject* object = new SceneObject(displayManager, Primitive::Type::TESSELATION, glm::vec3(x, y, z),  glm::vec3(1, 1, 1));
             Tesselation* t = dynamic_cast<Tesselation*>(object->getPrimitive());
+
+            t->setRandomPeaks(true);
+            t->setType(Tesselation::Type::HILLS);
+            t->setZFreeSeed(0);
             t->resetSeamVertices();
-            t->setFreeZ(0);
-            t->setIsolated(false);
+            t->initVertices();
 
-            if ( ! firstRow)
+            t->setBorderRight(false);       // we're growing the tesselation from all tiles
+            t->setBorderBottom(false);      // we're growing the tesselation from all tiles
+            t->setBorderTop(true);          // assume we're a border on the other edges unless reset by setPrevious...
+            t->setBorderLeft(true);
+
+            if (currentRow != 0)
             {
-                t->setPreviousBottomRowBottomRightZ(prevBottomRowBottomRightZ);
+                t->setPreviousBottomRowBottomRightZ(prevBottomRowBottomRightZ[currentColumn]);
             }
 
-            if ( ! firstColumn)
+            if (currentColumn != 0)
             {
-                std::vector<GLfloat> temp = t->getRightColumnBottomRightZ();
-                t->setFreeZ(temp[0]);
+//              t->setZFreeSeed(prevRightColumnBottomRightZ[0]);
+                t->setZFreeSeed(lastZFree);
                 t->setPreviousRightColumnBottomRightZ(prevRightColumnBottomRightZ);
-
             }
 
-            prevBottomRowBottomRightZ = t->getBottomRowBottomRightZ();
+            if (currentColumn == tilesLong - 1)
+            {
+                t->setBorderRight(true);
+            }
+
+            if (currentRow == tilesWide - 1)
+            {
+                t->setBorderBottom(true);
+            }
+
+            t->initVertices();
+
+            prevBottomRowBottomRightZ[currentColumn] = t->getBottomRowBottomRightZ();
             prevRightColumnBottomRightZ = t->getRightColumnBottomRightZ();
+            lastZFree = t->getZFree();
 
-            object->draw(0, 0);
+            object->draw(0, 0, false);
 
-            firstColumn = false;
+            delete object;
+
+            currentColumn++;
         }
 
-        firstRow = false;
+        currentRow++;
     }
 
     return;
+}
 
-    for (GLfloat y = 0.0f; y < 6.0f; y += 6.0)
+void Frame::drawTesselatedFloorWithIsolatedTiles()
+{
+    GLfloat z = -3.0;
+
+    GLfloat floorWidth = 12.0;      // y-dimension
+    GLfloat floorLength = 12.0;     // x-dimension
+    GLfloat tileDimension = 6.0;    // assumes square tiles
+    GLfloat x, y;
+
+    for (y = 0.0f; y < floorWidth; y += tileDimension)
     {
-        for (GLfloat x = 0.0f; x < 6.0f; x += 6.0)
+        for (x = 0.0f; x < floorLength; x += tileDimension)
         {
             SceneObject* object = new SceneObject(displayManager, Primitive::Type::TESSELATION, glm::vec3(x, y, z),  glm::vec3(0.5, 0.5, 0.5));
             Tesselation* t = dynamic_cast<Tesselation*>(object->getPrimitive());
-            t->setIsolated(true);
-            object->draw(0, 0);
+
+            t->setRandomPeaks(false);
+            t->setZFreeSeed(0);
+            t->setType(Tesselation::Type::RAMPED);
+            t->setIsolated();
+            t->initVertices();
+
+            object->draw(0, 0, false);
+
+            delete object;
         }
     }
 }
