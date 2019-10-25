@@ -24,10 +24,10 @@ int main(int argc, char *argv[])
     SDL_Window* window = nullptr;
     SDL_Event windowEvent;
 
-    GLfloat cameraX = 0.0f, cameraY = 33.0f, cameraZ = 0.0f;
-    GLfloat cameraIncrement = 1.0f;
-    GLfloat cameraSphereRadius = 6.5f;
-    GLfloat cameraTheta = 0.0f;
+    GLfloat cameraX = 0.0f, cameraY = 33.0f, cameraZ = 4.0f;
+    GLfloat cameraRadius = 33.0f;
+    GLfloat cameraRotationIncrementDeg = 1.0;
+    GLfloat cameraAngle = 90.0f;
 
     // SDL is used to abstract the creation of an X window and event loop etc
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -84,31 +84,25 @@ int main(int argc, char *argv[])
                  */
                 if (windowEvent.key.keysym.sym == SDLK_UP)
                 {
-                    cameraZ += cameraIncrement;
+                    cameraZ += 1;
                 }
                 else if (windowEvent.key.keysym.sym == SDLK_DOWN)
                 {
-                    cameraZ -= cameraIncrement;
+                    cameraZ -= 1;
                 }
                 else if (windowEvent.key.keysym.sym == SDLK_LEFT)
                 {
-                    cameraTheta += cameraIncrement;
+                    cameraAngle -= cameraRotationIncrementDeg;
 
-                    cameraX = 0;
-                    cameraY -= cameraIncrement;
-
-//                    cameraX = cameraSphereRadius * sin(cameraTheta);
-//                    cameraY = cameraSphereRadius * cos(cameraTheta);
+                    cameraX = cameraRadius * cos(cameraAngle / (2*M_PI));
+                    cameraY = cameraRadius * sin(cameraAngle / (2*M_PI));
                 }
                 else if (windowEvent.key.keysym.sym == SDLK_RIGHT)
                 {
-                    cameraTheta -= cameraIncrement;
+                    cameraAngle += cameraRotationIncrementDeg;
 
-                    cameraX = 0;
-                    cameraY += cameraIncrement;
-
-//                    cameraX = cameraSphereRadius * sin(cameraTheta);
-//                    cameraY = cameraSphereRadius * cos(cameraTheta);
+                    cameraX = cameraRadius * cos(cameraAngle / (2*M_PI));
+                    cameraY = cameraRadius * sin(cameraAngle / (2*M_PI));
                 }
 
                 dm->setCameraLocation(cameraX, cameraY, cameraZ);

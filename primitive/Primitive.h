@@ -14,13 +14,18 @@ public:
     enum Type
     {
         CUBE = 0,
-        TRIANGLE
+        TRIANGLE,
+        LINE,
+        QUAD,
+        TESSELATION
     };
 
     void setActive();
+    Primitive::Type getType();
     virtual void draw() = 0;
 
 protected:
+    Primitive::Type type;
     GLuint  vao;
     GLuint  vbo;
     GLfloat *vertices;

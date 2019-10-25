@@ -16,3 +16,8 @@ void Primitive::setActive()
     glBindVertexArray(vao);
 }
 
+Primitive::Type Primitive::getType()
+{
+    return type;
+}
+

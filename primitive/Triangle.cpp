@@ -3,6 +3,8 @@
 
 Triangle::Triangle(GLuint positionAttribute, GLuint colourAttribute)
 {
+    type = Primitive::TRIANGLE;
+
     vertices = new GLfloat[3 * 6] {
              0.0f,  0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
              0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
@@ -40,6 +42,11 @@ Triangle::Triangle(GLuint positionAttribute, GLuint colourAttribute)
 Triangle::~Triangle()
 {
     std::cout << "Triangle::~Triangle()" << std::endl;
+
+    if (vertices != nullptr)
+    {
+        delete vertices;
+    }
 }
 
 void Triangle::draw()

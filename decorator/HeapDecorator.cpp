@@ -74,6 +74,11 @@ void HeapDecorator::dft(size_t nodeIndex, unsigned long inverseNodeLevel, glm::v
 
     currentFrame->addObject(Primitive::Type::CUBE, nodePosition, nodeColour);
 
+    if (nodeIndex != 0)
+    {
+        currentFrame->addLine(lastNodePosition, nodePosition, glm::vec3(1, 1, 1));
+    }
+
     char msg[64];
     glm::vec3 textColour = glm::vec3(1.0, 1.0, 0.0);
     sprintf(msg, "%d", nodeValue);

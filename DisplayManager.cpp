@@ -37,7 +37,7 @@ bool DisplayManager::initialise(GLfloat wndWidthPx, GLfloat wndHeightPx)
     wndHeight = wndHeightPx;
 
     setPerspective(1.0f, 50.0f, 45.0f);
-    setCameraLocation(0, 33, 0);
+    setCameraLocation(0, 33, 4);
 
     try
     {

@@ -3,6 +3,8 @@
 
 Cube::Cube(GLuint positionAttribute, GLuint colourAttribute)
 {
+    type = Primitive::CUBE;
+
     /**
      * The "face" descriptions below assume a co-ordinate system where +z is going up, +x is coming out of the screen
      * going left and +y is coming out of the screen going right
@@ -83,6 +85,11 @@ Cube::Cube(GLuint positionAttribute, GLuint colourAttribute)
 Cube::~Cube()
 {
     std::cout << "Cube::~Cube()" << std::endl;
+
+    if (vertices != nullptr)
+    {
+        delete vertices;
+    }
 }
 
 void Cube::draw()
