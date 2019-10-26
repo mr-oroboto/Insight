@@ -1,5 +1,5 @@
-#ifndef INSIGHT_SHADERCOLLECTION_H
-#define INSIGHT_SHADERCOLLECTION_H
+#ifndef INSIGHT_SHADER_SHADERCOLLECTION_H
+#define INSIGHT_SHADER_SHADERCOLLECTION_H
 
 class ShaderCollection
 {
@@ -11,9 +11,9 @@ public:
     static const char* textFragmentSource;
 };
 
-#include "vertex.h"
-#include "fragment.h"
-#include "vertex_text.h"
-#include "fragment_text.h"
+#include "vertex.inc"
+#include "fragment.inc"
+#include "vertex_text.inc"
+#include "fragment_text.inc"
 
-#endif //INSIGHT_SHADERCOLLECTION_H
+#endif //INSIGHT_SHADER_SHADERCOLLECTION_H

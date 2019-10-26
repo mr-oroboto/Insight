@@ -1,9 +1,9 @@
 #include "FrameQueue.h"
+
 #include <iostream>
-#include <chrono>
 #include <thread>
 
-#define FRAMEQUEUE_DEFAULT_FPS 30
+#include "DisplayManager.h"
 
 FrameQueue::FrameQueue(DisplayManager* dm, bool repeats)
 {

@@ -1,5 +1,7 @@
-#ifndef INSIGHT_TRIANGLE_H
-#define INSIGHT_TRIANGLE_H
+#ifndef INSIGHT_PRIMITIVE_TRIANGLE_H
+#define INSIGHT_PRIMITIVE_TRIANGLE_H
+
+#include <GL/glew.h>
 
 #include "Primitive.h"
 
@@ -12,4 +14,4 @@ public:
     void draw();
 };
 
-#endif //INSIGHT_TRIANGLE_H
+#endif //INSIGHT_PRIMITIVE_TRIANGLE_H

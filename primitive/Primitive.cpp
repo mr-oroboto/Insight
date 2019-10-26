@@ -1,4 +1,5 @@
 #include "Primitive.h"
+
 #include <iostream>
 
 Primitive::~Primitive()

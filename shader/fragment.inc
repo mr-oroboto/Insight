@@ -1,5 +1,5 @@
-#ifndef INSIGHT_FRAGMENT_H
-#define INSIGHT_FRAGMENT_H
+#ifndef INSIGHT_SHADER_FRAGMENT_H
+#define INSIGHT_SHADER_FRAGMENT_H
 
 #include "ShaderCollection.h"
 
@@ -15,4 +15,4 @@ const char* ShaderCollection::fragmentSource = R"glsl(
     }
 )glsl";
 
-#endif //INSIGHT_FRAGMENT_H
+#endif //INSIGHT_SHADER_FRAGMENT_H

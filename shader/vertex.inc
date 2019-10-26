@@ -1,5 +1,5 @@
-#ifndef INSIGHT_VERTEX_H
-#define INSIGHT_VERTEX_H
+#ifndef INSIGHT_SHADER_VERTEX_H
+#define INSIGHT_SHADER_VERTEX_H
 
 #include "ShaderCollection.h"
 
@@ -32,4 +32,4 @@ const char* ShaderCollection::vertexSource = R"glsl(
     }
 )glsl";
 
-#endif // INSIGHT_VERTEX_H
+#endif // INSIGHT_SHADER_VERTEX_H

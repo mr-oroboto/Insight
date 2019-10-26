@@ -1,7 +1,8 @@
-#ifndef INSIGHT_MINHEAP_H
-#define INSIGHT_MINHEAP_H
+#ifndef INSIGHT_SCENARIO_MINHEAP_H
+#define INSIGHT_SCENARIO_MINHEAP_H
 
 #include "Scenario.h"
+#include "core/DisplayManager.h"
 
 class MinHeap : public Scenario
 {
@@ -13,4 +14,4 @@ public:
 };
 
 
-#endif //INSIGHT_MINHEAP_H
+#endif //INSIGHT_SCENARIO_MINHEAP_H

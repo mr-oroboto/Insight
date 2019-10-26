@@ -1,5 +1,5 @@
-#ifndef INSIGHT_VERTEXTEXT_H
-#define INSIGHT_VERTEXTEXT_H
+#ifndef INSIGHT_SHADER_VERTEXTEXT_H
+#define INSIGHT_SHADER_VERTEXTEXT_H
 
 #include "ShaderCollection.h"
 
@@ -21,4 +21,4 @@ const char* ShaderCollection::textVertexSource = R"glsl(
     }
 )glsl";
 
-#endif //INSIGHT_VERTEXTEXT_H
+#endif //INSIGHT_SHADER_VERTEXTEXT_H

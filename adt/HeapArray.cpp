@@ -1,5 +1,4 @@
 #include "HeapArray.h"
-#include <assert.h>
 
 HeapArray::HeapArray(HeapDecorator* dec)
 {

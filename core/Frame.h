@@ -1,12 +1,15 @@
-#ifndef INSIGHT_FRAME_H
-#define INSIGHT_FRAME_H
+#ifndef INSIGHT_CORE_FRAME_H
+#define INSIGHT_CORE_FRAME_H
 
-#include "DisplayManager.h"
-#include "SceneObject.h"
-#include "primitive/Primitive.h"
-#include <glm/glm.hpp>
 #include <vector>
 #include <string>
+
+#include <glm/glm.hpp>
+
+#include "SceneObject.h"
+#include "primitive/Primitive.h"
+
+class DisplayManager;
 
 class Frame
 {
@@ -42,4 +45,4 @@ protected:
     std::vector<Text> texts;
 };
 
-#endif //INSIGHT_FRAME_H
+#endif //INSIGHT_CORE_FRAME_H

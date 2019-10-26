@@ -1,5 +1,6 @@
 #include "Tesselation.h"
 
+#include <cstring>
 #include <iostream>
 #include <random>
 
@@ -248,22 +249,22 @@ void Tesselation::initVertices()
             }
 
             GLfloat tileVertices[12 * 8] = {
-                     // x            y                                z      r     g     b     u     v
-                     x + xIncrement,          y,                      zFixedTopRight,   1, 0, 0, 0.0f, 0.0f,  // +x face (left)
-                     x + xIncrement,          y + yIncrement,         zFreeBottomRight, 1, 0, 0, 0.0f, 0.0f,
-                     x + (xIncrement / 2.0),  y + (yIncrement / 2.0), zPeak,            1, 0, 0, 0.0f, 0.0f,
+                     // x            y                                       z            r     g     b     u     v
+                     x + xIncrement,          y,                        zFixedTopRight,   1, 0, 0, 0.0f, 0.0f,  // +x face (left)
+                     x + xIncrement,          y + yIncrement,           zFreeBottomRight, 1, 0, 0, 0.0f, 0.0f,
+                     x + (xIncrement / 2.0f),  y + (yIncrement / 2.0f), zPeak,            1, 0, 0, 0.0f, 0.0f,
 
-                     x + (xIncrement / 2.0),  y + (yIncrement / 2.0), zPeak,            0, 0, 1, 0.0f, 0.0f,  // +y face (facing camera)
-                     x + xIncrement,          y + yIncrement,         zFreeBottomRight, 0, 0, 1, 0.0f, 0.0f,
-                     x,                       y + yIncrement,         zFixedBottomLeft, 0, 0, 1, 0.0f, 0.0f,
+                     x + (xIncrement / 2.0f),  y + (yIncrement / 2.0f), zPeak,            0, 0, 1, 0.0f, 0.0f,  // +y face (facing camera)
+                     x + xIncrement,          y + yIncrement,           zFreeBottomRight, 0, 0, 1, 0.0f, 0.0f,
+                     x,                       y + yIncrement,           zFixedBottomLeft, 0, 0, 1, 0.0f, 0.0f,
 
-                     x,                      y + yIncrement,          zFixedBottomLeft, 0, 1, 0, 0.0f, 0.0f,  // -x face (right)
-                     x,                      y,                       zFixedTopLeft,    0, 1, 0, 0.0f, 0.0f,
-                     x + (xIncrement / 2.0), y + (yIncrement / 2.0),  zPeak,            0, 1, 0, 0.0f, 0.0f,
+                     x,                      y + yIncrement,            zFixedBottomLeft, 0, 1, 0, 0.0f, 0.0f,  // -x face (right)
+                     x,                      y,                         zFixedTopLeft,    0, 1, 0, 0.0f, 0.0f,
+                     x + (xIncrement / 2.0f), y + (yIncrement / 2.0f),  zPeak,            0, 1, 0, 0.0f, 0.0f,
 
-                     x + (xIncrement / 2.0), y + (yIncrement / 2.0),  zPeak,            1, 0, 1, 0.0f, 0.0f,  // -y face
-                     x,                      y,                       zFixedTopLeft,    1, 0, 1, 0.0f, 0.0f,
-                     x + xIncrement,         y,                       zFixedTopRight,   1, 0, 1, 0.0f, 0.0f
+                     x + (xIncrement / 2.0f), y + (yIncrement / 2.0f),  zPeak,            1, 0, 1, 0.0f, 0.0f,  // -y face
+                     x,                      y,                         zFixedTopLeft,    1, 0, 1, 0.0f, 0.0f,
+                     x + xIncrement,         y,                         zFixedTopRight,   1, 0, 1, 0.0f, 0.0f
             };
 
             memcpy(vertices + (currentVertices * 8), tileVertices, sizeof(GLfloat) * verticesPerSubprimitive * 8);

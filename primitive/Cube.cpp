@@ -1,4 +1,5 @@
 #include "Cube.h"
+
 #include <iostream>
 
 Cube::Cube(GLuint positionAttribute, GLuint colourAttribute)

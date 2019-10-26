@@ -1,5 +1,7 @@
-#ifndef INSIGHT_CUBE_H
-#define INSIGHT_CUBE_H
+#ifndef INSIGHT_PRIMITIVE_CUBE_H
+#define INSIGHT_PRIMITIVE_CUBE_H
+
+#include <GL/glew.h>
 
 #include "Primitive.h"
 
@@ -12,4 +14,4 @@ public:
     void draw();
 };
 
-#endif //INSIGHT_CUBE_H
+#endif //INSIGHT_PRIMITIVE_CUBE_H

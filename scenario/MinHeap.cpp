@@ -1,7 +1,8 @@
 #include "MinHeap.h"
-#include "../adt/HeapArray.h"
-#include "../decorator/HeapDecorator.h"
-#include "../FrameQueue.h"
+
+#include "adt/HeapArray.h"
+#include "decorator/HeapDecorator.h"
+#include "core/FrameQueue.h"
 
 MinHeap::~MinHeap()
 {

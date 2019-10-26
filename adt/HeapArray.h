@@ -1,9 +1,10 @@
-#ifndef INSIGHT_HEAPARRAY_H
-#define INSIGHT_HEAPARRAY_H
+#ifndef INSIGHT_ADT_HEAPARRAY_H
+#define INSIGHT_ADT_HEAPARRAY_H
 
 #include <iostream>
 #include <vector>
-#include "../decorator/HeapDecorator.h"
+
+#include "decorator/HeapDecorator.h"
 
 class HeapArray
 {
@@ -60,4 +61,4 @@ protected:
     bool shouldSwapInHeapifyDown(int node, int comparisonNodeValue);
 };
 
-#endif //INSIGHT_HEAPARRAY_H
+#endif //INSIGHT_ADT_HEAPARRAY_H

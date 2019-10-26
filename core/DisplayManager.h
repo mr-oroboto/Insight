@@ -1,12 +1,14 @@
-#ifndef INSIGHT_DISPLAYMANAGER_H
-#define INSIGHT_DISPLAYMANAGER_H
+#ifndef INSIGHT_CORE_DISPLAYMANAGER_H
+#define INSIGHT_CORE_DISPLAYMANAGER_H
 
-#include <GL/glew.h>                    // must be included before gl.h (which is via SDL_opengl.h)
 #include <map>
 #include <string>
-#include "primitive/PrimitiveCollection.h"
 
-class FrameQueue;
+#include <glm/glm.hpp>
+#include <GL/glew.h>                    // must be included before gl.h (which is via SDL_opengl.h)
+
+#include "FrameQueue.h"
+#include "primitive/PrimitiveCollection.h"
 
 class DisplayManager
 {
@@ -79,4 +81,4 @@ private:
     GLuint uniTextColour;
 };
 
-#endif //INSIGHT_DISPLAYMANAGER_H
+#endif //INSIGHT_CORE_DISPLAYMANAGER_H

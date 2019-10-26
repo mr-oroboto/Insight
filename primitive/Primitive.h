@@ -1,8 +1,7 @@
-#ifndef INSIGHT_PRIMITIVE_H
-#define INSIGHT_PRIMITIVE_H
+#ifndef INSIGHT_PRIMITIVE_PRIMITIVE_H
+#define INSIGHT_PRIMITIVE_PRIMITIVE_H
 
 #include <GL/glew.h>
-#include <glm/glm.hpp>
 
 class Primitive
 {
@@ -28,7 +27,7 @@ protected:
     Primitive::Type type;
     GLuint  vao;
     GLuint  vbo;
-    GLfloat *vertices;
+    GLfloat* vertices;
 };
 
-#endif //INSIGHT_PRIMITIVE_H
+#endif //INSIGHT_PRIMITIVE_PRIMITIVE_H

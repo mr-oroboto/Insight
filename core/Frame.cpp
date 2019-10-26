@@ -1,7 +1,10 @@
 #include "Frame.h"
-#include <iostream>
+
 #include <math.h>
-#include "primitive/Line.h"
+
+#include <iostream>
+
+#include "DisplayManager.h"
 #include "primitive/Tesselation.h"
 
 Frame::Frame(DisplayManager* dm, bool drawObjectPos, bool drawRefAxes, bool drawGround)

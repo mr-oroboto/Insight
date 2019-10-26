@@ -1,5 +1,5 @@
-#ifndef INSIGHT_FRAGMENT_TEXT_H
-#define INSIGHT_FRAGMENT_TEXT_H
+#ifndef INSIGHT_SHADER_FRAGMENT_TEXT_H
+#define INSIGHT_SHADER_FRAGMENT_TEXT_H
 
 #include "ShaderCollection.h"
 
@@ -19,4 +19,4 @@ const char* ShaderCollection::textFragmentSource = R"glsl(
     }
 )glsl";
 
-#endif //INSIGHT_FRAGMENT_TEXT_H
+#endif //INSIGHT_SHADER_FRAGMENT_TEXT_H

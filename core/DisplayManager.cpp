@@ -1,19 +1,18 @@
 #include "DisplayManager.h"
 
 #include <iostream>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
-#include <glm/glm.hpp>
+
 #include <glm/gtc/matrix_transform.hpp> // makes view and projection matrices easier to generate
 #include <glm/gtc/type_ptr.hpp>         // convert matrix to float
 #include <ft2build.h>
-#include FT_FREETYPE_H
+#include "freetype/freetype.h"
+
 #include "shader/ShaderCollection.h"
-#include "FrameQueue.h"
 
 DisplayManager::DisplayManager()
 {
     initialised = false;
+
     frameQueue = nullptr;
     primitives = nullptr;
 }
@@ -206,7 +205,7 @@ bool DisplayManager::initialiseFreeType()
                     texture,
                     glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
                     glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-                    face->glyph->advance.x
+                    static_cast<GLuint>(face->glyph->advance.x)
             };
 
             characters.insert(std::pair<GLchar, Character>(c, character));

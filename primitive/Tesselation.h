@@ -1,8 +1,11 @@
-#ifndef INSIGHT_TESSELATION_H
-#define INSIGHT_TESSELATION_H
+#ifndef INSIGHT_PRIMITIVE_TESSELATION_H
+#define INSIGHT_PRIMITIVE_TESSELATION_H
+
+#include <vector>
+
+#include <GL/glew.h>
 
 #include "Primitive.h"
-#include <vector>
 
 class Tesselation : public Primitive
 {
@@ -68,4 +71,4 @@ protected:
     GLuint subprimitivesPerRow;
 };
 
-#endif //INSIGHT_TESSELATION_H
+#endif //INSIGHT_PRIMITIVE_TESSELATION_H

@@ -1,9 +1,11 @@
-#ifndef INSIGHT_SCENEOBJECT_H
-#define INSIGHT_SCENEOBJECT_H
+#ifndef INSIGHT_CORE_SCENEOBJECT_H
+#define INSIGHT_CORE_SCENEOBJECT_H
 
 #include <glm/glm.hpp>
-#include "DisplayManager.h"
+
 #include "primitive/Primitive.h"
+
+class DisplayManager;
 
 class SceneObject
 {
@@ -29,5 +31,4 @@ protected:
     glm::vec3 colour;
 };
 
-
-#endif //INSIGHT_SCENEOBJECT_H
+#endif //INSIGHT_CORE_SCENEOBJECT_H

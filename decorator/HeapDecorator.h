@@ -1,7 +1,10 @@
-#ifndef INSIGHT_HEAPDECORATOR_H
-#define INSIGHT_HEAPDECORATOR_H
+#ifndef INSIGHT_DECORATOR_HEAPDECORATOR_H
+#define INSIGHT_DECORATOR_HEAPDECORATOR_H
+
+#include <glm/glm.hpp>
 
 #include "Decorator.h"
+#include "core/FrameQueue.h"
 
 class HeapArray;
 
@@ -23,4 +26,4 @@ protected:
 };
 
 
-#endif //INSIGHT_HEAPDECORATOR_H
+#endif //INSIGHT_DECORATOR_HEAPDECORATOR_H

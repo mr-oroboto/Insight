@@ -1,10 +1,12 @@
 #include "PrimitiveCollection.h"
+
+#include <iostream>
+
 #include "Cube.h"
 #include "Triangle.h"
 #include "Line.h"
 #include "Quad.h"
 #include "Tesselation.h"
-#include <iostream>
 
 PrimitiveCollection::PrimitiveCollection(GLuint positionAttribute, GLuint colourAttribute)
 {

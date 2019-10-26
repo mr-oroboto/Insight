@@ -1,9 +1,12 @@
-#ifndef INSIGHT_FRAMEQUEUE_H
-#define INSIGHT_FRAMEQUEUE_H
+#ifndef INSIGHT_CORE_FRAMEQUEUE_H
+#define INSIGHT_CORE_FRAMEQUEUE_H
 
-#include "Frame.h"
 #include <queue>
 #include <chrono>
+
+#include "Frame.h"
+
+#define FRAMEQUEUE_DEFAULT_FPS 30
 
 class DisplayManager;
 
@@ -36,4 +39,4 @@ protected:
     std::queue<Frame*> queue;
 };
 
-#endif //INSIGHT_FRAMEQUEUE_H
+#endif //INSIGHT_CORE_FRAMEQUEUE_H

@@ -1,5 +1,8 @@
-#ifndef INSIGHT_LINE_H
-#define INSIGHT_LINE_H
+#ifndef INSIGHT_PRIMITIVE_LINE_H
+#define INSIGHT_PRIMITIVE_LINE_H
+
+#include <GL/glew.h>
+#include <glm/glm.hpp>
 
 #include "Primitive.h"
 
@@ -18,4 +21,4 @@ private:
     glm::vec3 toWorldPosition;
 };
 
-#endif //INSIGHT_LINE_H
+#endif //INSIGHT_PRIMITIVE_LINE_H

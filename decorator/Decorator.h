@@ -1,9 +1,8 @@
-#ifndef INSIGHT_DECORATOR_H
-#define INSIGHT_DECORATOR_H
+#ifndef INSIGHT_DECORATOR_DECORATOR_H
+#define INSIGHT_DECORATOR_DECORATOR_H
 
-#include <glm/glm.hpp>
-#include "../FrameQueue.h"
-#include "../Frame.h"
+#include "core/FrameQueue.h"
+#include "core/Frame.h"
 
 class Decorator
 {
@@ -19,4 +18,4 @@ protected:
 };
 
 
-#endif //INSIGHT_DECORATOR_H
+#endif //INSIGHT_DECORATOR_DECORATOR_H

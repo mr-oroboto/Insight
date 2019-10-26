@@ -1,6 +1,8 @@
 #include "HeapDecorator.h"
-#include "../adt/HeapArray.h"
+
 #include <math.h>
+
+#include "adt/HeapArray.h"
 
 void HeapDecorator::setHeap(HeapArray* heapArray)
 {

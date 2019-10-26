@@ -1,7 +1,7 @@
-#ifndef INSIGHT_SCENARIO_H
-#define INSIGHT_SCENARIO_H
+#ifndef INSIGHT_SCENARIO_SCENARIO_H
+#define INSIGHT_SCENARIO_SCENARIO_H
 
-#include "../DisplayManager.h"
+#include "core/DisplayManager.h"
 
 class Scenario
 {
@@ -13,8 +13,7 @@ public:
 
 protected:
     DisplayManager* displayManager;
-
 };
 
 
-#endif //INSIGHT_SCENARIO_H
+#endif //INSIGHT_SCENARIO_SCENARIO_H

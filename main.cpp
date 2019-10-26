@@ -1,10 +1,12 @@
-#include <iostream>
 #include <math.h>
+
+#include <iostream>
+
 #include <SDL2/SDL.h>
 #include <GL/glew.h>                    // must be included before gl.h (which is via SDL_opengl.h)
-#include "DisplayManager.h"
-#include "FrameQueue.h"
-#include "Frame.h"
+
+#include "core/DisplayManager.h"
+#include "core/FrameQueue.h"
 #include "scenario/MinHeap.h"
 
 #define WINDOW_FULLSCREEN false

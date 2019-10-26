@@ -1,8 +1,10 @@
-#ifndef INSIGHT_PRIMITIVECOLLECTION_H
-#define INSIGHT_PRIMITIVECOLLECTION_H
+#ifndef INSIGHT_PRIMITIVE_PRIMITIVECOLLECTION_H
+#define INSIGHT_PRIMITIVE_PRIMITIVECOLLECTION_H
 
 #include <unordered_map>
-#include <GL/glew.h>                    // must be included before gl.h (which is via SDL_opengl.h)
+
+#include <GL/glew.h>
+
 #include "Primitive.h"
 
 class PrimitiveCollection
@@ -17,4 +19,4 @@ private:
     std::unordered_map<Primitive::Type, Primitive*> primitives;
 };
 
-#endif //INSIGHT_PRIMITIVECOLLECTION_H
+#endif //INSIGHT_PRIMITIVE_PRIMITIVECOLLECTION_H

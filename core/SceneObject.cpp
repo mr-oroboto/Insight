@@ -1,9 +1,11 @@
 #include "SceneObject.h"
-#include <glm/glm.hpp>
+
+#include <iostream>
+
 #include <glm/gtc/matrix_transform.hpp> // makes view and projection matrices easier to generate
 #include <glm/gtc/type_ptr.hpp>         // convert matrix to float
-#include <iostream>
-#include <math.h>
+
+#include "DisplayManager.h"
 #include "primitive/Line.h"
 
 SceneObject::SceneObject(DisplayManager* dm, Primitive::Type type, glm::vec3 worldPos, glm::vec3 col)
