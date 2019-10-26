@@ -86,11 +86,6 @@ Cube::Cube(GLuint positionAttribute, GLuint colourAttribute)
 Cube::~Cube()
 {
     std::cout << "Cube::~Cube()" << std::endl;
-
-    if (vertices != nullptr)
-    {
-        delete vertices;
-    }
 }
 
 void Cube::draw()

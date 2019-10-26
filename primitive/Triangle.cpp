@@ -43,11 +43,6 @@ Triangle::Triangle(GLuint positionAttribute, GLuint colourAttribute)
 Triangle::~Triangle()
 {
     std::cout << "Triangle::~Triangle()" << std::endl;
-
-    if (vertices != nullptr)
-    {
-        delete vertices;
-    }
 }
 
 void Triangle::draw()

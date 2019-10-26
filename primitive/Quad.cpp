@@ -51,11 +51,6 @@ Quad::Quad(GLuint positionAttribute, GLuint colourAttribute)
 Quad::~Quad()
 {
     std::cout << "Quad::~Quad()" << std::endl;
-
-    if (vertices != nullptr)
-    {
-        delete vertices;
-    }
 }
 
 void Quad::draw()

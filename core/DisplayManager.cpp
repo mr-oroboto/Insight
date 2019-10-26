@@ -19,6 +19,8 @@ DisplayManager::DisplayManager()
 
 DisplayManager::~DisplayManager()
 {
+    std::cout << "DisplayManager::~DisplayManager()" << std::endl;
+
     if (initialised)
     {
         teardown();
@@ -313,6 +315,31 @@ bool DisplayManager::initialiseFreeType()
     return success;
 }
 
+void DisplayManager::teardown()
+{
+    glDeleteProgram(shaderProgram);
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    glDeleteProgram(textShaderProgram);
+    glDeleteShader(textVertexShader);
+    glDeleteShader(textFragmentShader);
+
+    if (primitives)
+    {
+        delete primitives;
+        primitives = nullptr;
+    }
+
+    if (frameQueue)
+    {
+        delete frameQueue;
+        frameQueue = nullptr;
+    }
+
+    initialised = false;
+}
+
 void DisplayManager::drawText(std::string text, glm::vec3 position, bool ortho, GLfloat scale, glm::vec3 colour)
 {
     glEnable(GL_BLEND);                                 // this is disabled during any object rendering function
@@ -408,31 +435,6 @@ void DisplayManager::drawText(std::string text, glm::vec3 position, bool ortho, 
     glBindTexture(GL_TEXTURE_2D, 0);
 
     glDisable(GL_BLEND);
-}
-
-void DisplayManager::teardown()
-{
-    glDeleteProgram(shaderProgram);
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    glDeleteProgram(textShaderProgram);
-    glDeleteShader(textVertexShader);
-    glDeleteShader(textFragmentShader);
-
-    if (primitives)
-    {
-        delete primitives;
-        primitives = nullptr;
-    }
-
-    if (frameQueue)
-    {
-        delete frameQueue;
-        frameQueue = nullptr;
-    }
-
-    initialised = false;
 }
 
 void DisplayManager::setCameraLocation(GLfloat x, GLfloat y, GLfloat z)

@@ -1,17 +1,19 @@
 #include "MinHeap.h"
 
+#include <iostream>
+
 #include "adt/HeapArray.h"
 #include "decorator/HeapDecorator.h"
 #include "core/FrameQueue.h"
 
 MinHeap::~MinHeap()
 {
-
+    std::cout << "MinHeap::~MinHeap()" << std::endl;
 }
 
 void MinHeap::run()
 {
-    FrameQueue* frameQueue = new FrameQueue(displayManager, true);
+    FrameQueue* frameQueue = new FrameQueue(displayManager, false);
     frameQueue->setFrameRate(1);
 
     HeapDecorator* decorator = new HeapDecorator(frameQueue);
@@ -30,7 +32,7 @@ void MinHeap::run()
     minHeap.validate();
 
     frameQueue->setReady();
-    frameQueue->setActive();
+    frameQueue->setActive();    // transfer ownership to DisplayManager
 
     delete decorator;
 }

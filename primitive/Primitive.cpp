@@ -9,7 +9,10 @@ Primitive::~Primitive()
     glDeleteBuffers(1, &vbo);
     glDeleteVertexArrays(1, &vao);
 
-    delete[] vertices;
+    if (vertices != nullptr)
+    {
+        delete[] vertices;
+    }
 }
 
 void Primitive::setActive()

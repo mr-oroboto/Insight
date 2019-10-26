@@ -47,11 +47,6 @@ Line::Line(GLuint positionAttribute, GLuint colourAttribute)
 Line::~Line()
 {
     std::cout << "Line::~Line()" << std::endl;
-
-    if (vertices != nullptr)
-    {
-        delete vertices;
-    }
 }
 
 void Line::setCoords(glm::vec3 from, glm::vec3 to)

@@ -66,10 +66,14 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    MinHeap minHeap(dm);
-    minHeap.run();
+    {
+        MinHeap minHeap(dm);
+        minHeap.run();
+    }
 
-    while (true)
+    bool continueRendering = true;
+
+    while (continueRendering)
     {
         if (SDL_PollEvent(&windowEvent))                // gather clicks, keystrokes, window movements, resizes etc
         {
@@ -109,6 +113,13 @@ int main(int argc, char *argv[])
 
                 dm->setCameraLocation(cameraX, cameraY, cameraZ);
             }
+            else if (windowEvent.type == SDL_KEYUP)
+            {
+                if (windowEvent.key.keysym.sym == SDLK_q)
+                {
+                    continueRendering = false;
+                }
+            }
         }
 
         dm->drawScene();
@@ -117,8 +128,11 @@ int main(int argc, char *argv[])
         SDL_GL_SwapWindow(window);
     }
 
-    /******************************************************************************************************************/
+    delete dm;
 
+    std::cout << "Cleanup complete, exiting" << std::endl;
+
+    /******************************************************************************************************************/
 
     SDL_GL_DeleteContext(context);
     SDL_Quit();

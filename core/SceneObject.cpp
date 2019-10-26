@@ -23,7 +23,7 @@ SceneObject::SceneObject(DisplayManager* dm, Primitive::Type type, glm::vec3 wor
 
 SceneObject::~SceneObject()
 {
-    std::cout << "SceneObject::~SceneObject()" << std::endl;
+//  std::cout << "SceneObject::~SceneObject()" << std::endl;
 }
 
 void SceneObject::setScale(GLfloat s)

@@ -28,6 +28,11 @@ FrameQueue::~FrameQueue()
     }
 }
 
+/**
+ * Generate a new Frame that can have SceneObjects added to it.
+ *
+ * This Frame should either be passed back to this FrameQueue using enqueueFrame(), or deleted by the caller.
+ */
 Frame* FrameQueue::newFrame()
 {
     Frame* frame = new Frame(displayManager);
@@ -36,7 +41,10 @@ Frame* FrameQueue::newFrame()
 }
 
 /**
- * Take ownership of a Frame created via newFrame()
+ * Take ownership of a Frame created via newFrame().
+ *
+ * The Frame should not be referenced by other entities once it has been passed off via this method (it can be deleted
+ * during drawCurrentFrame() on non-repeating FrameQueue objects).
  */
 bool FrameQueue::enqueueFrame(Frame* frame)
 {
@@ -97,6 +105,11 @@ void FrameQueue::setFrameRate(GLfloat fps)
 
 void FrameQueue::drawCurrentFrame()
 {
+    if (queue.empty())
+    {
+        return;
+    }
+
     auto t_now = std::chrono::high_resolution_clock::now();
 
     GLfloat secsSinceStart = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(t_now - firstFrameDrawnAt).count();
@@ -117,6 +130,10 @@ void FrameQueue::drawCurrentFrame()
             if (repeating)
             {
                 queue.push(frame);
+            }
+            else
+            {
+                delete frame;
             }
         }
     }

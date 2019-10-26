@@ -64,11 +64,6 @@ Tesselation::Tesselation(GLuint positionAttribute, GLuint colourAttribute)
 Tesselation::~Tesselation()
 {
     std::cout << "Tesselation::~Tesselation()" << std::endl;
-
-    if (vertices != nullptr)
-    {
-        delete vertices;
-    }
 }
 
 void Tesselation::resetSeamVertices()
