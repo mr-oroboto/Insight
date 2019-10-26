@@ -8,7 +8,7 @@
 class Quad : public Primitive
 {
 public:
-    Quad(GLuint positionAttribute, GLuint colourAttribute);
+    Quad(GLuint position_attribute, GLuint colour_attribute);
     ~Quad();
 
     void draw();

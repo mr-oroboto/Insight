@@ -7,7 +7,7 @@ class Primitive
 {
 public:
     Primitive() {}
-    Primitive(GLuint positionAttribute, GLuint colourAttribute) {}
+    Primitive(GLuint position_attribute, GLuint colour_attribute) {}
     virtual ~Primitive();
 
     enum Type
@@ -20,14 +20,16 @@ public:
     };
 
     void setActive();
+
     Primitive::Type getType();
+
     virtual void draw() = 0;
 
 protected:
-    Primitive::Type type;
-    GLuint  vao;
-    GLuint  vbo;
-    GLfloat* vertices;
+    Primitive::Type type_;
+    GLuint vao_;
+    GLuint vbo_;
+    GLfloat* vertices_;
 };
 
 #endif //INSIGHT_PRIMITIVE_PRIMITIVE_H

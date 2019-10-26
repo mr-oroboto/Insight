@@ -4,54 +4,54 @@
 #include <iostream>
 #include <random>
 
-Tesselation::Tesselation(GLuint positionAttribute, GLuint colourAttribute)
+Tesselation::Tesselation(GLuint position_attribute, GLuint colour_attribute)
 {
-    type = Primitive::TESSELATION;
+    type_ = Primitive::TESSELATION;
 
-    tesselationType = Type::FLAT;
-    randomPeaks = false;
+    tesselation_type_ = Type::FLAT;
+    randomise_peaks_ = false;
 
-    isBorderLeft = true;
-    isBorderRight = true;
-    isBorderTop = true;
-    isBorderBottom = true;
+    is_border_left_ = true;
+    is_border_right_ = true;
+    is_border_top_ = true;
+    is_border_bottom_ = true;
 
-    xIncrement = 0.5;
-    yIncrement = 0.5;
-    zMin = 0.05;
-    zMax = 0.1;
-    zFreeSeed = zFree = 0.0;
+    x_increment_ = 0.5;
+    y_increment_ = 0.5;
+    z_min_ = 0.05;
+    z_max_ = 0.1;
+    z_free_seed_ = z_free_ = 0.0;
 
-    width = 6.0f;
-    length = width;                     // DRAGON: don't change this, we assume the tesselation is a square
+    width_ = 6.0f;
+    length_ = width_;                     // DRAGON: don't change this, we assume the tesselation is a square
 
-    verticesPerSubprimitive = 12;       // 4 triangles with open base
+    vertices_per_subtile_ = 12;       // 4 triangles with open base
 
-    totalVertices = static_cast<GLuint>((width / xIncrement) * (length / yIncrement) * verticesPerSubprimitive);
-    vertices = new GLfloat[totalVertices * 8];
-    std::cout << "creating " << totalVertices << " vertices for tesselation, allocated " << (sizeof(GLfloat) * totalVertices * 8) << " byte vertice buffer at " << vertices << std::endl;
+    total_vertices_ = static_cast<GLuint>((width_ / x_increment_) * (length_ / y_increment_) * vertices_per_subtile_);
+    vertices_ = new GLfloat[total_vertices_ * 8];
+    std::cout << "creating " << total_vertices_ << " vertices for tesselation, allocated " << (sizeof(GLfloat) * total_vertices_ * 8) << " byte vertice buffer at " << vertices_ << std::endl;
 
     resetSeamVertices();
 
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+    glGenVertexArrays(1, &vao_);
+    glBindVertexArray(vao_);
 
-    glGenBuffers(1, &vbo);
+    glGenBuffers(1, &vbo_);
 
     // Must be done after glBindVertexArray() so the vbo is associated with the vao
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_);
 
     // Must be done after glBindVertexArray() so the mapping is associated with the vao (and inherently the vbo)
-    glEnableVertexAttribArray(positionAttribute);
-    glVertexAttribPointer(positionAttribute,
+    glEnableVertexAttribArray(position_attribute);
+    glVertexAttribPointer(position_attribute,
                           3,                  /* num of values to read from array per vertex */
                           GL_FLOAT,           /* type of those values */
                           GL_FALSE,           /* normalise to -1.0, 1.0 if not floats? */
                           8 * sizeof(float),  /* stride: each (x,y,z) pos now has RGBUV data in between */
                           0                   /* offset */);
 
-    glEnableVertexAttribArray(colourAttribute);
-    glVertexAttribPointer(colourAttribute,
+    glEnableVertexAttribArray(colour_attribute);
+    glVertexAttribPointer(colour_attribute,
                           3,                         /* num of values to read from array per vertex */
                           GL_FLOAT,                  /* type of those values */
                           GL_FALSE,                  /* normalise to -1.0, 1.0 if not floats? */
@@ -68,22 +68,22 @@ Tesselation::~Tesselation()
 
 void Tesselation::resetSeamVertices()
 {
-    currentRowBottomRightZ.clear();
-    prevRowBottomRightZ.clear();
+    current_row_bottom_right_z_.clear();
+    previous_row_bottom_right_z_.clear();
 
-    currentRightColumnBottomRightZ.clear();
-    prevRightColumnBottomRightZ.clear();
+    current_right_column_bottom_right_z_.clear();
+    previous_right_column_bottom_right_z_.clear();
 
-    subprimitivesPerRow = 0;
-    for (GLfloat x = 0.0f; x < width; x += xIncrement)
+    sub_tiles_per_row_ = 0;
+    for (GLfloat x = 0.0f; x < width_; x += x_increment_)
     {
-        prevRowBottomRightZ.push_back(0);
-        prevRightColumnBottomRightZ.push_back(0);           // assumes square tesselation
+        previous_row_bottom_right_z_.push_back(0);
+        previous_right_column_bottom_right_z_.push_back(0);           // assumes square tesselation
 
-        currentRowBottomRightZ.push_back(0);
-        currentRightColumnBottomRightZ.push_back(0);        // assumes sqaure tesselation
+        current_row_bottom_right_z_.push_back(0);
+        current_right_column_bottom_right_z_.push_back(0);        // assumes sqaure tesselation
 
-        subprimitivesPerRow++;
+        sub_tiles_per_row_++;
     }
 }
 
@@ -91,16 +91,15 @@ void Tesselation::initVertices()
 {
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_real_distribution<> distribution(zMin, zMax);
+    std::uniform_real_distribution<> distribution(z_min_, z_max_);
 
-    GLuint currentVertices = 0;
-    GLuint currentColumn = 0, currentRow = 0;
+    GLuint current_vertices = 0;
+    GLuint current_column = 0, current_row = 0;
     GLfloat x, y;
 
-
-    for (y = 0.0f; y < length && currentVertices < totalVertices; y += yIncrement)
+    for (y = 0.0f; y < length_ && current_vertices < total_vertices_; y += y_increment_)
     {
-        currentColumn = 0;
+        current_column = 0;
 
         // Of the tile's four corners, we only get to choose the Z value of one of them (the bottom right corner), the
         // rest come from the fact the tesselation itself is a border tile on that corner (ie. z = 0), or the tesselation
@@ -108,186 +107,186 @@ void Tesselation::initVertices()
         //
         // All zFreeBottomRight values of the tile's left side start from the same seed value (which could also be from
         // a neighbouring tesselation).
-        zFree = zFreeSeed;
+        z_free_ = z_free_seed_;
 
-        for (x = 0.0f; x < width && currentVertices < totalVertices; x += xIncrement)
+        for (x = 0.0f; x < width_ && current_vertices < total_vertices_; x += x_increment_)
         {
-            GLfloat zFixedTopLeft, zFixedTopRight, zFixedBottomLeft, zFreeBottomRight, zPeak;
+            GLfloat z_fixed_top_left, z_fixed_top_right, z_fixed_bottom_left, z_free_bottom_right, z_peak;
 
             // Set our only free height variable, the other corners come from previous tiles (in this, or a past tesselation if not isolated)
-            switch (tesselationType)
+            switch (tesselation_type_)
             {
                 case Type::HILLS:
-                    zFree += 0.1;
-                    zFreeBottomRight = sqrt(sin(zFree) * sin(zFree)) + sqrt(cos(zFree) * tan(zFree));
+                    z_free_ += 0.1;
+                    z_free_bottom_right = sqrt(sin(z_free_) * sin(z_free_)) + sqrt(cos(z_free_) * tan(z_free_));
                     break;
 
                 case Type::RAMPED:
-                    zFree += 0.1;
-                    zFreeBottomRight = zFree;
+                    z_free_ += 0.1;
+                    z_free_bottom_right = z_free_;
                     break;
 
                 case Type::SIN_LENGTH:
-                    zFree += 0.1;
-                    zFreeBottomRight = sqrt(sin(zFree) * sin(zFree));
+                    z_free_ += 0.1;
+                    z_free_bottom_right = sqrt(sin(z_free_) * sin(z_free_));
                     break;
 
                 case Type::FLAT:
                 default:
-                    zFreeBottomRight = zFree;
+                    z_free_bottom_right = z_free_;
                     break;
             }
 
-            currentRowBottomRightZ[currentColumn] = zFreeBottomRight;
+            current_row_bottom_right_z_[current_column] = z_free_bottom_right;
 
-            if (currentColumn == 0)
+            if (current_column == 0)
             {
                 /**
                  * First column, pin left side to 0 (or right column of previous tesselation)
                  */
 
-                if (isBorderLeft)
+                if (is_border_left_)
                 {
-                    zFixedTopLeft = 0;
-                    zFixedBottomLeft = 0;
+                    z_fixed_top_left = 0;
+                    z_fixed_bottom_left = 0;
                 }
                 else
                 {
-                    if (currentRow >= 1)
+                    if (current_row >= 1)
                     {
-                        zFixedTopLeft = prevRightColumnBottomRightZ[currentRow - 1];
+                        z_fixed_top_left = previous_right_column_bottom_right_z_[current_row - 1];
                     }
                     else
                     {
-                        zFixedTopLeft = prevRightColumnBottomRightZ[currentRow];    // @todo, should be currentRow - 1
+                        z_fixed_top_left = previous_right_column_bottom_right_z_[current_row];    // @todo, should be currentRow - 1
                     }
 
-                    zFixedBottomLeft = prevRightColumnBottomRightZ[currentRow];
+                    z_fixed_bottom_left = previous_right_column_bottom_right_z_[current_row];
                 }
 
-                zFixedTopRight = prevRowBottomRightZ[currentColumn];
+                z_fixed_top_right = previous_row_bottom_right_z_[current_column];
             }
-            else if (currentColumn == subprimitivesPerRow - 1)
+            else if (current_column == sub_tiles_per_row_ - 1)
             {
                 /**
                  * Last column, pin right side to 0 if isolated
                  */
 
-                zFixedTopLeft = prevRowBottomRightZ[currentColumn - 1];
-                zFixedBottomLeft = currentRowBottomRightZ[currentColumn - 1];
+                z_fixed_top_left = previous_row_bottom_right_z_[current_column - 1];
+                z_fixed_bottom_left = current_row_bottom_right_z_[current_column - 1];
 
-                if (isBorderRight)
+                if (is_border_right_)
                 {
-                    zFixedTopRight = 0;
-                    zFreeBottomRight = 0;
+                    z_fixed_top_right = 0;
+                    z_free_bottom_right = 0;
                 }
                 else
                 {
-                    zFixedTopRight = prevRowBottomRightZ[currentColumn]; // zFreeBottomRight remains free (selected earlier)
+                    z_fixed_top_right = previous_row_bottom_right_z_[current_column]; // zFreeBottomRight remains free (selected earlier)
                 }
 
-                currentRightColumnBottomRightZ[currentRow] = zFreeBottomRight;
+                current_right_column_bottom_right_z_[current_row] = z_free_bottom_right;
             }
             else
             {
-                zFixedTopLeft = prevRowBottomRightZ[currentColumn - 1];
-                zFixedBottomLeft = currentRowBottomRightZ[currentColumn - 1];
-                zFixedTopRight = prevRowBottomRightZ[currentColumn];
+                z_fixed_top_left = previous_row_bottom_right_z_[current_column - 1];
+                z_fixed_bottom_left = current_row_bottom_right_z_[current_column - 1];
+                z_fixed_top_right = previous_row_bottom_right_z_[current_column];
             }
 
-            if (currentRow == 0)
+            if (current_row == 0)
             {
                 /**
                  * First row, pin top to 0 if isolated
                  */
 
-                if (isBorderTop)
+                if (is_border_top_)
                 {
-                    zFixedTopLeft = 0;
-                    zFixedTopRight = 0;
+                    z_fixed_top_left = 0;
+                    z_fixed_top_right = 0;
                 }
                 else
                 {
-                    if (currentColumn >= 1)
+                    if (current_column >= 1)
                     {
-                        zFixedTopLeft = prevRowBottomRightZ[currentColumn - 1];
+                        z_fixed_top_left = previous_row_bottom_right_z_[current_column - 1];
                     }
                     else
                     {
-                        zFixedTopLeft = prevRowBottomRightZ[currentColumn];     // @todo, should be currentColumn - 1
+                        z_fixed_top_left = previous_row_bottom_right_z_[current_column];     // @todo, should be currentColumn - 1
                     }
 
-                    zFixedTopRight = prevRowBottomRightZ[currentColumn];
+                    z_fixed_top_right = previous_row_bottom_right_z_[current_column];
                 }
             }
 
-            if (currentRow == subprimitivesPerRow - 1)
+            if (current_row == sub_tiles_per_row_ - 1)
             {
                 /**
                  * Last row assuming we have a square tile, pin bottom to 0 if isolated
                  */
 
-                if (isBorderBottom)                                         // no need to reset these if not isolated
+                if (is_border_bottom_)                                         // no need to reset these if not isolated
                 {
-                    zFixedBottomLeft = 0;
-                    zFreeBottomRight = 0;
+                    z_fixed_bottom_left = 0;
+                    z_free_bottom_right = 0;
                 }
             }
 
-            if (randomPeaks)
+            if (randomise_peaks_)
             {
-                zPeak = zFixedTopLeft + distribution(gen);
+                z_peak = z_fixed_top_left + distribution(gen);
             }
             else
             {
-                zPeak = zFixedTopLeft;
+                z_peak = z_fixed_top_left;
             }
 
-            GLfloat tileVertices[12 * 8] = {
+            GLfloat tile_vertices[12 * 8] = {
                      // x            y                                       z            r     g     b     u     v
-                     x + xIncrement,          y,                        zFixedTopRight,   1, 0, 0, 0.0f, 0.0f,  // +x face (left)
-                     x + xIncrement,          y + yIncrement,           zFreeBottomRight, 1, 0, 0, 0.0f, 0.0f,
-                     x + (xIncrement / 2.0f),  y + (yIncrement / 2.0f), zPeak,            1, 0, 0, 0.0f, 0.0f,
+                     x + x_increment_,          y,                         z_fixed_top_right,   1, 0, 0, 0.0f, 0.0f,  // +x face (left)
+                     x + x_increment_,          y + y_increment_,          z_free_bottom_right, 1, 0, 0, 0.0f, 0.0f,
+                     x + (x_increment_ / 2.0f), y + (y_increment_ / 2.0f), z_peak,            1, 0, 0, 0.0f, 0.0f,
 
-                     x + (xIncrement / 2.0f),  y + (yIncrement / 2.0f), zPeak,            0, 0, 1, 0.0f, 0.0f,  // +y face (facing camera)
-                     x + xIncrement,          y + yIncrement,           zFreeBottomRight, 0, 0, 1, 0.0f, 0.0f,
-                     x,                       y + yIncrement,           zFixedBottomLeft, 0, 0, 1, 0.0f, 0.0f,
+                     x + (x_increment_ / 2.0f), y + (y_increment_ / 2.0f), z_peak,            0, 0, 1, 0.0f, 0.0f,  // +y face (facing camera)
+                     x + x_increment_,          y + y_increment_,          z_free_bottom_right, 0, 0, 1, 0.0f, 0.0f,
+                     x,                         y + y_increment_,          z_fixed_bottom_left, 0, 0, 1, 0.0f, 0.0f,
 
-                     x,                      y + yIncrement,            zFixedBottomLeft, 0, 1, 0, 0.0f, 0.0f,  // -x face (right)
-                     x,                      y,                         zFixedTopLeft,    0, 1, 0, 0.0f, 0.0f,
-                     x + (xIncrement / 2.0f), y + (yIncrement / 2.0f),  zPeak,            0, 1, 0, 0.0f, 0.0f,
+                     x,                         y + y_increment_,          z_fixed_bottom_left, 0, 1, 0, 0.0f, 0.0f,  // -x face (right)
+                     x,                         y,                         z_fixed_top_left,    0, 1, 0, 0.0f, 0.0f,
+                     x + (x_increment_ / 2.0f), y + (y_increment_ / 2.0f), z_peak,            0, 1, 0, 0.0f, 0.0f,
 
-                     x + (xIncrement / 2.0f), y + (yIncrement / 2.0f),  zPeak,            1, 0, 1, 0.0f, 0.0f,  // -y face
-                     x,                      y,                         zFixedTopLeft,    1, 0, 1, 0.0f, 0.0f,
-                     x + xIncrement,         y,                         zFixedTopRight,   1, 0, 1, 0.0f, 0.0f
+                     x + (x_increment_ / 2.0f), y + (y_increment_ / 2.0f), z_peak,            1, 0, 1, 0.0f, 0.0f,  // -y face
+                     x,                         y,                         z_fixed_top_left,    1, 0, 1, 0.0f, 0.0f,
+                     x + x_increment_,          y,                         z_fixed_top_right,   1, 0, 1, 0.0f, 0.0f
             };
 
-            memcpy(vertices + (currentVertices * 8), tileVertices, sizeof(GLfloat) * verticesPerSubprimitive * 8);
-            currentVertices += verticesPerSubprimitive;
+            memcpy(vertices_ + (current_vertices * 8), tile_vertices, sizeof(GLfloat) * vertices_per_subtile_ * 8);
+            current_vertices += vertices_per_subtile_;
 
-            currentColumn++;
+            current_column++;
         }
 
-        prevRowBottomRightZ = currentRowBottomRightZ;
-        currentRow++;
+        previous_row_bottom_right_z_ = current_row_bottom_right_z_;
+        current_row++;
     }
 
-    glBindVertexArray(vao);
+    glBindVertexArray(vao_);
 
     // Must be done after glBindVertexArray() so the vbo is associated with the vao
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * totalVertices * 8, vertices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * total_vertices_ * 8, vertices_, GL_STATIC_DRAW);
 }
 
-void Tesselation::setPreviousBottomRowBottomRightZ(std::vector<GLfloat> initialPreviousBottomRowBottomRightZ)
+void Tesselation::setPreviousBottomRowBottomRightZ(std::vector<GLfloat> initial_previous_bottom_row_bottom_right_z)
 {
-    prevRowBottomRightZ = initialPreviousBottomRowBottomRightZ;
+    previous_row_bottom_right_z_ = initial_previous_bottom_row_bottom_right_z;
     setBorderTop(false);
 }
 
-void Tesselation::setPreviousRightColumnBottomRightZ(std::vector<GLfloat> initialPreviousRightColumnBottomRightZ)
+void Tesselation::setPreviousRightColumnBottomRightZ(std::vector<GLfloat> initial_previous_right_column_bottom_right_z)
 {
-    prevRightColumnBottomRightZ = initialPreviousRightColumnBottomRightZ;
+    previous_right_column_bottom_right_z_ = initial_previous_right_column_bottom_right_z;
     setBorderLeft(false);
 }
 
@@ -301,56 +300,56 @@ void Tesselation::setIsolated()
 
 void Tesselation::setBorderLeft(bool border)
 {
-    isBorderLeft = border;
+    is_border_left_ = border;
 }
 
 void Tesselation::setBorderRight(bool border)
 {
-    isBorderRight = border;
+    is_border_right_ = border;
 }
 
 void Tesselation::setBorderTop(bool border)
 {
-    isBorderTop = border;
+    is_border_top_ = border;
 }
 
 void Tesselation::setBorderBottom(bool border)
 {
-    isBorderBottom = border;
+    is_border_bottom_ = border;
 }
 
-void Tesselation::setZFreeSeed(GLfloat val)
+void Tesselation::setZFreeSeed(GLfloat seed_value)
 {
-    zFreeSeed = val;
+    z_free_seed_ = seed_value;
 }
 
 GLfloat Tesselation::getZFree()
 {
-    return zFree;
+    return z_free_;
 }
 
 std::vector<GLfloat> Tesselation::getBottomRowBottomRightZ()
 {
-    return currentRowBottomRightZ;
+    return current_row_bottom_right_z_;
 }
 
 std::vector<GLfloat> Tesselation::getRightColumnBottomRightZ()
 {
-    return currentRightColumnBottomRightZ;
+    return current_right_column_bottom_right_z_;
 }
 
-void Tesselation::setRandomPeaks(bool peaks)
+void Tesselation::setRandomisePeaks(bool peaks)
 {
-    randomPeaks = peaks;
+    randomise_peaks_ = peaks;
 }
 
 void Tesselation::setType(Type type)
 {
-    tesselationType = type;
+    tesselation_type_ = type;
 }
 
 void Tesselation::draw()
 {
     setActive();
-    glDrawArrays(GL_TRIANGLES, 0, totalVertices);
+    glDrawArrays(GL_TRIANGLES, 0, total_vertices_);
 }

@@ -5,24 +5,24 @@
 
 #include "DisplayManager.h"
 
-FrameQueue::FrameQueue(DisplayManager* dm, bool repeats)
+FrameQueue::FrameQueue(DisplayManager* display_manager, bool repeats)
 {
-    ready = false;
+    ready_ = false;
 
     setFrameRate(FRAMEQUEUE_DEFAULT_FPS);
 
-    displayManager = dm;
-    repeating = repeats;
+    display_manager_ = display_manager;
+    repeating_ = repeats;
 }
 
 FrameQueue::~FrameQueue()
 {
     std::cout << "FrameQueue::~FrameQueue()" << std::endl;
 
-    while ( ! queue.empty())
+    while ( ! queue_.empty())
     {
-        Frame* frame = queue.front();
-        queue.pop();
+        Frame* frame = queue_.front();
+        queue_.pop();
 
         delete frame;
     }
@@ -35,7 +35,7 @@ FrameQueue::~FrameQueue()
  */
 Frame* FrameQueue::newFrame()
 {
-    Frame* frame = new Frame(displayManager);
+    Frame* frame = new Frame(display_manager_);
 
     return frame;
 }
@@ -48,13 +48,13 @@ Frame* FrameQueue::newFrame()
  */
 bool FrameQueue::enqueueFrame(Frame* frame)
 {
-    if (repeating && ready)
+    if (repeating_ && ready_)
     {
         std::cerr << "Repeating FrameQueue has been made ready, new Frames cannot be added" << std::endl;
         return false;
     }
 
-    queue.push(frame);
+    queue_.push(frame);
 
     return true;
 }
@@ -67,13 +67,13 @@ bool FrameQueue::enqueueFrame(Frame* frame)
  */
 bool FrameQueue::setActive()
 {
-    if (repeating && ! ready)
+    if (repeating_ && ! ready_)
     {
         std::cerr << "Repeating FrameQueue has not been made ready" << std::endl;
         return false;
     }
 
-    displayManager->setFrameQueue(this);
+    display_manager_->setFrameQueue(this);
 
     return true;
 }
@@ -84,52 +84,52 @@ bool FrameQueue::setActive()
  */
 bool FrameQueue::setReady()
 {
-    if (queue.empty())
+    if (queue_.empty())
     {
         std::cerr << "FrameQueue cannot be made ready with no Frames" << std::endl;
         return false;
     }
 
-    ready = true;
+    ready_ = true;
 
     return true;
 }
 
 void FrameQueue::setFrameRate(GLfloat fps)
 {
-    frameRate = fps;
-    secsPerFrame = 1 / frameRate;
+    frame_rate_ = fps;
+    secs_per_frame_ = 1 / frame_rate_;
 
-    firstFrameDrawnAt = lastFrameDrawnAt = std::chrono::high_resolution_clock::now();
+    first_frame_drawn_at_ = last_frame_drawn_at_ = std::chrono::high_resolution_clock::now();
 }
 
 void FrameQueue::drawCurrentFrame()
 {
-    if (queue.empty())
+    if (queue_.empty())
     {
         return;
     }
 
     auto t_now = std::chrono::high_resolution_clock::now();
 
-    GLfloat secsSinceStart = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(t_now - firstFrameDrawnAt).count();
-    GLfloat secsSinceLastFrame = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(t_now - lastFrameDrawnAt).count();
+    GLfloat secs_since_start = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(t_now - first_frame_drawn_at_).count();
+    GLfloat secs_since_last_frame = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(t_now - last_frame_drawn_at_).count();
 
-    Frame* frame = queue.front();
+    Frame* frame = queue_.front();
 
     if (frame)
     {
-        frame->draw(secsSinceStart, secsSinceLastFrame);
+        frame->draw(secs_since_start, secs_since_last_frame);
 
-        if (secsSinceLastFrame >= secsPerFrame)
+        if (secs_since_last_frame >= secs_per_frame_)
         {
             // Remove the frame so we draw the next frame
-            queue.pop();
-            lastFrameDrawnAt = t_now;
+            queue_.pop();
+            last_frame_drawn_at_ = t_now;
 
-            if (repeating)
+            if (repeating_)
             {
-                queue.push(frame);
+                queue_.push(frame);
             }
             else
             {

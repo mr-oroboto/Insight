@@ -3,7 +3,7 @@
 
 #include "ShaderCollection.h"
 
-const char* ShaderCollection::textFragmentSource = R"glsl(
+const char* ShaderCollection::text_fragment_source_ = R"glsl(
     #version 330 core
 
     in vec2 TexCoords;

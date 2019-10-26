@@ -11,18 +11,18 @@ class HeapArray;
 class HeapDecorator : public Decorator
 {
 public:
-    HeapDecorator(FrameQueue* frameQueue) : Decorator(frameQueue) {}
+    HeapDecorator(FrameQueue* frame_queue) : Decorator(frame_queue) {}
 
     void setHeap(HeapArray* heap);
-    void setHightlightedNodeValue(int nodeValue);
+    void setHightlightedNodeValue(int node_value);
 
     bool decorate();
 
 protected:
-    void dft(size_t nodeIndex, unsigned long nodeLevel, glm::vec3 lastNodePosition, bool isLeftOfParent);
+    void dft(size_t node_index, unsigned long node_level, glm::vec3 last_node_coords, bool is_left_of_parent);
 
-    HeapArray* heap;
-    int highlightedNodeValue;
+    HeapArray* heap_;
+    int highlighted_node_value_;
 };
 
 

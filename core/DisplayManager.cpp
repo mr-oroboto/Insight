@@ -11,31 +11,31 @@
 
 DisplayManager::DisplayManager()
 {
-    initialised = false;
+    initialised_ = false;
 
-    frameQueue = nullptr;
-    primitives = nullptr;
+    frame_queue_ = nullptr;
+    primitives_ = nullptr;
 }
 
 DisplayManager::~DisplayManager()
 {
     std::cout << "DisplayManager::~DisplayManager()" << std::endl;
 
-    if (initialised)
+    if (initialised_)
     {
         teardown();
     }
 }
 
-bool DisplayManager::initialise(GLfloat wndWidthPx, GLfloat wndHeightPx)
+bool DisplayManager::initialise(GLfloat wnd_width, GLfloat wnd_height)
 {
-    if (initialised)
+    if (initialised_)
     {
         return true;
     }
 
-    wndWidth = wndWidthPx;
-    wndHeight = wndHeightPx;
+    wnd_width_ = wnd_width;
+    wnd_height_ = wnd_height;
 
     setPerspective(1.0f, 50.0f, 45.0f);
     setCameraLocation(0, 33, 4);
@@ -47,84 +47,84 @@ bool DisplayManager::initialise(GLfloat wndWidthPx, GLfloat wndHeightPx)
             throw "Failed to initialise FreeType";
         }
 
-        vertexShader = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vertexShader, 1, &ShaderCollection::vertexSource, NULL);
-        glCompileShader(vertexShader);
-        if ( ! shaderInitialised(vertexShader))
+        vertex_shader_ = glCreateShader(GL_VERTEX_SHADER);
+        glShaderSource(vertex_shader_, 1, &ShaderCollection::vertex_source_, NULL);
+        glCompileShader(vertex_shader_);
+        if ( !isShaderInitialised(vertex_shader_))
         {
             throw "Failed to initialise vertex shader";
         }
 
-        fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fragmentShader, 1, &ShaderCollection::fragmentSource, NULL);
-        glCompileShader(fragmentShader);
-        if ( ! shaderInitialised(fragmentShader))
+        fragment_shader_ = glCreateShader(GL_FRAGMENT_SHADER);
+        glShaderSource(fragment_shader_, 1, &ShaderCollection::fragment_source_, NULL);
+        glCompileShader(fragment_shader_);
+        if ( !isShaderInitialised(fragment_shader_))
         {
             throw "Failed to initialise fragment shader";
         }
 
-        shaderProgram = glCreateProgram();
-        glAttachShader(shaderProgram, vertexShader);
-        glAttachShader(shaderProgram, fragmentShader);
-        glBindFragDataLocation(shaderProgram, 0, "outColour");
-        glLinkProgram(shaderProgram);
-        glUseProgram(shaderProgram);
+        shader_program_ = glCreateProgram();
+        glAttachShader(shader_program_, vertex_shader_);
+        glAttachShader(shader_program_, fragment_shader_);
+        glBindFragDataLocation(shader_program_, 0, "outColour");
+        glLinkProgram(shader_program_);
+        glUseProgram(shader_program_);
 
-        GLint positionAttribute = glGetAttribLocation(shaderProgram, "position");
-        if (positionAttribute < 0)
+        GLint position_attribute = glGetAttribLocation(shader_program_, "position");
+        if (position_attribute < 0)
         {
             throw "Can't find position attribute in shader program";
         }
 
         // Add an entirely new attribute mapping for the colour data we added to the vertex attributes
-        GLint colourAttribute = glGetAttribLocation(shaderProgram, "inColour");
-        if (colourAttribute < 0)
+        GLint colour_attribute = glGetAttribLocation(shader_program_, "inColour");
+        if (colour_attribute < 0)
         {
             throw "Can't find colour attribute in shader program";
         }
 
-        primitives = new PrimitiveCollection(static_cast<GLuint>(positionAttribute), static_cast<GLuint>(colourAttribute));
+        primitives_ = new PrimitiveCollection(static_cast<GLuint>(position_attribute), static_cast<GLuint>(colour_attribute));
 
-        GLint reference = glGetUniformLocation(shaderProgram, "model");
+        GLint reference = glGetUniformLocation(shader_program_, "model");
         if (reference < 0)
         {
             throw "Can't find model transform in shader program";
         }
-        uniModelTransform = static_cast<GLuint>(reference);
+        uni_model_transform_ = static_cast<GLuint>(reference);
 
-        reference = glGetUniformLocation(shaderProgram, "view");
+        reference = glGetUniformLocation(shader_program_, "view");
         if (reference < 0)
         {
             throw "Can't find view transform in shader program";
         }
-        uniViewTransform = static_cast<GLuint>(reference);
+        uni_view_transform_ = static_cast<GLuint>(reference);
 
-        reference = glGetUniformLocation(shaderProgram, "projection");
+        reference = glGetUniformLocation(shader_program_, "projection");
         if (reference < 0)
         {
             throw "Can't find projection transform in shader program";
         }
-        uniProjectionTransform = static_cast<GLuint>(reference);
+        uni_projection_transform_ = static_cast<GLuint>(reference);
 
         // Create a projection transformation matrix to apply our perspective to the eye co-ordinates and turn them into
         // clipping co-ordinates. This is essentially our way to mapping 3D space to 2D space of the screen.
-        glUniformMatrix4fv(uniProjectionTransform, 1, GL_FALSE, glm::value_ptr(projectionTransform));
+        glUniformMatrix4fv(uni_projection_transform_, 1, GL_FALSE, glm::value_ptr(projection_transform_));
 
-        reference = glGetUniformLocation(shaderProgram, "doOverrideColour");
+        reference = glGetUniformLocation(shader_program_, "doOverrideColour");
         if (reference < 0)
         {
             throw "Can't find model colour override toggle in shader program";
         }
-        uniModelDoOverrideColour = static_cast<GLuint>(reference);
+        uni_model_do_override_colour_ = static_cast<GLuint>(reference);
 
-        reference = glGetUniformLocation(shaderProgram, "overrideColour");
+        reference = glGetUniformLocation(shader_program_, "overrideColour");
         if (reference < 0)
         {
             throw "Can't find model override colour in shader program";
         }
-        uniModelOverrideColour = static_cast<GLuint>(reference);
+        uni_model_override_colour_ = static_cast<GLuint>(reference);
 
-        initialised = true;
+        initialised_ = true;
     }
     catch (std::string e)
     {
@@ -136,12 +136,12 @@ bool DisplayManager::initialise(GLfloat wndWidthPx, GLfloat wndHeightPx)
     return true;
 }
 
-bool DisplayManager::shaderInitialised(GLuint shader)
+bool DisplayManager::isShaderInitialised(GLuint shader)
 {
-    GLint shaderCompileStatus;
+    GLint shader_compile_status;
 
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &shaderCompileStatus);
-    if (shaderCompileStatus != GL_TRUE)
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &shader_compile_status);
+    if (shader_compile_status != GL_TRUE)
     {
         char errBuf[512];
         glGetShaderInfoLog(shader, 512, NULL, errBuf);
@@ -210,89 +210,89 @@ bool DisplayManager::initialiseFreeType()
                     static_cast<GLuint>(face->glyph->advance.x)
             };
 
-            characters.insert(std::pair<GLchar, Character>(c, character));
+            characters_.insert(std::pair<GLchar, Character>(c, character));
         }
 
-        textVertexShader = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(textVertexShader, 1, &ShaderCollection::textVertexSource, NULL);
-        glCompileShader(textVertexShader);
-        if ( ! shaderInitialised(textVertexShader))
+        text_vertex_shader_ = glCreateShader(GL_VERTEX_SHADER);
+        glShaderSource(text_vertex_shader_, 1, &ShaderCollection::text_vertex_source_, NULL);
+        glCompileShader(text_vertex_shader_);
+        if ( !isShaderInitialised(text_vertex_shader_))
         {
             throw "Failed to initialise text vertex shader";
         }
 
-        textFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(textFragmentShader, 1, &ShaderCollection::textFragmentSource, NULL);
-        glCompileShader(textFragmentShader);
-        if ( ! shaderInitialised(textFragmentShader))
+        text_fragment_shader_ = glCreateShader(GL_FRAGMENT_SHADER);
+        glShaderSource(text_fragment_shader_, 1, &ShaderCollection::text_fragment_source_, NULL);
+        glCompileShader(text_fragment_shader_);
+        if ( !isShaderInitialised(text_fragment_shader_))
         {
             throw "Failed to initialise text fragment shader";
         }
 
-        textShaderProgram = glCreateProgram();
-        glAttachShader(textShaderProgram, textVertexShader);
-        glAttachShader(textShaderProgram, textFragmentShader);
-        glBindFragDataLocation(textShaderProgram, 0, "outColour");
-        glLinkProgram(textShaderProgram);
-        glUseProgram(textShaderProgram);
+        text_shader_program_ = glCreateProgram();
+        glAttachShader(text_shader_program_, text_vertex_shader_);
+        glAttachShader(text_shader_program_, text_fragment_shader_);
+        glBindFragDataLocation(text_shader_program_, 0, "outColour");
+        glLinkProgram(text_shader_program_);
+        glUseProgram(text_shader_program_);
 
-        GLint positionAttribute = glGetAttribLocation(textShaderProgram, "position");
-        if (positionAttribute < 0)
+        GLint position_attribute = glGetAttribLocation(text_shader_program_, "position");
+        if (position_attribute < 0)
         {
             throw "Can't find text position attribute in text shader program";
         }
 
-        GLint texCoordsAttribute = glGetAttribLocation(textShaderProgram, "inTexCoords");
-        if (texCoordsAttribute < 0)
+        GLint tex_coords_attribute = glGetAttribLocation(text_shader_program_, "inTexCoords");
+        if (tex_coords_attribute < 0)
         {
             throw "Can't find text texture co-ordinate attribute in text shader program";
         }
 
-        GLint reference = glGetUniformLocation(textShaderProgram, "view");
+        GLint reference = glGetUniformLocation(text_shader_program_, "view");
         if (reference < 0)
         {
             throw "Can't find text view transform uniform in text shader program";
         }
-        uniTextViewTransform = static_cast<GLuint>(reference);
+        uni_text_view_transform_ = static_cast<GLuint>(reference);
 
-        reference = glGetUniformLocation(textShaderProgram, "projection");
+        reference = glGetUniformLocation(text_shader_program_, "projection");
         if (reference < 0)
         {
             throw "Can't find text projection transform uniform in text shader program";
         }
-        uniTextProjectionTransform = static_cast<GLuint>(reference);
+        uni_text_projection_transform_ = static_cast<GLuint>(reference);
 
-        textProjectionTransform = glm::ortho(0.0f,       // x == 0 is left of screen
-                                             wndWidth,   // right of screen
+        text_projection_transform_ = glm::ortho(0.0f,       // x == 0 is left of screen
+                                             wnd_width_,   // right of screen
                                              0.0f,       // y == 0 is bottom of screen
-                                             wndHeight   // top of screen
+                                             wnd_height_   // top of screen
         );
-        glUniformMatrix4fv(uniTextProjectionTransform, 1, GL_FALSE, glm::value_ptr(textProjectionTransform));
+        glUniformMatrix4fv(uni_text_projection_transform_, 1, GL_FALSE, glm::value_ptr(text_projection_transform_));
 
-        reference = glGetUniformLocation(textShaderProgram, "textColour");
+        reference = glGetUniformLocation(text_shader_program_, "textColour");
         if (reference < 0)
         {
             throw "Can't find text colour uniform in text shader program";
         }
-        uniTextColour = static_cast<GLuint>(reference);
+        uni_text_colour_ = static_cast<GLuint>(reference);
 
-        glGenVertexArrays(1, &textVao);     // create a VAO for our texture vertex buffer (dynamically updated during drawing)
-        glBindVertexArray(textVao);
+        glGenVertexArrays(1, &text_vao_);     // create a VAO for our texture vertex buffer (dynamically updated during drawing)
+        glBindVertexArray(text_vao_);
 
-        glGenBuffers(1, &textVbo);
-        glBindBuffer(GL_ARRAY_BUFFER, textVbo);
+        glGenBuffers(1, &text_vbo_);
+        glBindBuffer(GL_ARRAY_BUFFER, text_vbo_);
         glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 5, NULL, GL_DYNAMIC_DRAW);  // 2D quad (two triangles) needs 6 vertices with 5 attributes (3x pos, 2x tex co-ords) each
 
-        glEnableVertexAttribArray(static_cast<GLuint>(positionAttribute));
-        glVertexAttribPointer(static_cast<GLuint>(positionAttribute),
+        glEnableVertexAttribArray(static_cast<GLuint>(position_attribute));
+        glVertexAttribPointer(static_cast<GLuint>(position_attribute),
                               3,                  /* num of values to read from array per vertex */
                               GL_FLOAT,           /* type of those values */
                               GL_FALSE,           /* normalise to -1.0, 1.0 if not floats? */
                               5 * sizeof(float),  /* stride: each (x,y,z) pos has texture co-ords (s,t) in between */
                               0                   /* offset */);
 
-        glEnableVertexAttribArray(static_cast<GLuint>(texCoordsAttribute));
-        glVertexAttribPointer(static_cast<GLuint>(texCoordsAttribute),
+        glEnableVertexAttribArray(static_cast<GLuint>(tex_coords_attribute));
+        glVertexAttribPointer(static_cast<GLuint>(tex_coords_attribute),
                               2,                         /* num of values to read from array per vertex */
                               GL_FLOAT,                  /* type of those values */
                               GL_FALSE,                  /* normalise to -1.0, 1.0 if not floats? */
@@ -317,27 +317,27 @@ bool DisplayManager::initialiseFreeType()
 
 void DisplayManager::teardown()
 {
-    glDeleteProgram(shaderProgram);
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    glDeleteProgram(shader_program_);
+    glDeleteShader(vertex_shader_);
+    glDeleteShader(fragment_shader_);
 
-    glDeleteProgram(textShaderProgram);
-    glDeleteShader(textVertexShader);
-    glDeleteShader(textFragmentShader);
+    glDeleteProgram(text_shader_program_);
+    glDeleteShader(text_vertex_shader_);
+    glDeleteShader(text_fragment_shader_);
 
-    if (primitives)
+    if (primitives_)
     {
-        delete primitives;
-        primitives = nullptr;
+        delete primitives_;
+        primitives_ = nullptr;
     }
 
-    if (frameQueue)
+    if (frame_queue_)
     {
-        delete frameQueue;
-        frameQueue = nullptr;
+        delete frame_queue_;
+        frame_queue_ = nullptr;
     }
 
-    initialised = false;
+    initialised_ = false;
 }
 
 void DisplayManager::drawText(std::string text, glm::vec3 position, bool ortho, GLfloat scale, glm::vec3 colour)
@@ -345,88 +345,88 @@ void DisplayManager::drawText(std::string text, glm::vec3 position, bool ortho, 
     glEnable(GL_BLEND);                                 // this is disabled during any object rendering function
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  // because red channel is used as alpha in shaders
 
-    glUseProgram(textShaderProgram);
+    glUseProgram(text_shader_program_);
 
     if (ortho)
     {
-        glm::mat4 viewTransform = glm::mat4(1.0f);
+        glm::mat4 view_transform = glm::mat4(1.0f);
 
-        glUniformMatrix4fv(uniTextViewTransform, 1, GL_FALSE, glm::value_ptr(viewTransform));                   // identity matrix
-        glUniformMatrix4fv(uniTextProjectionTransform, 1, GL_FALSE, glm::value_ptr(textProjectionTransform));   // orthographic projection
+        glUniformMatrix4fv(uni_text_view_transform_, 1, GL_FALSE, glm::value_ptr(view_transform));                   // identity matrix
+        glUniformMatrix4fv(uni_text_projection_transform_, 1, GL_FALSE, glm::value_ptr(text_projection_transform_));   // orthographic projection
     }
     else
     {
-        glm::mat4 viewTransform = glm::lookAt(
-                glm::vec3(cameraX, cameraY, cameraZ),     // camera position within world co-ordinates
+        glm::mat4 view_transform = glm::lookAt(
+                glm::vec3(camera_x_, camera_y_, camera_z_),     // camera position within world co-ordinates
                 glm::vec3(0.0f, 0.0f, 0.0f),              // world co-ordinates to be center of the screen
                 glm::vec3(0.0f, 0.0f, 1.0f)               // the "up" axis (z, making xy plane the "ground")
         );
 
-        glUniformMatrix4fv(uniTextViewTransform, 1, GL_FALSE, glm::value_ptr(viewTransform));
-        glUniformMatrix4fv(uniTextProjectionTransform, 1, GL_FALSE, glm::value_ptr(projectionTransform));       // normal perspective projection
+        glUniformMatrix4fv(uni_text_view_transform_, 1, GL_FALSE, glm::value_ptr(view_transform));
+        glUniformMatrix4fv(uni_text_projection_transform_, 1, GL_FALSE, glm::value_ptr(projection_transform_));       // normal perspective projection
     }
 
-    glUniform3f(uniTextColour, colour.r, colour.g, colour.b);
+    glUniform3f(uni_text_colour_, colour.r, colour.g, colour.b);
 
     glActiveTexture(GL_TEXTURE0);       // sampler in shader is bound to texture unit 0, make this texture unit active so we can bind our texture to it
 
-    glBindVertexArray(textVao);         // make our VBO and vertex attribute mapping active
+    glBindVertexArray(text_vao_);         // make our VBO and vertex attribute mapping active
 
     std::string::const_iterator c;
     for (c = text.begin(); c != text.end(); c++)
     {
-        Character ch = characters[*c];
+        Character ch = characters_[*c];
 
-        GLfloat xpos = position.x + ch.bearing.x * scale;
-        GLfloat ypos = position.y;
-        GLfloat zpos = position.z;
+        GLfloat x_pos = position.x + ch.bearing.x * scale;
+        GLfloat y_pos = position.y;
+        GLfloat z_pos = position.z;
 
-        GLfloat w = ch.size.x * scale;
-        GLfloat h = ch.size.y * scale;
+        GLfloat width = ch.size.x * scale;
+        GLfloat height = ch.size.y * scale;
 
         if (ortho)
         {
-            ypos = position.y - (ch.size.y - ch.bearing.y) * scale;
+            y_pos = position.y - (ch.size.y - ch.bearing.y) * scale;
 
             GLfloat vertices[6][5] = {
                     //  x          y       z     s    t     (where s and t are the texture co-ordinates to sample from)
-                    { xpos,     ypos + h, 0, 0.0, 0.0 }, // triangle 0 of 2D quad
-                    { xpos,     ypos,     0, 0.0, 1.0 },
-                    { xpos + w, ypos,     0, 1.0, 1.0 },
+                    { x_pos,         y_pos + height, 0, 0.0, 0.0 }, // triangle 0 of 2D quad
+                    { x_pos,         y_pos,          0, 0.0, 1.0 },
+                    { x_pos + width, y_pos,          0, 1.0, 1.0 },
 
-                    { xpos,     ypos + h, 0, 0.0, 0.0 }, // triangle 1 of 2D quad
-                    { xpos + w, ypos,     0, 1.0, 1.0 },
-                    { xpos + w, ypos + h, 0, 1.0, 0.0 }
+                    { x_pos,         y_pos + height, 0, 0.0, 0.0 }, // triangle 1 of 2D quad
+                    { x_pos + width, y_pos,          0, 1.0, 1.0 },
+                    { x_pos + width, y_pos + height, 0, 1.0, 0.0 }
             };
 
-            glBindBuffer(GL_ARRAY_BUFFER, textVbo);
+            glBindBuffer(GL_ARRAY_BUFFER, text_vbo_);
             glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
 
             position.x += (ch.advance >> 6) * scale;
         }
         else
         {
-            zpos = position.z - (ch.size.y - ch.bearing.y) * scale;
+            z_pos = position.z - (ch.size.y - ch.bearing.y) * scale;
 
             // render onto a xz plane
             GLfloat vertices[6][5] = {
                     //  x          y       z     s    t     (where s and t are the texture co-ordinates to sample from)
-                    { xpos,     ypos, zpos + h, 1.0, 0.0 }, // triangle 0 of 2D quad
-                    { xpos,     ypos, zpos,     1.0, 1.0 },
-                    { xpos + w, ypos, zpos,     0.0, 1.0 },
+                    { x_pos,     y_pos, z_pos + height, 1.0, 0.0 }, // triangle 0 of 2D quad
+                    { x_pos,     y_pos, z_pos,     1.0, 1.0 },
+                    { x_pos + width, y_pos, z_pos,     0.0, 1.0 },
 
-                    { xpos,     ypos, zpos + h, 1.0, 0.0 }, // triangle 1 of 2D quad
-                    { xpos + w, ypos, zpos,     0.0, 1.0 },
-                    { xpos + w, ypos, zpos + h, 0.0, 0.0 }
+                    { x_pos,     y_pos, z_pos + height, 1.0, 0.0 }, // triangle 1 of 2D quad
+                    { x_pos + width, y_pos, z_pos,     0.0, 1.0 },
+                    { x_pos + width, y_pos, z_pos + height, 0.0, 0.0 }
             };
 
-            glBindBuffer(GL_ARRAY_BUFFER, textVbo);
+            glBindBuffer(GL_ARRAY_BUFFER, text_vbo_);
             glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
 
             position.x -= (ch.advance >> 6) * scale;
         }
 
-        glBindTexture(GL_TEXTURE_2D, ch.textureId); // bind the texture to texture unit 0 (made active above)
+        glBindTexture(GL_TEXTURE_2D, ch.texture_id); // bind the texture to texture unit 0 (made active above)
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glDrawArrays(GL_TRIANGLES, 0, 6);
     }
@@ -439,75 +439,75 @@ void DisplayManager::drawText(std::string text, glm::vec3 position, bool ortho, 
 
 void DisplayManager::setCameraLocation(GLfloat x, GLfloat y, GLfloat z)
 {
-    cameraX = x;
-    cameraY = y;
-    cameraZ = z;
+    camera_x_ = x;
+    camera_y_ = y;
+    camera_z_ = z;
 
     std::cout << "camera at (" << x << ", " << y << ", " << z << ")" << std::endl;
 }
 
-void DisplayManager::setPerspective(GLfloat nearPlane, GLfloat farPlane, GLfloat fov)
+void DisplayManager::setPerspective(GLfloat near_plane, GLfloat far_plane, GLfloat fov)
 {
-    projectionTransform = glm::perspective(
+    projection_transform_ = glm::perspective(
             glm::radians(fov),    // vertical field-of-view (see open.gl/transformations)
-            wndWidth / wndHeight, // aspect ratio of the screen
-            nearPlane,            // near clipping plane (any vertex closer to camera than this disappears)
-            farPlane              // far clipping plane (any vertex further from camera than this disappears)
+            wnd_width_ / wnd_height_, // aspect ratio of the screen
+            near_plane,            // near clipping plane (any vertex closer to camera than this disappears)
+            far_plane              // far clipping plane (any vertex further from camera than this disappears)
     );
 
-//  glUniformMatrix4fv(uniProjectionTransform, 1, GL_FALSE, glm::value_ptr(projectionTransform));
+//  glUniformMatrix4fv(uni_projection_transform_, 1, GL_FALSE, glm::value_ptr(projection_transform_));
 }
 
 void DisplayManager::drawScene()
 {
-    glUseProgram(shaderProgram);
+    glUseProgram(shader_program_);
 
     /**
      * View Transform
      */
-    glm::mat4 viewTransform = glm::lookAt(
-            glm::vec3(cameraX, cameraY, cameraZ),     // camera position within world co-ordinates
+    glm::mat4 view_transform = glm::lookAt(
+            glm::vec3(camera_x_, camera_y_, camera_z_),     // camera position within world co-ordinates
             glm::vec3(0.0f, 0.0f, 0.0f),              // world co-ordinates to be center of the screen
             glm::vec3(0.0f, 0.0f, 1.0f)               // the "up" axis (z, making xy plane the "ground")
     );
-    glUniformMatrix4fv(uniViewTransform, 1, GL_FALSE, glm::value_ptr(viewTransform));
+    glUniformMatrix4fv(uni_view_transform_, 1, GL_FALSE, glm::value_ptr(view_transform));
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);               // clear screen to black, otherwise we'll paint over the last frame which looks weird
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // also clear the colour buffer if we've got GL_DEPTH_TEST enabled (this fixes the glitchy graphics)
 
-    if (frameQueue)
+    if (frame_queue_)
     {
-        frameQueue->drawCurrentFrame();
+        frame_queue_->drawCurrentFrame();
     }
 }
 
 PrimitiveCollection* DisplayManager::getPrimitiveCollection()
 {
-    return primitives;
+    return primitives_;
 }
 
 void DisplayManager::setFrameQueue(FrameQueue* queue)
 {
     // If we already have a FrameQueue, destroy it.
-    if (frameQueue)
+    if (frame_queue_)
     {
-        delete frameQueue;
+        delete frame_queue_;
     }
 
-    frameQueue = queue;
+    frame_queue_ = queue;
 }
 
 GLuint DisplayManager::getModelTransformUniform()
 {
-    return uniModelTransform;
+    return uni_model_transform_;
 }
 
 GLuint DisplayManager::getModelDoOverrideColourUniform()
 {
-    return uniModelDoOverrideColour;
+    return uni_model_do_override_colour_;
 }
 
 GLuint DisplayManager::getModelOverrideColourUniform()
 {
-    return uniModelOverrideColour;
+    return uni_model_override_colour_;
 }

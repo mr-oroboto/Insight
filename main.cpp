@@ -15,8 +15,6 @@
 #define WINDOW_X_SIZE 2560
 #define WINDOW_Y_SIZE 1440
 
-using namespace std;
-
 /**********************************************************************************************************************
  * Entry point
  **********************************************************************************************************************/
@@ -24,12 +22,12 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     SDL_Window* window = nullptr;
-    SDL_Event windowEvent;
+    SDL_Event window_event;
 
-    GLfloat cameraX = 0.0f, cameraY = 33.0f, cameraZ = 4.0f;
-    GLfloat cameraRadius = 33.0f;
-    GLfloat cameraRotationIncrementDeg = 1.0;
-    GLfloat cameraAngle = 90.0f;
+    GLfloat camera_x = 0.0f, camera_y = 33.0f, camera_z = 4.0f;
+    GLfloat camera_radius = 33.0f;
+    GLfloat camera_rotation_increment_degrees = 1.0;
+    GLfloat camera_angle_degrees = 90.0f;
 
     // SDL is used to abstract the creation of an X window and event loop etc
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -62,25 +60,25 @@ int main(int argc, char *argv[])
     DisplayManager* dm = new DisplayManager();
     if ( ! dm->initialise(WINDOW_X_SIZE, WINDOW_Y_SIZE))
     {
-        cout << "Failed to initialise OpenGL" << endl;
+        std::cout << "Failed to initialise OpenGL" << std::endl;
         return -1;
     }
 
     {
-        MinHeap minHeap(dm);
-        minHeap.run();
+        MinHeap scenario(dm);
+        scenario.run();
     }
 
-    bool continueRendering = true;
+    bool continue_rendering = true;
 
-    while (continueRendering)
+    while (continue_rendering)
     {
-        if (SDL_PollEvent(&windowEvent))                // gather clicks, keystrokes, window movements, resizes etc
+        if (SDL_PollEvent(&window_event))                // gather clicks, keystrokes, window movements, resizes etc
         {
-            if (windowEvent.type == SDL_QUIT) break;
-            if (WINDOW_FULLSCREEN && windowEvent.type == SDL_KEYUP && windowEvent.key.keysym.sym == SDLK_ESCAPE) break;
+            if (window_event.type == SDL_QUIT) break;
+            if (WINDOW_FULLSCREEN && window_event.type == SDL_KEYUP && window_event.key.keysym.sym == SDLK_ESCAPE) break;
 
-            if (windowEvent.type == SDL_KEYDOWN)
+            if (window_event.type == SDL_KEYDOWN)
             {
                 /**
                  * When we move the camera around we actually want to move it around the outside of a sphere with a
@@ -88,36 +86,36 @@ int main(int argc, char *argv[])
                  * right) moves us around on the surface of that sphere. Our (x,y and z) co-ordinates of the camera
                  * must change for each key press.
                  */
-                if (windowEvent.key.keysym.sym == SDLK_UP)
+                if (window_event.key.keysym.sym == SDLK_UP)
                 {
-                    cameraZ += 1;
+                    camera_z += 1;
                 }
-                else if (windowEvent.key.keysym.sym == SDLK_DOWN)
+                else if (window_event.key.keysym.sym == SDLK_DOWN)
                 {
-                    cameraZ -= 1;
+                    camera_z -= 1;
                 }
-                else if (windowEvent.key.keysym.sym == SDLK_LEFT)
+                else if (window_event.key.keysym.sym == SDLK_LEFT)
                 {
-                    cameraAngle -= cameraRotationIncrementDeg;
+                    camera_angle_degrees -= camera_rotation_increment_degrees;
 
-                    cameraX = cameraRadius * cos(cameraAngle / (2*M_PI));
-                    cameraY = cameraRadius * sin(cameraAngle / (2*M_PI));
+                    camera_x = camera_radius * cos(camera_angle_degrees / (2*M_PI));
+                    camera_y = camera_radius * sin(camera_angle_degrees / (2*M_PI));
                 }
-                else if (windowEvent.key.keysym.sym == SDLK_RIGHT)
+                else if (window_event.key.keysym.sym == SDLK_RIGHT)
                 {
-                    cameraAngle += cameraRotationIncrementDeg;
+                    camera_angle_degrees += camera_rotation_increment_degrees;
 
-                    cameraX = cameraRadius * cos(cameraAngle / (2*M_PI));
-                    cameraY = cameraRadius * sin(cameraAngle / (2*M_PI));
+                    camera_x = camera_radius * cos(camera_angle_degrees / (2*M_PI));
+                    camera_y = camera_radius * sin(camera_angle_degrees / (2*M_PI));
                 }
 
-                dm->setCameraLocation(cameraX, cameraY, cameraZ);
+                dm->setCameraLocation(camera_x, camera_y, camera_z);
             }
-            else if (windowEvent.type == SDL_KEYUP)
+            else if (window_event.type == SDL_KEYUP)
             {
-                if (windowEvent.key.keysym.sym == SDLK_q)
+                if (window_event.key.keysym.sym == SDLK_q)
                 {
-                    continueRendering = false;
+                    continue_rendering = false;
                 }
             }
         }

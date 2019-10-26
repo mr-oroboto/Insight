@@ -6,22 +6,22 @@ Primitive::~Primitive()
 {
     std::cout << "Primitive::~Primitive()" << std::endl;
 
-    glDeleteBuffers(1, &vbo);
-    glDeleteVertexArrays(1, &vao);
+    glDeleteBuffers(1, &vbo_);
+    glDeleteVertexArrays(1, &vao_);
 
-    if (vertices != nullptr)
+    if (vertices_ != nullptr)
     {
-        delete[] vertices;
+        delete[] vertices_;
     }
 }
 
 void Primitive::setActive()
 {
-    glBindVertexArray(vao);
+    glBindVertexArray(vao_);
 }
 
 Primitive::Type Primitive::getType()
 {
-    return type;
+    return type_;
 }
 

@@ -13,26 +13,25 @@ MinHeap::~MinHeap()
 
 void MinHeap::run()
 {
-    FrameQueue* frameQueue = new FrameQueue(displayManager, false);
-    frameQueue->setFrameRate(1);
+    FrameQueue* frame_queue = new FrameQueue(display_manager_, true);
+    frame_queue->setFrameRate(1);
 
-    HeapDecorator* decorator = new HeapDecorator(frameQueue);
-    MinHeapArray minHeap(decorator);
+    HeapDecorator* decorator = new HeapDecorator(frame_queue);
+    MinHeapArray heap(decorator);
 
-    int heapValues[] = {
+    int heap_values[] = {
             4, 50, 7, 90, 55, 87, 2, 16
     };
 
-    for (size_t i = 0; i < sizeof(heapValues) / sizeof(int); i++)
+    for (size_t i = 0; i < sizeof(heap_values) / sizeof(int); i++)
     {
-        int heapValue = heapValues[i];
-        minHeap.insert(heapValue);
+        heap.insert(heap_values[i]);
     }
 
-    minHeap.validate();
+    heap.validate();
 
-    frameQueue->setReady();
-    frameQueue->setActive();    // transfer ownership to DisplayManager
+    frame_queue->setReady();
+    frame_queue->setActive();    // transfer ownership to DisplayManager
 
     delete decorator;
 }

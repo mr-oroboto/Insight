@@ -7,7 +7,7 @@
 class MinHeap : public Scenario
 {
 public:
-    MinHeap(DisplayManager* dm) : Scenario(dm) {}
+    MinHeap(DisplayManager* display_manager) : Scenario(display_manager) {}
     ~MinHeap();
 
     void run();

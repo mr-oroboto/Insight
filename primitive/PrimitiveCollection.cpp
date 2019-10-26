@@ -8,44 +8,44 @@
 #include "Quad.h"
 #include "Tesselation.h"
 
-PrimitiveCollection::PrimitiveCollection(GLuint positionAttribute, GLuint colourAttribute)
+PrimitiveCollection::PrimitiveCollection(GLuint position_attribute, GLuint colour_attribute)
 {
-    primitives[Primitive::Type::CUBE] = new Cube(positionAttribute, colourAttribute);
-    primitives[Primitive::Type::TRIANGLE] = new Triangle(positionAttribute, colourAttribute);
-    primitives[Primitive::Type::LINE] = new Line(positionAttribute, colourAttribute);
-    primitives[Primitive::Type::QUAD] = new Quad(positionAttribute, colourAttribute);
-    primitives[Primitive::Type::TESSELATION] = new Tesselation(positionAttribute, colourAttribute);
+    primitives_[Primitive::Type::CUBE] = new Cube(position_attribute, colour_attribute);
+    primitives_[Primitive::Type::TRIANGLE] = new Triangle(position_attribute, colour_attribute);
+    primitives_[Primitive::Type::LINE] = new Line(position_attribute, colour_attribute);
+    primitives_[Primitive::Type::QUAD] = new Quad(position_attribute, colour_attribute);
+    primitives_[Primitive::Type::TESSELATION] = new Tesselation(position_attribute, colour_attribute);
 }
 
 PrimitiveCollection::~PrimitiveCollection()
 {
     std::cout << "PrimitiveCollection::~PrimitiveCollection()" << std::endl;
 
-    delete primitives[Primitive::Type::CUBE];
-    primitives[Primitive::Type::CUBE] = nullptr;
+    delete primitives_[Primitive::Type::CUBE];
+    primitives_[Primitive::Type::CUBE] = nullptr;
 
-    delete primitives[Primitive::Type::TRIANGLE];
-    primitives[Primitive::Type::TRIANGLE] = nullptr;
+    delete primitives_[Primitive::Type::TRIANGLE];
+    primitives_[Primitive::Type::TRIANGLE] = nullptr;
 
-    delete primitives[Primitive::Type::LINE];
-    primitives[Primitive::Type::LINE] = nullptr;
+    delete primitives_[Primitive::Type::LINE];
+    primitives_[Primitive::Type::LINE] = nullptr;
 
-    delete primitives[Primitive::Type::QUAD];
-    primitives[Primitive::Type::QUAD] = nullptr;
+    delete primitives_[Primitive::Type::QUAD];
+    primitives_[Primitive::Type::QUAD] = nullptr;
 
-    delete primitives[Primitive::Type::TESSELATION];
-    primitives[Primitive::Type::TESSELATION] = nullptr;
+    delete primitives_[Primitive::Type::TESSELATION];
+    primitives_[Primitive::Type::TESSELATION] = nullptr;
 }
 
 Primitive* PrimitiveCollection::selectPrimitive(Primitive::Type primitive)
 {
-    if (primitives.find(primitive) == primitives.end() || primitives[primitive] == nullptr)
+    if (primitives_.find(primitive) == primitives_.end() || primitives_[primitive] == nullptr)
     {
         return nullptr;
     }
 
-    primitives[primitive]->setActive();
+    primitives_[primitive]->setActive();
 
-    return primitives[primitive];
+    return primitives_[primitive];
 }
 

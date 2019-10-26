@@ -9,16 +9,16 @@
 class Line : public Primitive
 {
 public:
-    Line(GLuint positionAttribute, GLuint colourAttribute);
+    Line(GLuint position_attribute, GLuint colour_attribute);
     ~Line();
 
-    void setCoords(glm::vec3 from, glm::vec3 to);
+    void setCoords(glm::vec3 from_coords, glm::vec3 to_coords);
 
     void draw();
 
 private:
-    glm::vec3 fromWorldPosition;
-    glm::vec3 toWorldPosition;
+    glm::vec3 from_world_coords_;
+    glm::vec3 to_world_coords_;
 };
 
 #endif //INSIGHT_PRIMITIVE_LINE_H

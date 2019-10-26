@@ -3,7 +3,7 @@
 
 #include "ShaderCollection.h"
 
-const char* ShaderCollection::vertexSource = R"glsl(
+const char* ShaderCollection::vertex_source_ = R"glsl(
     #version 150 core
 
     in vec3 position;

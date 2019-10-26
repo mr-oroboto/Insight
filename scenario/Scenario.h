@@ -6,13 +6,13 @@
 class Scenario
 {
 public:
-    Scenario(DisplayManager* dm) : displayManager(dm) {}
+    Scenario(DisplayManager* display_manager) : display_manager_(display_manager) {}
     virtual ~Scenario();
 
     virtual void run() = 0;
 
 protected:
-    DisplayManager* displayManager;
+    DisplayManager* display_manager_;
 };
 
 

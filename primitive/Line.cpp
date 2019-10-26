@@ -2,40 +2,40 @@
 
 #include <iostream>
 
-Line::Line(GLuint positionAttribute, GLuint colourAttribute)
+Line::Line(GLuint position_attribute, GLuint colour_attribute)
 {
-    type = Primitive::LINE;
+    type_ = Primitive::LINE;
 
     /**
      * The "face" descriptions below assume a co-ordinate system where +z is going up, +x is coming out of the screen
      * going left and +y is coming out of the screen going right
      */
-    vertices = new GLfloat[2 * 8] {
+    vertices_ = new GLfloat[2 * 8] {
             // x    y    z     r     g     b     u     v
             0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
             1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f
     };
 
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+    glGenVertexArrays(1, &vao_);
+    glBindVertexArray(vao_);
 
-    glGenBuffers(1, &vbo);
+    glGenBuffers(1, &vbo_);
 
     // Must be done after glBindVertexArray() so the vbo is associated with the vao
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 2 * 8, vertices, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 2 * 8, vertices_, GL_DYNAMIC_DRAW);
 
     // Must be done after glBindVertexArray() so the mapping is associated with the vao (and inherently the vbo)
-    glEnableVertexAttribArray(positionAttribute);
-    glVertexAttribPointer(positionAttribute,
+    glEnableVertexAttribArray(position_attribute);
+    glVertexAttribPointer(position_attribute,
                           3,                  /* num of values to read from array per vertex */
                           GL_FLOAT,           /* type of those values */
                           GL_FALSE,           /* normalise to -1.0, 1.0 if not floats? */
                           8 * sizeof(float),  /* stride: each (x,y,z) pos now has RGBUV data in between */
                           0                   /* offset */);
 
-    glEnableVertexAttribArray(colourAttribute);
-    glVertexAttribPointer(colourAttribute,
+    glEnableVertexAttribArray(colour_attribute);
+    glVertexAttribPointer(colour_attribute,
                           3,                         /* num of values to read from array per vertex */
                           GL_FLOAT,                  /* type of those values */
                           GL_FALSE,                  /* normalise to -1.0, 1.0 if not floats? */
@@ -49,10 +49,10 @@ Line::~Line()
     std::cout << "Line::~Line()" << std::endl;
 }
 
-void Line::setCoords(glm::vec3 from, glm::vec3 to)
+void Line::setCoords(glm::vec3 from_coords, glm::vec3 to_coords)
 {
-    fromWorldPosition = from;
-    toWorldPosition = to;
+    from_world_coords_ = from_coords;
+    to_world_coords_ = to_coords;
 }
 
 void Line::draw()
@@ -60,16 +60,16 @@ void Line::draw()
     setActive();
 
     // Update the vertices
-    delete vertices;
+    delete vertices_;
 
-    vertices = new GLfloat[2 * 8] {
+    vertices_ = new GLfloat[2 * 8] {
             //       x                   y                    z              r     g     b     u     v
-            fromWorldPosition.x, fromWorldPosition.y, fromWorldPosition.z, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-            toWorldPosition.x,   toWorldPosition.y,   toWorldPosition.z,   1.0f, 1.0f, 1.0f, 0.0f, 0.0f
+            from_world_coords_.x, from_world_coords_.y, from_world_coords_.z, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+            to_world_coords_.x,   to_world_coords_.y,   to_world_coords_.z,   1.0f, 1.0f, 1.0f, 0.0f, 0.0f
     };
 
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 2 * 8, vertices, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 2 * 8, vertices_, GL_DYNAMIC_DRAW);
 
     glDrawArrays(GL_LINES, 0, 2);
 }

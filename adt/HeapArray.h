@@ -9,56 +9,57 @@
 class HeapArray
 {
 public:
-    HeapArray(HeapDecorator* dec);
+    HeapArray(HeapDecorator* decorator);
 
-    void insert(int d);
+    void insert(int value);
     bool validate();
 
-    int nodeValue(size_t nodeIndex);
+    int getNodeValue(size_t node_index);
 
-    int parentIndex(size_t nodeIndex);
-    int leftIndex(size_t nodeIndex);
-    int rightIndex(size_t nodeIndex);
+    int getParentIndex(size_t node_index);
+    int getLeftIndex(size_t node_index);
+    int getRightIndex(size_t node_index);
 
-    unsigned long nodeCount();
+    unsigned long getNodeCount();
 
 protected:
-    int extract();          // extract root (min or max)
-    virtual bool shouldSwapInHeapifyUp(int nodeValue, int comparisonNodeValue) = 0;
-    virtual bool shouldSwapInHeapifyDown(int node, int comparisonNodeValue) = 0;
+    int extractRoot();          // extract root (min or max)
 
-    std::vector<int> store;
-    HeapDecorator* decorator;
+    virtual bool shouldSwapInHeapifyUp(int node_value, int comparison_node_value) = 0;
+    virtual bool shouldSwapInHeapifyDown(int node_value, int comparison_node_value) = 0;
+
+    std::vector<int> store_;
+    HeapDecorator* decorator_;
 
 private:
-    void heapifyUp(size_t nodeIndex);
-    void heapifyDown(size_t nodeIndex);
+    void heapifyUp(size_t node_index);
+    void heapifyDown(size_t node_index);
 };
 
 class MaxHeapArray : public HeapArray
 {
 public:
-    MaxHeapArray(HeapDecorator* dec) : HeapArray(dec) {}
+    MaxHeapArray(HeapDecorator* decorator) : HeapArray(decorator) {}
 
     int max();
-    int extractMax() { return extract(); }
+    int extractMax() { return extractRoot(); }
 
 protected:
-    bool shouldSwapInHeapifyUp(int nodeValue, int comparisonNodeValue);
-    bool shouldSwapInHeapifyDown(int node, int comparisonNodeValue);
+    bool shouldSwapInHeapifyUp(int node_value, int comparison_node_value);
+    bool shouldSwapInHeapifyDown(int node_value, int comparison_node_value);
 };
 
 class MinHeapArray : public HeapArray
 {
 public:
-    MinHeapArray(HeapDecorator* dec) : HeapArray(dec) {}
+    MinHeapArray(HeapDecorator* decorator) : HeapArray(decorator) {}
 
     int min();
-    int extractMin() { return extract(); }
+    int extractMin() { return extractRoot(); }
 
 protected:
-    bool shouldSwapInHeapifyUp(int nodeValue, int comparisonNodeValue);
-    bool shouldSwapInHeapifyDown(int node, int comparisonNodeValue);
+    bool shouldSwapInHeapifyUp(int node_value, int comparison_node_value);
+    bool shouldSwapInHeapifyDown(int node_value, int comparison_node_value);
 };
 
 #endif //INSIGHT_ADT_HEAPARRAY_H

@@ -10,13 +10,13 @@
 class PrimitiveCollection
 {
 public:
-    PrimitiveCollection(GLuint positionAttribute, GLuint colourAttribute);
+    PrimitiveCollection(GLuint position_attribute, GLuint colour_attribute);
     ~PrimitiveCollection();
 
     Primitive* selectPrimitive(Primitive::Type primitive);
 
 private:
-    std::unordered_map<Primitive::Type, Primitive*> primitives;
+    std::unordered_map<Primitive::Type, Primitive*> primitives_;
 };
 
 #endif //INSIGHT_PRIMITIVE_PRIMITIVECOLLECTION_H

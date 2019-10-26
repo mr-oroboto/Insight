@@ -6,89 +6,89 @@
 
 void HeapDecorator::setHeap(HeapArray* heapArray)
 {
-    heap = heapArray;
+    heap_ = heapArray;
 }
 
-void HeapDecorator::setHightlightedNodeValue(int nodeValue)
+void HeapDecorator::setHightlightedNodeValue(int node_value)
 {
-    highlightedNodeValue = nodeValue;
+    highlighted_node_value_ = node_value;
 }
 
 bool HeapDecorator::decorate()
 {
     bool success = true;
 
-    currentFrame = frameQueue->newFrame();
+    current_frame_ = frame_queue_->newFrame();
 
-    glm::vec3 lastNodePosition = glm::vec3(0, 0, 5);
+    glm::vec3 last_node_coords = glm::vec3(0, 0, 5);
 
-    unsigned long nodeCount = heap->nodeCount();
-    unsigned long heapLevels = floor(log(nodeCount) / log(2.0));
+    unsigned long node_count = heap_->getNodeCount();
+    unsigned long heap_levels = floor(log(node_count) / log(2.0));
 
     char msg[64];
-    sprintf(msg, "current value: %d, levels: %lu", highlightedNodeValue, heapLevels);
-    currentFrame->addText(msg, 10, 10);
+    sprintf(msg, "current value: %d, levels: %lu", highlighted_node_value_, heap_levels);
+    current_frame_->addText(msg, 10, 10);
 
-    dft(0, heapLevels + 1, lastNodePosition, false);
+    dft(0, heap_levels + 1, last_node_coords, false);
 
-    frameQueue->enqueueFrame(currentFrame);
+    frame_queue_->enqueueFrame(current_frame_);
 
     return success;
 }
 
-void HeapDecorator::dft(size_t nodeIndex, unsigned long inverseNodeLevel, glm::vec3 lastNodePosition, bool isLeftOfParent)
+void HeapDecorator::dft(size_t node_index, unsigned long node_level, glm::vec3 last_node_coords, bool is_left_of_parent)
 {
-    int leftIndex = heap->leftIndex(nodeIndex);
-    int rightIndex = heap->rightIndex(nodeIndex);
+    int left_index = heap_->getLeftIndex(node_index);
+    int right_index = heap_->getRightIndex(node_index);
 
     // Where should this node be drawn?
-    glm::vec3 nodePosition = lastNodePosition;
-    if (nodeIndex != 0)
+    glm::vec3 node_position = last_node_coords;
+    if (node_index != 0)
     {
-        if (isLeftOfParent)
+        if (is_left_of_parent)
         {
-            nodePosition.x += (inverseNodeLevel * 2.0);
-            nodePosition.z -= 1.5;
+            node_position.x += (node_level * 2.0);
+            node_position.z -= 1.5;
         }
         else
         {
-            nodePosition.x -= (inverseNodeLevel * 2.0);
-            nodePosition.z -= 1.5;
+            node_position.x -= (node_level * 2.0);
+            node_position.z -= 1.5;
         }
     }
 
-    if (leftIndex >= 0)
+    if (left_index >= 0)
     {
-        dft(leftIndex, inverseNodeLevel - 1, nodePosition, true);
+        dft(left_index, node_level - 1, node_position, true);
     }
 
     // Draw the node
-    int nodeValue = heap->nodeValue(nodeIndex);
-    glm::vec3 nodeColour;
-    if (nodeValue == highlightedNodeValue)
+    int node_value = heap_->getNodeValue(node_index);
+    glm::vec3 node_colour;
+    if (node_value == highlighted_node_value_)
     {
-        nodeColour = glm::vec3(1, 0, 0);
+        node_colour = glm::vec3(1, 0, 0);
     }
     else
     {
-        nodeColour = glm::vec3(0.8, 0.8, 0.8);
+        node_colour = glm::vec3(0.8, 0.8, 0.8);
     }
 
-    currentFrame->addObject(Primitive::Type::CUBE, nodePosition, nodeColour);
+    current_frame_->addObject(Primitive::Type::CUBE, node_position, node_colour);
 
-    if (nodeIndex != 0)
+    if (node_index != 0)
     {
-        currentFrame->addLine(lastNodePosition, nodePosition, glm::vec3(1, 1, 1));
+        current_frame_->addLine(last_node_coords, node_position, glm::vec3(1, 1, 1));
     }
 
     char msg[64];
-    glm::vec3 textColour = glm::vec3(1.0, 1.0, 0.0);
-    sprintf(msg, "%d", nodeValue);
-    currentFrame->addText(msg, nodePosition.x, nodePosition.y, nodePosition.z, false, 0.015, textColour);
+    glm::vec3 text_colour = glm::vec3(1.0, 1.0, 0.0);
+    sprintf(msg, "%d", node_value);
+    current_frame_->addText(msg, node_position.x, node_position.y, node_position.z, false, 0.015, text_colour);
 
-    if (rightIndex >= 0)
+    if (right_index >= 0)
     {
-        dft(rightIndex, inverseNodeLevel - 1, nodePosition, false);
+        dft(right_index, node_level - 1, node_position, false);
     }
 }
 

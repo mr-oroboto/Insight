@@ -13,30 +13,30 @@ class DisplayManager;
 class FrameQueue
 {
 public:
-    FrameQueue(DisplayManager* dm, bool repeats);
+    FrameQueue(DisplayManager* display_manager, bool repeats);
     ~FrameQueue();
 
     Frame* newFrame();
     bool enqueueFrame(Frame*);
 
+    void setFrameRate(GLfloat fps);
     bool setActive();
     bool setReady();
-    void setFrameRate(GLfloat fps);
 
     void drawCurrentFrame();
 
 protected:
-    bool repeating;
-    bool ready;
+    bool repeating_;
+    bool ready_;
 
-    GLfloat frameRate;
-    GLfloat secsPerFrame;
+    GLfloat frame_rate_;
+    GLfloat secs_per_frame_;
 
-    std::chrono::high_resolution_clock::time_point lastFrameDrawnAt;
-    std::chrono::high_resolution_clock::time_point firstFrameDrawnAt;
+    std::chrono::high_resolution_clock::time_point last_frame_drawn_at_;
+    std::chrono::high_resolution_clock::time_point first_frame_drawn_at_;
 
-    DisplayManager* displayManager;
-    std::queue<Frame*> queue;
+    DisplayManager* display_manager_;
+    std::queue<Frame*> queue_;
 };
 
 #endif //INSIGHT_CORE_FRAMEQUEUE_H

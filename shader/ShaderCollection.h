@@ -4,11 +4,11 @@
 class ShaderCollection
 {
 public:
-    static const char* vertexSource;
-    static const char* fragmentSource;
+    static const char* vertex_source_;
+    static const char* fragment_source_;
 
-    static const char* textVertexSource;
-    static const char* textFragmentSource;
+    static const char* text_vertex_source_;
+    static const char* text_fragment_source_;
 };
 
 #include "vertex.inc"

@@ -3,7 +3,7 @@
 
 #include "ShaderCollection.h"
 
-const char* ShaderCollection::fragmentSource = R"glsl(
+const char* ShaderCollection::fragment_source_ = R"glsl(
     #version 150 core
 
     in vec3 colour;

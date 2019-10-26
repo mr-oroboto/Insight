@@ -14,19 +14,16 @@ class DisplayManager;
 class Frame
 {
 public:
-    Frame(DisplayManager* dm, bool drawObjectPos = false, bool drawRefAxes = false, bool drawFloor = true);
+    Frame(DisplayManager* display_manager, bool draw_object_position = false, bool draw_reference_axes = false, bool draw_floor = true);
     ~Frame();
 
-    void addObject(Primitive::Type type, glm::vec3 worldPosition, glm::vec3 colour, GLfloat scale = 1.0f);
+    void addObject(Primitive::Type type, glm::vec3 world_coords, glm::vec3 colour, GLfloat scale = 1.0f);
     void addText(std::string text, GLfloat x, GLfloat y, GLfloat z = 0.0f, bool ortho = true, GLfloat scale = 1.0f, glm::vec3 colour = glm::vec3(1.0f, 1.0f, 1.0f));
-    void addLine(glm::vec3 from, glm::vec3 to, glm::vec3 colour);
+    void addLine(glm::vec3 from_world_coords, glm::vec3 to_world_coords, glm::vec3 colour);
 
-    void draw(GLfloat secsSinceStart, GLfloat secsSinceLastFrame);
+    void draw(GLfloat secs_since_start, GLfloat secs_since_last_frame);
 
-protected:
-    void drawTesselatedFloor();
-    void drawTesselatedFloorWithIsolatedTiles();
-
+private:
     struct Text
     {
         std::string text;
@@ -36,13 +33,16 @@ protected:
         glm::vec3 colour;
     };
 
-    bool drawObjectPositions;
-    bool drawReferenceAxes;
-    bool drawFloor;
+    void drawTesselatedFloor();
+    void drawTesselatedFloorWithIsolatedTiles();
 
-    DisplayManager* displayManager;
-    std::vector<SceneObject*> objects;
-    std::vector<Text> texts;
+    bool draw_object_positions_;
+    bool draw_reference_axes_;
+    bool draw_floor_;
+
+    DisplayManager* display_manager_;
+    std::vector<SceneObject*> objects_;
+    std::vector<Text> texts_;
 };
 
 #endif //INSIGHT_CORE_FRAME_H
