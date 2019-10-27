@@ -38,7 +38,6 @@ bool DisplayManager::initialise(GLfloat wnd_width, GLfloat wnd_height)
     wnd_height_ = wnd_height;
 
     setPerspective(1.0f, 50.0f, 45.0f);
-    setCameraLocation(0, 33, 4);
 
     try
     {
@@ -76,14 +75,20 @@ bool DisplayManager::initialise(GLfloat wnd_width, GLfloat wnd_height)
             throw "Can't find position attribute in shader program";
         }
 
-        // Add an entirely new attribute mapping for the colour data we added to the vertex attributes
+        GLint normal_attribute = glGetAttribLocation(shader_program_, "inNormal");
+        if (normal_attribute < 0)
+        {
+            throw "Can't find normal attribute in shader program";
+        }
+
+        // Add an entirely new attribute mapping for the model colour data we added to the vertex attributes
         GLint colour_attribute = glGetAttribLocation(shader_program_, "inColour");
         if (colour_attribute < 0)
         {
             throw "Can't find colour attribute in shader program";
         }
 
-        primitives_ = new PrimitiveCollection(static_cast<GLuint>(position_attribute), static_cast<GLuint>(colour_attribute));
+        primitives_ = new PrimitiveCollection(static_cast<GLuint>(position_attribute), static_cast<GLuint>(normal_attribute), static_cast<GLuint>(colour_attribute));
 
         GLint reference = glGetUniformLocation(shader_program_, "model");
         if (reference < 0)
@@ -98,6 +103,15 @@ bool DisplayManager::initialise(GLfloat wnd_width, GLfloat wnd_height)
             throw "Can't find view transform in shader program";
         }
         uni_view_transform_ = static_cast<GLuint>(reference);
+
+        reference = glGetUniformLocation(shader_program_, "cameraPosition");
+        if (reference < 0)
+        {
+            throw "Can't find view / camera position in shader program";
+        }
+        uni_camera_coords_ = static_cast<GLuint>(reference);
+
+        setCameraCoords(glm::vec3(0, 0, 0));
 
         reference = glGetUniformLocation(shader_program_, "projection");
         if (reference < 0)
@@ -124,10 +138,46 @@ bool DisplayManager::initialise(GLfloat wnd_width, GLfloat wnd_height)
         }
         uni_model_override_colour_ = static_cast<GLuint>(reference);
 
+        reference = glGetUniformLocation(shader_program_, "lightingOn");
+        if (reference < 0)
+        {
+            throw "Can't find light control in shader program";
+        }
+        uni_lighting_on_ = static_cast<GLuint>(reference);
+
+        setLightingOn(true);
+
+        reference = glGetUniformLocation(shader_program_, "lightColour");
+        if (reference < 0)
+        {
+            throw "Can't find light colour in shader program";
+        }
+        uni_light_colour_ = static_cast<GLuint>(reference);
+
+        reference = glGetUniformLocation(shader_program_, "lightIntensity");
+        if (reference < 0)
+        {
+            throw "Can't find light intensity in shader program";
+        }
+        uni_light_intensity_ = static_cast<GLuint>(reference);
+
+        setLightColour(glm::vec3(1, 1, 1));
+
+        reference = glGetUniformLocation(shader_program_, "lightPosition");
+        if (reference < 0)
+        {
+            throw "Can't find light position in shader program";
+        }
+        uni_light_coords_ = static_cast<GLuint>(reference);
+
+        setLightCoords(glm::vec3(-5, 5, 3));
+
         initialised_ = true;
     }
     catch (std::string e)
     {
+        std::cout << e << std::endl;
+
         teardown();
 
         return false;
@@ -340,8 +390,10 @@ void DisplayManager::teardown()
     initialised_ = false;
 }
 
-void DisplayManager::drawText(std::string text, glm::vec3 position, bool ortho, GLfloat scale, glm::vec3 colour)
+void DisplayManager::drawText(const std::string& text, const glm::vec3& world_coords, bool ortho, GLfloat scale, const glm::vec3& colour)
 {
+    glm::vec3 text_world_coords = world_coords;
+
     glEnable(GL_BLEND);                                 // this is disabled during any object rendering function
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  // because red channel is used as alpha in shaders
 
@@ -351,15 +403,15 @@ void DisplayManager::drawText(std::string text, glm::vec3 position, bool ortho, 
     {
         glm::mat4 view_transform = glm::mat4(1.0f);
 
-        glUniformMatrix4fv(uni_text_view_transform_, 1, GL_FALSE, glm::value_ptr(view_transform));                   // identity matrix
-        glUniformMatrix4fv(uni_text_projection_transform_, 1, GL_FALSE, glm::value_ptr(text_projection_transform_));   // orthographic projection
+        glUniformMatrix4fv(uni_text_view_transform_, 1, GL_FALSE, glm::value_ptr(view_transform));                    // identity matrix
+        glUniformMatrix4fv(uni_text_projection_transform_, 1, GL_FALSE, glm::value_ptr(text_projection_transform_));  // orthographic projection
     }
     else
     {
         glm::mat4 view_transform = glm::lookAt(
-                glm::vec3(camera_x_, camera_y_, camera_z_),     // camera position within world co-ordinates
-                glm::vec3(0.0f, 0.0f, 0.0f),              // world co-ordinates to be center of the screen
-                glm::vec3(0.0f, 0.0f, 1.0f)               // the "up" axis (z, making xy plane the "ground")
+                glm::vec3(camera_coords_.x, camera_coords_.y, camera_coords_.z), // camera position within world co-ordinates
+                glm::vec3(0.0f, 0.0f, 0.0f),                                     // world co-ordinates to be center of the screen
+                glm::vec3(0.0f, 0.0f, 1.0f)                                      // the "up" axis (z, making xy plane the "ground")
         );
 
         glUniformMatrix4fv(uni_text_view_transform_, 1, GL_FALSE, glm::value_ptr(view_transform));
@@ -368,7 +420,7 @@ void DisplayManager::drawText(std::string text, glm::vec3 position, bool ortho, 
 
     glUniform3f(uni_text_colour_, colour.r, colour.g, colour.b);
 
-    glActiveTexture(GL_TEXTURE0);       // sampler in shader is bound to texture unit 0, make this texture unit active so we can bind our texture to it
+    glActiveTexture(GL_TEXTURE0);         // sampler in shader is bound to texture unit 0, make this texture unit active so we can bind our texture to it
 
     glBindVertexArray(text_vao_);         // make our VBO and vertex attribute mapping active
 
@@ -377,16 +429,16 @@ void DisplayManager::drawText(std::string text, glm::vec3 position, bool ortho, 
     {
         Character ch = characters_[*c];
 
-        GLfloat x_pos = position.x + ch.bearing.x * scale;
-        GLfloat y_pos = position.y;
-        GLfloat z_pos = position.z;
+        GLfloat x_pos = text_world_coords.x + ch.bearing.x * scale;
+        GLfloat y_pos = text_world_coords.y;
+        GLfloat z_pos = text_world_coords.z;
 
         GLfloat width = ch.size.x * scale;
         GLfloat height = ch.size.y * scale;
 
         if (ortho)
         {
-            y_pos = position.y - (ch.size.y - ch.bearing.y) * scale;
+            y_pos = text_world_coords.y - (ch.size.y - ch.bearing.y) * scale;
 
             GLfloat vertices[6][5] = {
                     //  x          y       z     s    t     (where s and t are the texture co-ordinates to sample from)
@@ -402,11 +454,11 @@ void DisplayManager::drawText(std::string text, glm::vec3 position, bool ortho, 
             glBindBuffer(GL_ARRAY_BUFFER, text_vbo_);
             glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
 
-            position.x += (ch.advance >> 6) * scale;
+            text_world_coords.x += (ch.advance >> 6) * scale;
         }
         else
         {
-            z_pos = position.z - (ch.size.y - ch.bearing.y) * scale;
+            z_pos = text_world_coords.z - (ch.size.y - ch.bearing.y) * scale;
 
             // render onto a xz plane
             GLfloat vertices[6][5] = {
@@ -423,7 +475,7 @@ void DisplayManager::drawText(std::string text, glm::vec3 position, bool ortho, 
             glBindBuffer(GL_ARRAY_BUFFER, text_vbo_);
             glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
 
-            position.x -= (ch.advance >> 6) * scale;
+            text_world_coords.x -= (ch.advance >> 6) * scale;
         }
 
         glBindTexture(GL_TEXTURE_2D, ch.texture_id); // bind the texture to texture unit 0 (made active above)
@@ -437,22 +489,53 @@ void DisplayManager::drawText(std::string text, glm::vec3 position, bool ortho, 
     glDisable(GL_BLEND);
 }
 
-void DisplayManager::setCameraLocation(GLfloat x, GLfloat y, GLfloat z)
+void DisplayManager::setCameraCoords(const glm::vec3& world_coords)
 {
-    camera_x_ = x;
-    camera_y_ = y;
-    camera_z_ = z;
+    camera_coords_ = world_coords;
 
-    std::cout << "camera at (" << x << ", " << y << ", " << z << ")" << std::endl;
+    glUseProgram(shader_program_);
+    glUniform3f(uni_camera_coords_, camera_coords_.x, camera_coords_.y, camera_coords_.z);
+
+    std::cout << "camera at (" << camera_coords_.x << ", " << camera_coords_.y << ", " << camera_coords_.z << ")" << std::endl;
+}
+
+void DisplayManager::setLightingOn(bool on)
+{
+    lighting_on_ = on ? 1 : 0;
+
+    glUseProgram(shader_program_);
+    glUniform1i(uni_lighting_on_, lighting_on_);
+
+    std::cout << "lighting at " << uni_lighting_on_ << " is " << lighting_on_ << std::endl;
+}
+
+void DisplayManager::setLightCoords(const glm::vec3& world_coords)
+{
+    light_coords_ = world_coords;
+
+    glUseProgram(shader_program_);
+    glUniform3f(uni_light_coords_, light_coords_.x, light_coords_.y, light_coords_.z);
+
+    std::cout << "light at (" << light_coords_.x << ", " << light_coords_.y << ", " << light_coords_.z << ")" << std::endl;
+}
+
+void DisplayManager::setLightColour(const glm::vec3 &colour, GLfloat intensity)
+{
+    light_colour_ = colour;
+    light_intensity_ = intensity;
+
+    glUseProgram(shader_program_);
+    glUniform3f(uni_light_colour_, colour.r, colour.g, colour.b);
+    glUniform1f(uni_light_intensity_, intensity);
 }
 
 void DisplayManager::setPerspective(GLfloat near_plane, GLfloat far_plane, GLfloat fov)
 {
     projection_transform_ = glm::perspective(
-            glm::radians(fov),    // vertical field-of-view (see open.gl/transformations)
+            glm::radians(fov),        // vertical field-of-view (see open.gl/transformations)
             wnd_width_ / wnd_height_, // aspect ratio of the screen
-            near_plane,            // near clipping plane (any vertex closer to camera than this disappears)
-            far_plane              // far clipping plane (any vertex further from camera than this disappears)
+            near_plane,               // near clipping plane (any vertex closer to camera than this disappears)
+            far_plane                 // far clipping plane (any vertex further from camera than this disappears)
     );
 
 //  glUniformMatrix4fv(uni_projection_transform_, 1, GL_FALSE, glm::value_ptr(projection_transform_));
@@ -466,9 +549,9 @@ void DisplayManager::drawScene()
      * View Transform
      */
     glm::mat4 view_transform = glm::lookAt(
-            glm::vec3(camera_x_, camera_y_, camera_z_),     // camera position within world co-ordinates
-            glm::vec3(0.0f, 0.0f, 0.0f),              // world co-ordinates to be center of the screen
-            glm::vec3(0.0f, 0.0f, 1.0f)               // the "up" axis (z, making xy plane the "ground")
+            glm::vec3(camera_coords_.x, camera_coords_.y, camera_coords_.z),  // camera position within world co-ordinates
+            glm::vec3(0.0f, 0.0f, 0.0f),                                      // world co-ordinates to be center of the screen
+            glm::vec3(0.0f, 0.0f, 1.0f)                                       // the "up" axis (z, making xy plane the "ground")
     );
     glUniformMatrix4fv(uni_view_transform_, 1, GL_FALSE, glm::value_ptr(view_transform));
 

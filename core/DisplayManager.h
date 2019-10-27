@@ -19,7 +19,10 @@ public:
     bool initialise(GLfloat wnd_width, GLfloat wnd_height);
 
     void setFrameQueue(FrameQueue* queue);
-    void setCameraLocation(GLfloat x, GLfloat y, GLfloat z);
+    void setCameraCoords(const glm::vec3& world_coords);
+    void setLightingOn(bool on);
+    void setLightCoords(const glm::vec3& world_coords);
+    void setLightColour(const glm::vec3& colour, GLfloat intensity = 1.0);
     void setPerspective(GLfloat near_plane, GLfloat far_plane, GLfloat fov);
 
     PrimitiveCollection* getPrimitiveCollection();
@@ -29,7 +32,7 @@ public:
     GLuint getModelOverrideColourUniform();
 
     void drawScene();
-    void drawText(std::string text, glm::vec3 position, bool ortho = true, GLfloat scale = 1.0f, glm::vec3 colour = glm::vec3(1.0f, 1.0f, 1.0f));
+    void drawText(const std::string& text, const glm::vec3& world_coords, bool ortho = true, GLfloat scale = 1.0f, const glm::vec3& colour = glm::vec3(1.0f, 1.0f, 1.0f));
 
 private:
     struct Character
@@ -49,24 +52,32 @@ private:
 
     bool initialised_;
 
+    GLfloat wnd_width_;
+    GLfloat wnd_height_;
+
     GLuint shader_program_;
     GLuint vertex_shader_;
     GLuint fragment_shader_;
 
     GLuint uni_model_transform_;
-    GLuint uni_view_transform_;
-    GLuint uni_projection_transform_;
     GLuint uni_model_do_override_colour_;
     GLuint uni_model_override_colour_;
 
-    GLfloat wnd_width_;
-    GLfloat wnd_height_;
-    glm::mat4 projection_transform_;
-    glm::mat4 text_projection_transform_;
+    glm::vec3 camera_coords_;
+    GLuint uni_camera_coords_;
+    GLuint uni_view_transform_;
 
-    GLfloat camera_x_;
-    GLfloat camera_y_;
-    GLfloat camera_z_;
+    glm::mat4 projection_transform_;
+    GLuint uni_projection_transform_;
+
+    GLuint lighting_on_;
+    GLuint uni_lighting_on_;
+    glm::vec3 light_colour_;
+    GLuint uni_light_colour_;
+    glm::vec3 light_coords_;
+    GLuint uni_light_coords_;
+    GLfloat light_intensity_;
+    GLuint uni_light_intensity_;
 
     std::map<GLchar, Character> characters_;
 
@@ -76,6 +87,8 @@ private:
 
     GLuint text_vao_;
     GLuint text_vbo_;
+
+    glm::mat4 text_projection_transform_;
 
     GLuint uni_text_view_transform_;
     GLuint uni_text_projection_transform_;

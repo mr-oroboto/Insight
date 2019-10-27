@@ -117,6 +117,8 @@ void Frame::draw(GLfloat secs_since_start, GLfloat secs_since_last_frame)
  */
 void Frame::drawTesselatedFloor()
 {
+    bool useVertexColours = true;
+
     GLfloat z = -3.0f;
 
     GLfloat floor_x_start = -12.0f;
@@ -146,8 +148,8 @@ void Frame::drawTesselatedFloor()
             SceneObject* object = new SceneObject(display_manager_, Primitive::Type::TESSELATION, glm::vec3(x, y, z),  glm::vec3(1, 1, 1));
             Tesselation* tile = dynamic_cast<Tesselation*>(object->getPrimitive());
 
-            tile->setRandomisePeaks(true);
-            tile->setType(Tesselation::Type::FLAT);
+            tile->setRandomisePeaks(false);
+            tile->setType(Tesselation::Type::RANDOM);
             tile->setZFreeSeed(0);
             tile->resetSeamVertices();
             tile->initVertices();
@@ -185,7 +187,7 @@ void Frame::drawTesselatedFloor()
             previous_right_column_bottom_right_z = tile->getRightColumnBottomRightZ();
             last_zfree = tile->getZFree();
 
-            object->draw(0, 0, false);
+            object->draw(0, 0, ! useVertexColours);
 
             delete object;
 

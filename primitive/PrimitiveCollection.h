@@ -10,7 +10,7 @@
 class PrimitiveCollection
 {
 public:
-    PrimitiveCollection(GLuint position_attribute, GLuint colour_attribute);
+    PrimitiveCollection(GLuint position_attribute, GLuint normal_attribute, GLuint colour_attribute);
     ~PrimitiveCollection();
 
     Primitive* selectPrimitive(Primitive::Type primitive);

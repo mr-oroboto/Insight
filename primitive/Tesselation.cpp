@@ -4,7 +4,7 @@
 #include <iostream>
 #include <random>
 
-Tesselation::Tesselation(GLuint position_attribute, GLuint colour_attribute)
+Tesselation::Tesselation(GLuint position_attribute, GLuint normal_attribute, GLuint colour_attribute)
 {
     type_ = Primitive::TESSELATION;
 
@@ -22,13 +22,22 @@ Tesselation::Tesselation(GLuint position_attribute, GLuint colour_attribute)
     z_max_ = 0.1;
     z_free_seed_ = z_free_ = 0.0;
 
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> distribution(0.01, 1.5);
+
+    for (size_t i = 0; i < 1024; i++)
+    {
+        random_height_seeds_.push_back(distribution(gen));
+    }
+
     width_ = 6.0f;
     length_ = width_;                     // DRAGON: don't change this, we assume the tesselation is a square
 
     vertices_per_subtile_ = 12;       // 4 triangles with open base
 
     total_vertices_ = static_cast<GLuint>((width_ / x_increment_) * (length_ / y_increment_) * vertices_per_subtile_);
-    vertices_ = new GLfloat[total_vertices_ * 8];
+    vertices_ = new GLfloat[total_vertices_ * 9];
     std::cout << "creating " << total_vertices_ << " vertices for tesselation, allocated " << (sizeof(GLfloat) * total_vertices_ * 8) << " byte vertice buffer at " << vertices_ << std::endl;
 
     resetSeamVertices();
@@ -47,16 +56,24 @@ Tesselation::Tesselation(GLuint position_attribute, GLuint colour_attribute)
                           3,                  /* num of values to read from array per vertex */
                           GL_FLOAT,           /* type of those values */
                           GL_FALSE,           /* normalise to -1.0, 1.0 if not floats? */
-                          8 * sizeof(float),  /* stride: each (x,y,z) pos now has RGBUV data in between */
+                          9 * sizeof(float),  /* stride: each (x,y,z) pos now has RGBUV data in between */
                           0                   /* offset */);
+
+    glEnableVertexAttribArray(normal_attribute);
+    glVertexAttribPointer(normal_attribute,
+                          3,                         /* num of values to read from array per vertex */
+                          GL_FLOAT,                  /* type of those values */
+                          GL_FALSE,                  /* normalise to -1.0, 1.0 if not floats? */
+                          9 * sizeof(float),         /* stride: each (x,y,z) pos now has RGBUV data in between */
+                          (void*)(3 * sizeof(float)) /* offset */);
 
     glEnableVertexAttribArray(colour_attribute);
     glVertexAttribPointer(colour_attribute,
                           3,                         /* num of values to read from array per vertex */
                           GL_FLOAT,                  /* type of those values */
                           GL_FALSE,                  /* normalise to -1.0, 1.0 if not floats? */
-                          8 * sizeof(float),         /* stride: each colour block has (x,y,z) data in between */
-                          (void*)(3 * sizeof(float)) /* offset: the colour block starts 3 floats (x,y,z) into the array */);
+                          9 * sizeof(float),         /* stride: each colour block has (x,y,z) data in between */
+                          (void*)(6 * sizeof(float)) /* offset: the colour block starts 3 floats (x,y,z) into the array */);
 
     initVertices();
 }
@@ -94,7 +111,7 @@ void Tesselation::initVertices()
     std::uniform_real_distribution<> distribution(z_min_, z_max_);
 
     GLuint current_vertices = 0;
-    GLuint current_column = 0, current_row = 0;
+    GLuint current_column = 0, current_row = 0, current_tile = 0;
     GLfloat x, y;
 
     for (y = 0.0f; y < length_ && current_vertices < total_vertices_; y += y_increment_)
@@ -112,6 +129,11 @@ void Tesselation::initVertices()
         for (x = 0.0f; x < width_ && current_vertices < total_vertices_; x += x_increment_)
         {
             GLfloat z_fixed_top_left, z_fixed_top_right, z_fixed_bottom_left, z_free_bottom_right, z_peak;
+
+            if (tesselation_type_ == Type::RANDOM)
+            {
+                z_free_ = random_height_seeds_[current_tile++ % random_height_seeds_.size()];
+            }
 
             // Set our only free height variable, the other corners come from previous tiles (in this, or a past tesselation if not isolated)
             switch (tesselation_type_)
@@ -242,26 +264,27 @@ void Tesselation::initVertices()
                 z_peak = z_fixed_top_left;
             }
 
-            GLfloat tile_vertices[12 * 8] = {
-                     // x            y                                       z            r     g     b     u     v
-                     x + x_increment_,          y,                         z_fixed_top_right,   1, 0, 0, 0.0f, 0.0f,  // +x face (left)
-                     x + x_increment_,          y + y_increment_,          z_free_bottom_right, 1, 0, 0, 0.0f, 0.0f,
-                     x + (x_increment_ / 2.0f), y + (y_increment_ / 2.0f), z_peak,            1, 0, 0, 0.0f, 0.0f,
+            // @todo: fix normals
+            GLfloat tile_vertices[12 * 9] = {
+                     // x                       y                                 z              nx    ny    nz   r  g  b
+                     x + x_increment_,          y,                         z_fixed_top_right,   1.0f, 0.0f, 0.0f, 1, 0, 0,  // +x face (left)
+                     x + x_increment_,          y + y_increment_,          z_free_bottom_right, 1.0f, 0.0f, 0.0f, 1, 0, 0,
+                     x + (x_increment_ / 2.0f), y + (y_increment_ / 2.0f), z_peak,              1.0f, 0.0f, 0.0f, 1, 0, 0,
 
-                     x + (x_increment_ / 2.0f), y + (y_increment_ / 2.0f), z_peak,            0, 0, 1, 0.0f, 0.0f,  // +y face (facing camera)
-                     x + x_increment_,          y + y_increment_,          z_free_bottom_right, 0, 0, 1, 0.0f, 0.0f,
-                     x,                         y + y_increment_,          z_fixed_bottom_left, 0, 0, 1, 0.0f, 0.0f,
+                     x + (x_increment_ / 2.0f), y + (y_increment_ / 2.0f), z_peak,              0.0f, 1.0f, 0.0f, 0, 0, 1,  // +y face (facing camera)
+                     x + x_increment_,          y + y_increment_,          z_free_bottom_right, 0.0f, 1.0f, 0.0f, 0, 0, 1,
+                     x,                         y + y_increment_,          z_fixed_bottom_left, 0.0f, 1.0f, 0.0f, 0, 0, 1,
 
-                     x,                         y + y_increment_,          z_fixed_bottom_left, 0, 1, 0, 0.0f, 0.0f,  // -x face (right)
-                     x,                         y,                         z_fixed_top_left,    0, 1, 0, 0.0f, 0.0f,
-                     x + (x_increment_ / 2.0f), y + (y_increment_ / 2.0f), z_peak,            0, 1, 0, 0.0f, 0.0f,
+                     x,                         y + y_increment_,          z_fixed_bottom_left, -1.0f, 0.0f, 0.0f, 0, 1, 0,  // -x face (right)
+                     x,                         y,                         z_fixed_top_left,    -1.0f, 0.0f, 0.0f, 0, 1, 0,
+                     x + (x_increment_ / 2.0f), y + (y_increment_ / 2.0f), z_peak,              -1.0f, 0.0f, 0.0f, 0, 1, 0,
 
-                     x + (x_increment_ / 2.0f), y + (y_increment_ / 2.0f), z_peak,            1, 0, 1, 0.0f, 0.0f,  // -y face
-                     x,                         y,                         z_fixed_top_left,    1, 0, 1, 0.0f, 0.0f,
-                     x + x_increment_,          y,                         z_fixed_top_right,   1, 0, 1, 0.0f, 0.0f
+                     x + (x_increment_ / 2.0f), y + (y_increment_ / 2.0f), z_peak,              0.0f, -1.0f, 0.0f, 1, 0, 1,  // -y face
+                     x,                         y,                         z_fixed_top_left,    0.0f, -1.0f, 0.0f, 1, 0, 1,
+                     x + x_increment_,          y,                         z_fixed_top_right,   0.0f, -1.0f, 0.0f, 1, 0, 1
             };
 
-            memcpy(vertices_ + (current_vertices * 8), tile_vertices, sizeof(GLfloat) * vertices_per_subtile_ * 8);
+            memcpy(vertices_ + (current_vertices * 9), tile_vertices, sizeof(GLfloat) * vertices_per_subtile_ * 9);
             current_vertices += vertices_per_subtile_;
 
             current_column++;
@@ -275,7 +298,7 @@ void Tesselation::initVertices()
 
     // Must be done after glBindVertexArray() so the vbo is associated with the vao
     glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * total_vertices_ * 8, vertices_, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * total_vertices_ * 9, vertices_, GL_STATIC_DRAW);
 }
 
 void Tesselation::setPreviousBottomRowBottomRightZ(std::vector<GLfloat> initial_previous_bottom_row_bottom_right_z)

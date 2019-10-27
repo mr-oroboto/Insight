@@ -8,13 +8,13 @@
 #include "Quad.h"
 #include "Tesselation.h"
 
-PrimitiveCollection::PrimitiveCollection(GLuint position_attribute, GLuint colour_attribute)
+PrimitiveCollection::PrimitiveCollection(GLuint position_attribute, GLuint normal_attribute, GLuint colour_attribute)
 {
-    primitives_[Primitive::Type::CUBE] = new Cube(position_attribute, colour_attribute);
-    primitives_[Primitive::Type::TRIANGLE] = new Triangle(position_attribute, colour_attribute);
-    primitives_[Primitive::Type::LINE] = new Line(position_attribute, colour_attribute);
-    primitives_[Primitive::Type::QUAD] = new Quad(position_attribute, colour_attribute);
-    primitives_[Primitive::Type::TESSELATION] = new Tesselation(position_attribute, colour_attribute);
+    primitives_[Primitive::Type::CUBE] = new Cube(position_attribute, normal_attribute, colour_attribute);
+    primitives_[Primitive::Type::TRIANGLE] = new Triangle(position_attribute, normal_attribute, colour_attribute);
+    primitives_[Primitive::Type::LINE] = new Line(position_attribute, normal_attribute, colour_attribute);
+    primitives_[Primitive::Type::QUAD] = new Quad(position_attribute, normal_attribute, colour_attribute);
+    primitives_[Primitive::Type::TESSELATION] = new Tesselation(position_attribute, normal_attribute, colour_attribute);
 }
 
 PrimitiveCollection::~PrimitiveCollection()

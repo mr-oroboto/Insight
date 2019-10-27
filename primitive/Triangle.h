@@ -8,7 +8,7 @@
 class Triangle : public Primitive
 {
 public:
-    Triangle(GLuint position_attribute, GLuint colour_attribute);
+    Triangle(GLuint position_attribute, GLuint normal_attribute, GLuint colour_attribute);
     ~Triangle();
 
     void draw();

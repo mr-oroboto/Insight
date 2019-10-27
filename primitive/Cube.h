@@ -8,7 +8,7 @@
 class Cube : public Primitive
 {
 public:
-    Cube(GLuint position_attribute, GLuint colour_attribute);
+    Cube(GLuint position_attribute, GLuint normal_attribute, GLuint colour_attribute);
     ~Cube();
 
     void draw();

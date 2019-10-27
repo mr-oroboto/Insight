@@ -7,7 +7,7 @@ class Primitive
 {
 public:
     Primitive() {}
-    Primitive(GLuint position_attribute, GLuint colour_attribute) {}
+    Primitive(GLuint position_attribute, GLuint normal_attribute, GLuint colour_attribute) {}
     virtual ~Primitive();
 
     enum Type

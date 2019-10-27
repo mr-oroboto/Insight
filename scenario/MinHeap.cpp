@@ -20,7 +20,7 @@ void MinHeap::run()
     MinHeapArray heap(decorator);
 
     int heap_values[] = {
-            4, 50, 7, 90, 55, 87, 2, 16
+            4, 50, 7, 90, 55, 87, 2, 16, 23
     };
 
     for (size_t i = 0; i < sizeof(heap_values) / sizeof(int); i++)

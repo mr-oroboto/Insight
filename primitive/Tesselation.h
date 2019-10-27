@@ -10,7 +10,7 @@
 class Tesselation : public Primitive
 {
 public:
-    Tesselation(GLuint position_attribute, GLuint colour_attribute);
+    Tesselation(GLuint position_attribute, GLuint normal_attribute, GLuint colour_attribute);
     ~Tesselation();
 
     enum Type
@@ -18,7 +18,8 @@ public:
         FLAT = 0,
         RAMPED,
         SIN_LENGTH,
-        HILLS
+        HILLS,
+        RANDOM
     };
 
     void setIsolated();
@@ -59,6 +60,7 @@ protected:
     std::vector<GLfloat> current_row_bottom_right_z_;
     std::vector<GLfloat> previous_right_column_bottom_right_z_;
     std::vector<GLfloat> current_right_column_bottom_right_z_;
+    std::vector<GLfloat> random_height_seeds_;
 
     bool is_border_left_;
     bool is_border_right_;

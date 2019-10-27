@@ -24,10 +24,13 @@ int main(int argc, char *argv[])
     SDL_Window* window = nullptr;
     SDL_Event window_event;
 
-    GLfloat camera_x = 0.0f, camera_y = 33.0f, camera_z = 4.0f;
+    glm::vec3 camera_coords = glm::vec3(-11, 31, 11);
+    glm::vec3 light_coords = glm::vec3(-5, 5, 3);
     GLfloat camera_radius = 33.0f;
     GLfloat camera_rotation_increment_degrees = 1.0;
     GLfloat camera_angle_degrees = 90.0f;
+    GLfloat light_radius = 10.0f;
+    GLfloat light_angle_degrees = 0.0f;
 
     // SDL is used to abstract the creation of an X window and event loop etc
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -64,15 +67,27 @@ int main(int argc, char *argv[])
         return -1;
     }
 
+    dm->setCameraCoords(camera_coords);
+    dm->setLightCoords(light_coords);
+    dm->setLightColour(glm::vec3(1, 1, 1), 0.5);
+
     {
         MinHeap scenario(dm);
         scenario.run();
     }
 
     bool continue_rendering = true;
+    bool lighting_on = true;
 
     while (continue_rendering)
     {
+        light_angle_degrees += 0.1;
+
+        light_coords.x = light_radius * cos(light_angle_degrees / (2*M_PI));
+        light_coords.y = light_radius * sin(light_angle_degrees / (2*M_PI));
+
+        dm->setLightCoords(light_coords);
+
         if (SDL_PollEvent(&window_event))                // gather clicks, keystrokes, window movements, resizes etc
         {
             if (window_event.type == SDL_QUIT) break;
@@ -88,34 +103,39 @@ int main(int argc, char *argv[])
                  */
                 if (window_event.key.keysym.sym == SDLK_UP)
                 {
-                    camera_z += 1;
+                    camera_coords.z += 1;
                 }
                 else if (window_event.key.keysym.sym == SDLK_DOWN)
                 {
-                    camera_z -= 1;
+                    camera_coords.z -= 1;
                 }
                 else if (window_event.key.keysym.sym == SDLK_LEFT)
                 {
                     camera_angle_degrees -= camera_rotation_increment_degrees;
 
-                    camera_x = camera_radius * cos(camera_angle_degrees / (2*M_PI));
-                    camera_y = camera_radius * sin(camera_angle_degrees / (2*M_PI));
+                    camera_coords.x = camera_radius * cos(camera_angle_degrees / (2*M_PI));
+                    camera_coords.y = camera_radius * sin(camera_angle_degrees / (2*M_PI));
                 }
                 else if (window_event.key.keysym.sym == SDLK_RIGHT)
                 {
                     camera_angle_degrees += camera_rotation_increment_degrees;
 
-                    camera_x = camera_radius * cos(camera_angle_degrees / (2*M_PI));
-                    camera_y = camera_radius * sin(camera_angle_degrees / (2*M_PI));
+                    camera_coords.x = camera_radius * cos(camera_angle_degrees / (2*M_PI));
+                    camera_coords.y = camera_radius * sin(camera_angle_degrees / (2*M_PI));
                 }
 
-                dm->setCameraLocation(camera_x, camera_y, camera_z);
+                dm->setCameraCoords(camera_coords);
             }
             else if (window_event.type == SDL_KEYUP)
             {
                 if (window_event.key.keysym.sym == SDLK_q)
                 {
                     continue_rendering = false;
+                }
+                else if (window_event.key.keysym.sym == SDLK_l)
+                {
+                    lighting_on = ! lighting_on;
+                    dm->setLightingOn(lighting_on);
                 }
             }
         }

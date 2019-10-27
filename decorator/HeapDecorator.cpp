@@ -74,7 +74,7 @@ void HeapDecorator::dft(size_t node_index, unsigned long node_level, glm::vec3 l
         node_colour = glm::vec3(0.8, 0.8, 0.8);
     }
 
-    current_frame_->addObject(Primitive::Type::CUBE, node_position, node_colour);
+    current_frame_->addObject(Primitive::Type::CUBE, node_position, node_colour, 1.5);
 
     if (node_index != 0)
     {

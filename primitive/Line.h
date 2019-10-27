@@ -9,7 +9,7 @@
 class Line : public Primitive
 {
 public:
-    Line(GLuint position_attribute, GLuint colour_attribute);
+    Line(GLuint position_attribute, GLuint normal_attribute, GLuint colour_attribute);
     ~Line();
 
     void setCoords(glm::vec3 from_coords, glm::vec3 to_coords);
