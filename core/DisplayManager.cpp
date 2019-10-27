@@ -37,7 +37,7 @@ bool DisplayManager::initialise(GLfloat wnd_width, GLfloat wnd_height)
     wnd_width_ = wnd_width;
     wnd_height_ = wnd_height;
 
-    setPerspective(1.0f, 50.0f, 45.0f);
+    setPerspective(0.1f, 100.0f, 45.0f);
 
     try
     {
@@ -170,7 +170,7 @@ bool DisplayManager::initialise(GLfloat wnd_width, GLfloat wnd_height)
         }
         uni_light_coords_ = static_cast<GLuint>(reference);
 
-        setLightCoords(glm::vec3(-5, 5, 3));
+        setLightCoords(glm::vec3(5, 3, -5));
 
         initialised_ = true;
     }
@@ -313,9 +313,9 @@ bool DisplayManager::initialiseFreeType()
         uni_text_projection_transform_ = static_cast<GLuint>(reference);
 
         text_projection_transform_ = glm::ortho(0.0f,       // x == 0 is left of screen
-                                             wnd_width_,   // right of screen
-                                             0.0f,       // y == 0 is bottom of screen
-                                             wnd_height_   // top of screen
+                                             wnd_width_,    // right of screen
+                                             0.0f,          // y == 0 is bottom of screen
+                                             wnd_height_    // top of screen
         );
         glUniformMatrix4fv(uni_text_projection_transform_, 1, GL_FALSE, glm::value_ptr(text_projection_transform_));
 
@@ -411,7 +411,7 @@ void DisplayManager::drawText(const std::string& text, const glm::vec3& world_co
         glm::mat4 view_transform = glm::lookAt(
                 glm::vec3(camera_coords_.x, camera_coords_.y, camera_coords_.z), // camera position within world co-ordinates
                 glm::vec3(0.0f, 0.0f, 0.0f),                                     // world co-ordinates to be center of the screen
-                glm::vec3(0.0f, 0.0f, 1.0f)                                      // the "up" axis (z, making xy plane the "ground")
+                glm::vec3(0.0f, 1.0f, 0.0f)                                      // the "up" axis (+y, OpenGL right handed co-ords)
         );
 
         glUniformMatrix4fv(uni_text_view_transform_, 1, GL_FALSE, glm::value_ptr(view_transform));
@@ -430,53 +430,27 @@ void DisplayManager::drawText(const std::string& text, const glm::vec3& world_co
         Character ch = characters_[*c];
 
         GLfloat x_pos = text_world_coords.x + ch.bearing.x * scale;
-        GLfloat y_pos = text_world_coords.y;
+        GLfloat y_pos = text_world_coords.y - (ch.size.y - ch.bearing.y) * scale;
         GLfloat z_pos = text_world_coords.z;
 
         GLfloat width = ch.size.x * scale;
         GLfloat height = ch.size.y * scale;
 
-        if (ortho)
-        {
-            y_pos = text_world_coords.y - (ch.size.y - ch.bearing.y) * scale;
+        GLfloat vertices[6][5] = {
+                //  x              y             z       s    t     (where s and t are the texture co-ordinates to sample from)
+                { x_pos,         y_pos + height, z_pos, 0.0, 0.0 }, // triangle 0 of 2D quad
+                { x_pos,         y_pos,          z_pos, 0.0, 1.0 },
+                { x_pos + width, y_pos,          z_pos, 1.0, 1.0 },
 
-            GLfloat vertices[6][5] = {
-                    //  x          y       z     s    t     (where s and t are the texture co-ordinates to sample from)
-                    { x_pos,         y_pos + height, 0, 0.0, 0.0 }, // triangle 0 of 2D quad
-                    { x_pos,         y_pos,          0, 0.0, 1.0 },
-                    { x_pos + width, y_pos,          0, 1.0, 1.0 },
+                { x_pos,         y_pos + height, z_pos, 0.0, 0.0 }, // triangle 1 of 2D quad
+                { x_pos + width, y_pos,          z_pos, 1.0, 1.0 },
+                { x_pos + width, y_pos + height, z_pos, 1.0, 0.0 }
+        };
 
-                    { x_pos,         y_pos + height, 0, 0.0, 0.0 }, // triangle 1 of 2D quad
-                    { x_pos + width, y_pos,          0, 1.0, 1.0 },
-                    { x_pos + width, y_pos + height, 0, 1.0, 0.0 }
-            };
+        glBindBuffer(GL_ARRAY_BUFFER, text_vbo_);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
 
-            glBindBuffer(GL_ARRAY_BUFFER, text_vbo_);
-            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-
-            text_world_coords.x += (ch.advance >> 6) * scale;
-        }
-        else
-        {
-            z_pos = text_world_coords.z - (ch.size.y - ch.bearing.y) * scale;
-
-            // render onto a xz plane
-            GLfloat vertices[6][5] = {
-                    //  x          y       z     s    t     (where s and t are the texture co-ordinates to sample from)
-                    { x_pos,     y_pos, z_pos + height, 1.0, 0.0 }, // triangle 0 of 2D quad
-                    { x_pos,     y_pos, z_pos,     1.0, 1.0 },
-                    { x_pos + width, y_pos, z_pos,     0.0, 1.0 },
-
-                    { x_pos,     y_pos, z_pos + height, 1.0, 0.0 }, // triangle 1 of 2D quad
-                    { x_pos + width, y_pos, z_pos,     0.0, 1.0 },
-                    { x_pos + width, y_pos, z_pos + height, 0.0, 0.0 }
-            };
-
-            glBindBuffer(GL_ARRAY_BUFFER, text_vbo_);
-            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-
-            text_world_coords.x -= (ch.advance >> 6) * scale;
-        }
+        text_world_coords.x += (ch.advance >> 6) * scale;
 
         glBindTexture(GL_TEXTURE_2D, ch.texture_id); // bind the texture to texture unit 0 (made active above)
         glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -546,12 +520,19 @@ void DisplayManager::drawScene()
     glUseProgram(shader_program_);
 
     /**
-     * View Transform
+     * View Transform (OpenGL right-handed co-ordinates)
+     *
+     * -x   left of screen
+     * +x   right of screen
+     * +y   top of screen
+     * -y   bottom of screen
+     * -z   into screen
+     * +z   out of screen
      */
     glm::mat4 view_transform = glm::lookAt(
             glm::vec3(camera_coords_.x, camera_coords_.y, camera_coords_.z),  // camera position within world co-ordinates
             glm::vec3(0.0f, 0.0f, 0.0f),                                      // world co-ordinates to be center of the screen
-            glm::vec3(0.0f, 0.0f, 1.0f)                                       // the "up" axis (z, making xy plane the "ground")
+            glm::vec3(0.0f, 1.0f, 0.0f)                                       // OpenGL right-handed co-ordinates
     );
     glUniformMatrix4fv(uni_view_transform_, 1, GL_FALSE, glm::value_ptr(view_transform));
 

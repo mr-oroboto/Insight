@@ -8,9 +8,9 @@ Triangle::Triangle(GLuint position_attribute, GLuint normal_attribute, GLuint co
 
     vertices_ = new GLfloat[3 * 9] {
             // x     y     z     nx    ny    nz    r     g     b
-             0.0f,  0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // @todo: fix normal
-             0.5f, -0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // @todo: fix normal
-            -0.5f, -0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f  // @todo: fix normal
+             0.0f,  0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // top @todo: fix normal
+             0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // bottom right @todo: fix normal
+            -0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f  // bottom left @todo: fix normal
     };
 
     glGenVertexArrays(1, &vao_);

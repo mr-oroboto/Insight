@@ -24,8 +24,8 @@ int main(int argc, char *argv[])
     SDL_Window* window = nullptr;
     SDL_Event window_event;
 
-    glm::vec3 camera_coords = glm::vec3(-11, 31, 11);
-    glm::vec3 light_coords = glm::vec3(-5, 5, 3);
+    glm::vec3 camera_coords = glm::vec3(11, 11, 31);
+    glm::vec3 light_coords = glm::vec3(5, 5, 3);
     GLfloat camera_radius = 33.0f;
     GLfloat camera_rotation_increment_degrees = 1.0;
     GLfloat camera_angle_degrees = 90.0f;
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
         light_angle_degrees += 0.1;
 
         light_coords.x = light_radius * cos(light_angle_degrees / (2*M_PI));
-        light_coords.y = light_radius * sin(light_angle_degrees / (2*M_PI));
+        light_coords.z = light_radius * sin(light_angle_degrees / (2*M_PI));
 
         dm->setLightCoords(light_coords);
 
@@ -103,25 +103,25 @@ int main(int argc, char *argv[])
                  */
                 if (window_event.key.keysym.sym == SDLK_UP)
                 {
-                    camera_coords.z += 1;
+                    camera_coords.y += 1;
                 }
                 else if (window_event.key.keysym.sym == SDLK_DOWN)
                 {
-                    camera_coords.z -= 1;
+                    camera_coords.y -= 1;
                 }
                 else if (window_event.key.keysym.sym == SDLK_LEFT)
                 {
                     camera_angle_degrees -= camera_rotation_increment_degrees;
 
                     camera_coords.x = camera_radius * cos(camera_angle_degrees / (2*M_PI));
-                    camera_coords.y = camera_radius * sin(camera_angle_degrees / (2*M_PI));
+                    camera_coords.z = camera_radius * sin(camera_angle_degrees / (2*M_PI));
                 }
                 else if (window_event.key.keysym.sym == SDLK_RIGHT)
                 {
                     camera_angle_degrees += camera_rotation_increment_degrees;
 
                     camera_coords.x = camera_radius * cos(camera_angle_degrees / (2*M_PI));
-                    camera_coords.y = camera_radius * sin(camera_angle_degrees / (2*M_PI));
+                    camera_coords.z = camera_radius * sin(camera_angle_degrees / (2*M_PI));
                 }
 
                 dm->setCameraCoords(camera_coords);

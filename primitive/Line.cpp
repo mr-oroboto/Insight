@@ -7,8 +7,7 @@ Line::Line(GLuint position_attribute, GLuint normal_attribute, GLuint colour_att
     type_ = Primitive::LINE;
 
     /**
-     * The "face" descriptions below assume a co-ordinate system where +z is going up, +x is coming out of the screen
-     * going left and +y is coming out of the screen going right
+     * OpenGL Right-Handed Co-ordinates (+y is up, +x is right, +z is out of screen)
      */
     vertices_ = new GLfloat[2 * 9] {
             // x    y    z     nx    ny    nz    r     g     b

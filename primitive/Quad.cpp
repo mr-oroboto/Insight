@@ -7,12 +7,11 @@ Quad::Quad(GLuint position_attribute, GLuint normal_attribute, GLuint colour_att
     type_ = Primitive::QUAD;
 
     /**
-     * The "face" descriptions below assume a co-ordinate system where +z is going up, +x is coming out of the screen
-     * going left and +y is coming out of the screen going right
+     * OpenGL Right-Handed Co-ordinates (+y is up, +x is right, +z is out of screen)
      */
     vertices_ = new GLfloat[6 * 9] {
             // x     y      z    nx    ny    nz     r     g     b
-            -1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,   // bottom face of cube (white)
+            -1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,   // z = 0 so facing out of screen, bottom left
              1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,   // @todo: fix normal
              1.0f,  1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,   // @todo: fix normal
              1.0f,  1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,   // @todo: fix normal

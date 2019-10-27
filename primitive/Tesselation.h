@@ -27,10 +27,10 @@ public:
     void setBorderBottom(bool border);
     void setBorderLeft(bool border);
     void setBorderRight(bool border);
-    void setZFreeSeed(GLfloat seed_value);
+    void setYFreeSeed(GLfloat seed_value);
 
-    void setPreviousBottomRowBottomRightZ(std::vector<GLfloat> initial_previous_bottom_row_bottom_right_z);
-    void setPreviousRightColumnBottomRightZ(std::vector<GLfloat> initial_previous_right_column_bottom_right_z);
+    void setPreviousBottomRowBottomRightY(std::vector<GLfloat> initial_previous_bottom_row_bottom_right_y);
+    void setPreviousRightColumnBottomRightY(std::vector<GLfloat> initial_previous_right_column_bottom_right_y);
 
     void resetSeamVertices();
     void initVertices();
@@ -40,9 +40,9 @@ public:
 
     void draw();
 
-    std::vector<GLfloat> getBottomRowBottomRightZ();
-    std::vector<GLfloat> getRightColumnBottomRightZ();
-    GLfloat getZFree();
+    std::vector<GLfloat> getBottomRowBottomRightY();
+    std::vector<GLfloat> getRightColumnBottomRightY();
+    GLfloat getYFree();
 
 protected:
     Type tesselation_type_;
@@ -50,16 +50,16 @@ protected:
     GLfloat width_;
     GLfloat length_;
     GLfloat x_increment_;
-    GLfloat y_increment_;
+    GLfloat z_increment_;
 
-    GLfloat z_min_;
-    GLfloat z_max_;
-    GLfloat z_free_seed_;
-    GLfloat z_free_;
-    std::vector<GLfloat> previous_row_bottom_right_z_;
-    std::vector<GLfloat> current_row_bottom_right_z_;
-    std::vector<GLfloat> previous_right_column_bottom_right_z_;
-    std::vector<GLfloat> current_right_column_bottom_right_z_;
+    GLfloat y_min_;
+    GLfloat y_max_;
+    GLfloat y_free_seed_;
+    GLfloat y_free_;
+    std::vector<GLfloat> previous_row_bottom_right_y_;
+    std::vector<GLfloat> current_row_bottom_right_y_;
+    std::vector<GLfloat> previous_right_column_bottom_right_y_;
+    std::vector<GLfloat> current_right_column_bottom_right_y_;
     std::vector<GLfloat> random_height_seeds_;
 
     bool is_border_left_;

@@ -20,7 +20,7 @@ bool HeapDecorator::decorate()
 
     current_frame_ = frame_queue_->newFrame();
 
-    glm::vec3 last_node_coords = glm::vec3(0, 0, 5);
+    glm::vec3 last_node_coords = glm::vec3(0, 5, 0);
 
     unsigned long node_count = heap_->getNodeCount();
     unsigned long heap_levels = floor(log(node_count) / log(2.0));
@@ -47,13 +47,13 @@ void HeapDecorator::dft(size_t node_index, unsigned long node_level, glm::vec3 l
     {
         if (is_left_of_parent)
         {
-            node_position.x += (node_level * 2.0);
-            node_position.z -= 1.5;
+            node_position.x -= (node_level * 2.0);
+            node_position.y -= 1.5;
         }
         else
         {
-            node_position.x -= (node_level * 2.0);
-            node_position.z -= 1.5;
+            node_position.x += (node_level * 2.0);
+            node_position.y -= 1.5;
         }
     }
 

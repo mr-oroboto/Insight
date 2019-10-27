@@ -119,38 +119,38 @@ void Frame::drawTesselatedFloor()
 {
     bool useVertexColours = true;
 
-    GLfloat z = -3.0f;
+    GLfloat y_pos = -3.0f;
 
     GLfloat floor_x_start = -12.0f;
-    GLfloat floor_y_start = -12.0f;
+    GLfloat floor_z_start = -12.0f;
     GLfloat floor_width = 24.0;      // y-dimension
     GLfloat floor_length = 24.0;     // x-dimension
     GLfloat tile_dimension = 6.0;    // assumes square tiles, this is actually defined in Tesselation (DRAGON)
-    GLfloat x, y;
+    GLfloat x, z;
     GLuint tiles_long = floor_length / tile_dimension;    // how many tiles wide (in y-dimension) is this surface?
     GLuint tiles_wide = floor_width / tile_dimension;
 
-    std::vector<std::vector<GLfloat>> previous_bottom_row_bottom_right_z(tiles_wide);
-    std::vector<GLfloat> previous_right_column_bottom_right_z;
+    std::vector<std::vector<GLfloat>> previous_bottom_row_bottom_right_y(tiles_wide);
+    std::vector<GLfloat> previous_right_column_bottom_right_y;
     GLuint current_column = 0, current_row = 0;
-    GLfloat last_zfree;
+    GLfloat last_yfree;
 
     /**
      * The floor is made of tiles (Tesselation primitives), each of which itself is made of sub-tiles. For the seam
-     * joining to work correctly, we must "grow" the floor in the positive y and positive x directions.
+     * joining to work correctly, we must "grow" the floor in the positive z and positive x directions.
      */
-    for (y = floor_y_start; y < (floor_y_start + floor_width); y += tile_dimension)
+    for (z = floor_z_start; z < (floor_z_start + floor_width); z += tile_dimension)
     {
         current_column = 0;
 
         for (x = floor_x_start; x < (floor_x_start + floor_length); x += tile_dimension)
         {
-            SceneObject* object = new SceneObject(display_manager_, Primitive::Type::TESSELATION, glm::vec3(x, y, z),  glm::vec3(1, 1, 1));
+            SceneObject* object = new SceneObject(display_manager_, Primitive::Type::TESSELATION, glm::vec3(x, y_pos, z),  glm::vec3(1, 1, 1));
             Tesselation* tile = dynamic_cast<Tesselation*>(object->getPrimitive());
 
             tile->setRandomisePeaks(false);
             tile->setType(Tesselation::Type::RANDOM);
-            tile->setZFreeSeed(0);
+            tile->setYFreeSeed(0);
             tile->resetSeamVertices();
             tile->initVertices();
 
@@ -161,14 +161,14 @@ void Frame::drawTesselatedFloor()
 
             if (current_row != 0)
             {
-                tile->setPreviousBottomRowBottomRightZ(previous_bottom_row_bottom_right_z[current_column]);
+                tile->setPreviousBottomRowBottomRightY(previous_bottom_row_bottom_right_y[current_column]);
             }
 
             if (current_column != 0)
             {
 //              t->setZFreeSeed(prevRightColumnBottomRightZ[0]);
-                tile->setZFreeSeed(last_zfree);
-                tile->setPreviousRightColumnBottomRightZ(previous_right_column_bottom_right_z);
+                tile->setYFreeSeed(last_yfree);
+                tile->setPreviousRightColumnBottomRightY(previous_right_column_bottom_right_y);
             }
 
             if (current_column == tiles_long - 1)
@@ -183,9 +183,9 @@ void Frame::drawTesselatedFloor()
 
             tile->initVertices();
 
-            previous_bottom_row_bottom_right_z[current_column] = tile->getBottomRowBottomRightZ();
-            previous_right_column_bottom_right_z = tile->getRightColumnBottomRightZ();
-            last_zfree = tile->getZFree();
+            previous_bottom_row_bottom_right_y[current_column] = tile->getBottomRowBottomRightY();
+            previous_right_column_bottom_right_y = tile->getRightColumnBottomRightY();
+            last_yfree = tile->getYFree();
 
             object->draw(0, 0, ! useVertexColours);
 
@@ -202,29 +202,31 @@ void Frame::drawTesselatedFloor()
 
 void Frame::drawTesselatedFloorWithIsolatedTiles()
 {
-    GLfloat z = -3.0;
+    bool useVertexColours = true;
+
+    GLfloat y_pos = -3.0;
 
     GLfloat floor_x_start = -12.0f;
-    GLfloat floor_y_start = -12.0f;
+    GLfloat floor_z_start = -12.0f;
     GLfloat floor_width = 12.0;      // y-dimension
     GLfloat floor_length = 12.0;     // x-dimension
     GLfloat tile_dimension = 6.0;    // assumes square tiles, this is actually defined in Tesselation (DRAGON)
-    GLfloat x, y;
+    GLfloat x, z;
 
-    for (y = floor_y_start; y < (floor_y_start + floor_width); y += tile_dimension)
+    for (z = floor_z_start; z < (floor_z_start + floor_width); z += tile_dimension)
     {
         for (x = floor_x_start; x < (floor_x_start + floor_length); x += tile_dimension)
         {
-            SceneObject* object = new SceneObject(display_manager_, Primitive::Type::TESSELATION, glm::vec3(x, y, z),  glm::vec3(0.5, 0.5, 0.5));
+            SceneObject* object = new SceneObject(display_manager_, Primitive::Type::TESSELATION, glm::vec3(x, y_pos, z),  glm::vec3(0.5, 0.5, 0.5));
             Tesselation* tile = dynamic_cast<Tesselation*>(object->getPrimitive());
 
             tile->setRandomisePeaks(false);
-            tile->setZFreeSeed(0);
+            tile->setYFreeSeed(0);
             tile->setType(Tesselation::Type::RAMPED);
             tile->setIsolated();
             tile->initVertices();
 
-            object->draw(0, 0, false);
+            object->draw(0, 0, ! useVertexColours);
 
             delete object;
         }
