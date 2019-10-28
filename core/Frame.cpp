@@ -37,7 +37,6 @@ void Frame::addObject(Primitive::Type type, glm::vec3 world_coords, glm::vec3 co
 void Frame::addLine(glm::vec3 from_world_coords, glm::vec3 to_world_coords, glm::vec3 colour)
 {
     SceneObject* object = new SceneObject(display_manager_, Primitive::Type::LINE, from_world_coords, colour);
-//    object->setScale(sqrt(pow(from.x - to.x, 2) + pow(from.y - to.y, 2) + pow(from.z - to.z, 2)));
     object->setAdditionalCoords(to_world_coords);
     objects_.push_back(object);
 }

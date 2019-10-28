@@ -8,6 +8,7 @@
 #include "core/DisplayManager.h"
 #include "core/FrameQueue.h"
 #include "scenario/MinHeap.h"
+#include "scenario/RotationTest.h"
 
 #define WINDOW_FULLSCREEN false
 #define WINDOW_X_POS 10
@@ -73,6 +74,7 @@ int main(int argc, char *argv[])
 
     {
         MinHeap scenario(dm);
+//        RotationTest scenario(dm);
         scenario.run();
     }
 

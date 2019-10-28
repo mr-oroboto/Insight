@@ -45,38 +45,20 @@ void SceneObject::draw(GLfloat secs_since_start, GLfloat secs_since_last_frame, 
 
     // Multiply the identity matrix by various transformations to translate, scale and rotate the primitive
 
+    model_transform = glm::translate(model_transform, world_coords_);
+    model_transform = glm::scale(model_transform, scale_vector);
+
     if (primitive_->getType() == Primitive::LINE)
     {
-        // Get new unit vector, then translate to new "from" position, then scale
+        Line* line = dynamic_cast<Line*>(primitive_);
 
-//        glm::vec3 vector = (additionalPosition - worldPosition);
-//        glm::vec3 vectorNormalised = glm::normalize(vector);
-//
-//        // rotate vector parallel to
-//        GLfloat rad = acos(vectorNormalised.x);
-//        modelTransform = glm::rotate(modelTransform, rad, glm::vec3(0.0f, 0.0f, 1.0f));
-//
-//        glm::vec4 b = glm::vec4(vectorNormalised.x, vectorNormalised.y, vectorNormalised.z, 0);
-//        glm::vec4 m = modelTransform * b;
-//
-//        glm::vec3 c = glm::vec3(m);
-//        glm::vec3 norm = glm::cross(glm::vec3(0, 0, -1), c);
-//
-//        // rotate vector parallel to xz plane
-//        rad = acos(vectorNormalised.z);
-//        modelTransform = glm::rotate(modelTransform, rad, norm);
-//
-//        modelTransform = glm::translate(modelTransform, worldPosition);
+        line->setCoords(world_coords_, additional_world_coords_);
 
-        dynamic_cast<Line*>(primitive_)->setCoords(world_coords_, additional_world_coords_);
+        // order of operations is important
+        model_transform = line->getTranslationTransform(glm::mat4(1.0f));
+        model_transform = line->getRotationTransform(model_transform);
+        model_transform = line->getScaleTransform(model_transform);
     }
-    else
-    {
-        model_transform = glm::translate(model_transform, world_coords_);
-//  modelTransform = glm::rotate(modelTransform, secsSinceStart * glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    }
-
-    model_transform = glm::scale(model_transform, scale_vector);
 
     glUniformMatrix4fv(display_manager_->getModelTransformUniform(), 1 /* number of matrices to upload */, GL_FALSE, glm::value_ptr(model_transform));
 

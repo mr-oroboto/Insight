@@ -7,6 +7,7 @@
 #include "Line.h"
 #include "Quad.h"
 #include "Tesselation.h"
+#include "Rectangle.h"
 
 PrimitiveCollection::PrimitiveCollection(GLuint position_attribute, GLuint normal_attribute, GLuint colour_attribute)
 {
@@ -15,6 +16,7 @@ PrimitiveCollection::PrimitiveCollection(GLuint position_attribute, GLuint norma
     primitives_[Primitive::Type::LINE] = new Line(position_attribute, normal_attribute, colour_attribute);
     primitives_[Primitive::Type::QUAD] = new Quad(position_attribute, normal_attribute, colour_attribute);
     primitives_[Primitive::Type::TESSELATION] = new Tesselation(position_attribute, normal_attribute, colour_attribute);
+    primitives_[Primitive::Type::RECTANGLE] = new Rectangle(position_attribute, normal_attribute, colour_attribute);
 }
 
 PrimitiveCollection::~PrimitiveCollection()
@@ -35,6 +37,9 @@ PrimitiveCollection::~PrimitiveCollection()
 
     delete primitives_[Primitive::Type::TESSELATION];
     primitives_[Primitive::Type::TESSELATION] = nullptr;
+
+    delete primitives_[Primitive::Type::RECTANGLE];
+    primitives_[Primitive::Type::RECTANGLE] = nullptr;
 }
 
 Primitive* PrimitiveCollection::selectPrimitive(Primitive::Type primitive)

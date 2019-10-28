@@ -16,7 +16,8 @@ public:
         TRIANGLE,
         LINE,
         QUAD,
-        TESSELATION
+        TESSELATION,
+        RECTANGLE
     };
 
     void setActive();

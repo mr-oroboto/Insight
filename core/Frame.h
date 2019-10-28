@@ -14,7 +14,7 @@ class DisplayManager;
 class Frame
 {
 public:
-    Frame(DisplayManager* display_manager, bool draw_object_position = false, bool draw_reference_axes = false, bool draw_floor = true);
+    Frame(DisplayManager* display_manager, bool draw_object_position = false, bool draw_reference_axes = false, bool draw_floor = false);
     ~Frame();
 
     void addObject(Primitive::Type type, glm::vec3 world_coords, glm::vec3 colour, GLfloat scale = 1.0f);
