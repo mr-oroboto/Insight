@@ -408,11 +408,7 @@ void DisplayManager::drawText(const std::string& text, const glm::vec3& world_co
     }
     else
     {
-        glm::mat4 view_transform = glm::lookAt(
-                glm::vec3(camera_coords_.x, camera_coords_.y, camera_coords_.z), // camera position within world co-ordinates
-                glm::vec3(0.0f, 0.0f, 0.0f),                                     // world co-ordinates to be center of the screen
-                glm::vec3(0.0f, 1.0f, 0.0f)                                      // the "up" axis (+y, OpenGL right handed co-ords)
-        );
+        glm::mat4 view_transform = getViewTransform();
 
         glUniformMatrix4fv(uni_text_view_transform_, 1, GL_FALSE, glm::value_ptr(view_transform));
         glUniformMatrix4fv(uni_text_projection_transform_, 1, GL_FALSE, glm::value_ptr(projection_transform_));       // normal perspective projection
@@ -463,14 +459,13 @@ void DisplayManager::drawText(const std::string& text, const glm::vec3& world_co
     glDisable(GL_BLEND);
 }
 
-void DisplayManager::setCameraCoords(const glm::vec3& world_coords)
+void DisplayManager::setCameraCoords(const glm::vec3& world_coords, const glm::vec3& camera_direction_vector)
 {
     camera_coords_ = world_coords;
+    camera_direction_vector_ = camera_direction_vector;
 
     glUseProgram(shader_program_);
     glUniform3f(uni_camera_coords_, camera_coords_.x, camera_coords_.y, camera_coords_.z);
-
-    std::cout << "camera at (" << camera_coords_.x << ", " << camera_coords_.y << ", " << camera_coords_.z << ")" << std::endl;
 }
 
 void DisplayManager::setLightingOn(bool on)
@@ -479,8 +474,6 @@ void DisplayManager::setLightingOn(bool on)
 
     glUseProgram(shader_program_);
     glUniform1i(uni_lighting_on_, lighting_on_);
-
-    std::cout << "lighting at " << uni_lighting_on_ << " is " << lighting_on_ << std::endl;
 }
 
 void DisplayManager::setLightCoords(const glm::vec3& world_coords)
@@ -489,8 +482,6 @@ void DisplayManager::setLightCoords(const glm::vec3& world_coords)
 
     glUseProgram(shader_program_);
     glUniform3f(uni_light_coords_, light_coords_.x, light_coords_.y, light_coords_.z);
-
-    std::cout << "light at (" << light_coords_.x << ", " << light_coords_.y << ", " << light_coords_.z << ")" << std::endl;
 }
 
 void DisplayManager::setLightColour(const glm::vec3 &colour, GLfloat intensity)
@@ -519,21 +510,7 @@ void DisplayManager::drawScene()
 {
     glUseProgram(shader_program_);
 
-    /**
-     * View Transform (OpenGL right-handed co-ordinates)
-     *
-     * -x   left of screen
-     * +x   right of screen
-     * +y   top of screen
-     * -y   bottom of screen
-     * -z   into screen
-     * +z   out of screen
-     */
-    glm::mat4 view_transform = glm::lookAt(
-            glm::vec3(camera_coords_.x, camera_coords_.y, camera_coords_.z),  // camera position within world co-ordinates
-            glm::vec3(0.0f, 0.0f, 0.0f),                                      // world co-ordinates to be center of the screen
-            glm::vec3(0.0f, 1.0f, 0.0f)                                       // OpenGL right-handed co-ordinates
-    );
+    glm::mat4 view_transform = getViewTransform();
     glUniformMatrix4fv(uni_view_transform_, 1, GL_FALSE, glm::value_ptr(view_transform));
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);               // clear screen to black, otherwise we'll paint over the last frame which looks weird
@@ -574,4 +551,36 @@ GLuint DisplayManager::getModelDoOverrideColourUniform()
 GLuint DisplayManager::getModelOverrideColourUniform()
 {
     return uni_model_override_colour_;
+}
+
+glm::vec3 DisplayManager::getCameraDirectionVector()
+{
+    return camera_direction_vector_;
+}
+
+glm::vec3 DisplayManager::getCameraUpVector()
+{
+    // OpenGL right-handed co-ordinate system (+y is up)
+    return glm::vec3(0.0f, 1.0f, 0.0f);
+}
+
+glm::mat4 DisplayManager::getViewTransform()
+{
+    /**
+     * View Transform (OpenGL right-handed co-ordinates)
+     *
+     * -x   left of screen
+     * +x   right of screen
+     * +y   top of screen
+     * -y   bottom of screen
+     * -z   into screen
+     * +z   out of screen
+     */
+    glm::mat4 view_transform = glm::lookAt(
+            camera_coords_,                                                   // camera position within world co-ordinates
+            camera_coords_ + getCameraDirectionVector(),                      // looking at target (facing whatever direction is specified (into screen by default))
+            getCameraUpVector()                                               // OpenGL right-handed co-ordinates (+y is up)
+    );
+
+    return view_transform;
 }

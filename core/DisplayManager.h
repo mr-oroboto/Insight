@@ -19,7 +19,7 @@ public:
     bool initialise(GLfloat wnd_width, GLfloat wnd_height);
 
     void setFrameQueue(FrameQueue* queue);
-    void setCameraCoords(const glm::vec3& world_coords);
+    void setCameraCoords(const glm::vec3& world_coords, const glm::vec3& camera_direction_vector = glm::vec3(0, 0, -1));
     void setLightingOn(bool on);
     void setLightCoords(const glm::vec3& world_coords);
     void setLightColour(const glm::vec3& colour, GLfloat intensity = 1.0);
@@ -30,6 +30,9 @@ public:
     GLuint getModelTransformUniform();
     GLuint getModelDoOverrideColourUniform();
     GLuint getModelOverrideColourUniform();
+
+    glm::vec3 getCameraDirectionVector();
+    glm::vec3 getCameraUpVector();
 
     void drawScene();
     void drawText(const std::string& text, const glm::vec3& world_coords, bool ortho = true, GLfloat scale = 1.0f, const glm::vec3& colour = glm::vec3(1.0f, 1.0f, 1.0f));
@@ -46,6 +49,8 @@ private:
     bool initialiseFreeType();
     void teardown();
     bool isShaderInitialised(GLuint shader);
+
+    glm::mat4 getViewTransform();
 
     PrimitiveCollection* primitives_;
     FrameQueue* frame_queue_;
@@ -64,6 +69,7 @@ private:
     GLuint uni_model_override_colour_;
 
     glm::vec3 camera_coords_;
+    glm::vec3 camera_direction_vector_;
     GLuint uni_camera_coords_;
     GLuint uni_view_transform_;
 
