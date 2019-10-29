@@ -27,7 +27,7 @@ DisplayManager::~DisplayManager()
     }
 }
 
-bool DisplayManager::initialise(GLfloat wnd_width, GLfloat wnd_height)
+bool DisplayManager::initialise(GLuint wnd_width, GLuint wnd_height)
 {
     if (initialised_)
     {
@@ -217,7 +217,7 @@ bool DisplayManager::initialiseFreeType()
             throw "Failed to initialise FreeType";
         }
 
-        if (FT_New_Face(ft, "/home/sysop/ClionProjects/Insight/font/Vera.ttf", 0, &face))
+        if (FT_New_Face(ft, "/home/sysop/ClionProjects/Insight/font/Vera.ttf", 0, &face))   // @todo: fixme
         {
             throw "Failed to find fonts";
         }
@@ -312,10 +312,10 @@ bool DisplayManager::initialiseFreeType()
         }
         uni_text_projection_transform_ = static_cast<GLuint>(reference);
 
-        text_projection_transform_ = glm::ortho(0.0f,       // x == 0 is left of screen
-                                             wnd_width_,    // right of screen
-                                             0.0f,          // y == 0 is bottom of screen
-                                             wnd_height_    // top of screen
+        text_projection_transform_ = glm::ortho(0.0f,                             // x == 0 is left of screen
+                                             static_cast<GLfloat>(wnd_width_),    // right of screen
+                                             0.0f,                                // y == 0 is bottom of screen
+                                             static_cast<GLfloat>(wnd_height_)    // top of screen
         );
         glUniformMatrix4fv(uni_text_projection_transform_, 1, GL_FALSE, glm::value_ptr(text_projection_transform_));
 
@@ -498,7 +498,7 @@ void DisplayManager::setPerspective(GLfloat near_plane, GLfloat far_plane, GLflo
 {
     projection_transform_ = glm::perspective(
             glm::radians(fov),        // vertical field-of-view (see open.gl/transformations)
-            wnd_width_ / wnd_height_, // aspect ratio of the screen
+            static_cast<GLfloat>(wnd_width_) / static_cast<GLfloat>(wnd_height_), // aspect ratio of the screen
             near_plane,               // near clipping plane (any vertex closer to camera than this disappears)
             far_plane                 // far clipping plane (any vertex further from camera than this disappears)
     );

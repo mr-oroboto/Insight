@@ -16,7 +16,7 @@ public:
     DisplayManager();
     ~DisplayManager();
 
-    bool initialise(GLfloat wnd_width, GLfloat wnd_height);
+    bool initialise(GLuint wnd_width, GLuint wnd_height);
 
     void setFrameQueue(FrameQueue* queue);
     void setCameraCoords(const glm::vec3& world_coords, const glm::vec3& camera_direction_vector = glm::vec3(0, 0, -1));
@@ -57,8 +57,7 @@ private:
 
     bool initialised_;
 
-    GLfloat wnd_width_;
-    GLfloat wnd_height_;
+    GLuint wnd_width_, wnd_height_;
 
     GLuint shader_program_;
     GLuint vertex_shader_;
