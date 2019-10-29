@@ -1,11 +1,7 @@
 #include <iostream>
 
-#include <GL/glew.h>                    // must be included before gl.h (which is via SDL_opengl.h)
-
 #include "core/WindowManager.h"
-#include "core/DisplayManager.h"
 #include "scenario/MinHeap.h"
-#include "scenario/RotationTest.h"
 
 #define WINDOW_FULLSCREEN false
 #define WINDOW_X_SIZE 2560

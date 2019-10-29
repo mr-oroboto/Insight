@@ -20,6 +20,7 @@ public:
     bool run();
 
 private:
+    bool processEvents(GLfloat secs_since_last_frame);
 
     SDL_Window* window_;
     SDL_GLContext opengl_context_;
@@ -29,6 +30,10 @@ private:
     GLuint wnd_size_x_, wnd_size_y_;
     GLuint wnd_pos_x_, wnd_pos_y_;
     bool fullscreen_;
+
+    bool tracking_mouse_;
+    GLfloat mouse_start_x_, mouse_start_y_;
+    GLfloat mouse_sensitivity_;
 
     std::chrono::high_resolution_clock::time_point t_last_frame_drawn_at_;
 
@@ -41,8 +46,9 @@ private:
     GLfloat pitch_speed_;           // how fast camera pitches (degrees / sec)
     GLfloat yaw_speed_;             // how fast camera yaws (degrees / sec)
 
-    glm::vec3 light_coords_;
+    bool lighting_on_;
     bool rotate_light_;             // does the light rotate around the origin? (helps to visualise lighting)
+    glm::vec3 light_coords_;
     GLfloat light_radius_;
     GLfloat light_angle_degrees_;
 };
