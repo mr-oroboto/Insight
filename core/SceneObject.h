@@ -10,11 +10,11 @@ class DisplayManager;
 class SceneObject
 {
 public:
-    SceneObject(DisplayManager* display_manager, Primitive::Type type, glm::vec3 world_coords, glm::vec3 col);
+    SceneObject(DisplayManager* display_manager, Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour);
     ~SceneObject();
 
     void setScale(GLfloat scale);
-    void setAdditionalCoords(glm::vec3 world_coords);
+    void setAdditionalCoords(const glm::vec3& world_coords);
 
     glm::vec3 getPosition();
     Primitive* getPrimitive();

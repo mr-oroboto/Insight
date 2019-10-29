@@ -36,7 +36,7 @@ bool HeapDecorator::decorate()
     return success;
 }
 
-void HeapDecorator::dft(size_t node_index, unsigned long node_level, glm::vec3 last_node_coords, bool is_left_of_parent)
+void HeapDecorator::dft(size_t node_index, unsigned long node_level, const glm::vec3& last_node_coords, bool is_left_of_parent)
 {
     int left_index = heap_->getLeftIndex(node_index);
     int right_index = heap_->getRightIndex(node_index);

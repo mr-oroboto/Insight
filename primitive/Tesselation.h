@@ -29,8 +29,8 @@ public:
     void setBorderRight(bool border);
     void setYFreeSeed(GLfloat seed_value);
 
-    void setPreviousBottomRowBottomRightY(std::vector<GLfloat> initial_previous_bottom_row_bottom_right_y);
-    void setPreviousRightColumnBottomRightY(std::vector<GLfloat> initial_previous_right_column_bottom_right_y);
+    void setPreviousBottomRowBottomRightY(const std::vector<GLfloat>& initial_previous_bottom_row_bottom_right_y);
+    void setPreviousRightColumnBottomRightY(const std::vector<GLfloat>& initial_previous_right_column_bottom_right_y);
 
     void resetSeamVertices();
     void initVertices();

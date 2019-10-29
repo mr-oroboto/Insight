@@ -19,7 +19,7 @@ public:
     bool decorate();
 
 protected:
-    void dft(size_t node_index, unsigned long node_level, glm::vec3 last_node_coords, bool is_left_of_parent);
+    void dft(size_t node_index, unsigned long node_level, const glm::vec3& last_node_coords, bool is_left_of_parent);
 
     HeapArray* heap_;
     int highlighted_node_value_;

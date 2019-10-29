@@ -8,7 +8,7 @@
 #include "DisplayManager.h"
 #include "primitive/Line.h"
 
-SceneObject::SceneObject(DisplayManager* display_manager, Primitive::Type type, glm::vec3 world_coords, glm::vec3 col)
+SceneObject::SceneObject(DisplayManager* display_manager, Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour)
 {
     display_manager_ = display_manager;
 
@@ -18,7 +18,7 @@ SceneObject::SceneObject(DisplayManager* display_manager, Primitive::Type type, 
     additional_world_coords_ = world_coords;
     scale_ = 1.0f;
 
-    colour_ = col;
+    colour_ = colour;
 }
 
 SceneObject::~SceneObject()
@@ -31,7 +31,7 @@ void SceneObject::setScale(GLfloat s)
     scale_ = s;
 }
 
-void SceneObject::setAdditionalCoords(glm::vec3 world_coords)
+void SceneObject::setAdditionalCoords(const glm::vec3& world_coords)
 {
     additional_world_coords_ = world_coords;
 }

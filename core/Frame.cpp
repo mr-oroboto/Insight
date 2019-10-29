@@ -27,21 +27,21 @@ Frame::~Frame()
     }
 }
 
-void Frame::addObject(Primitive::Type type, glm::vec3 world_coords, glm::vec3 colour, GLfloat scale)
+void Frame::addObject(Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour, GLfloat scale)
 {
     SceneObject* object = new SceneObject(display_manager_, type, world_coords, colour);
     object->setScale(scale);
     objects_.push_back(object);
 }
 
-void Frame::addLine(glm::vec3 from_world_coords, glm::vec3 to_world_coords, glm::vec3 colour)
+void Frame::addLine(const glm::vec3& from_world_coords, const glm::vec3& to_world_coords, const glm::vec3& colour)
 {
     SceneObject* object = new SceneObject(display_manager_, Primitive::Type::LINE, from_world_coords, colour);
     object->setAdditionalCoords(to_world_coords);
     objects_.push_back(object);
 }
 
-void Frame::addText(std::string text, GLfloat x, GLfloat y, GLfloat z, bool ortho, GLfloat scale, glm::vec3 colour)
+void Frame::addText(const std::string& text, GLfloat x, GLfloat y, GLfloat z, bool ortho, GLfloat scale, const glm::vec3& colour)
 {
     glm::vec3 position = glm::vec3(x, y, z);
 

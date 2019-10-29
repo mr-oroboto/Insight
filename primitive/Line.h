@@ -12,7 +12,7 @@ public:
     Line(GLuint position_attribute, GLuint normal_attribute, GLuint colour_attribute);
     ~Line();
 
-    void setCoords(glm::vec3 from_coords, glm::vec3 to_coords);
+    void setCoords(const glm::vec3& from_coords, const glm::vec3& to_coords);
     glm::mat4 getRotationTransform(const glm::mat4& model_transform);
     glm::mat4 getScaleTransform(const glm::mat4& model_transform);
     glm::mat4 getTranslationTransform(const glm::mat4& model_transform);

@@ -61,7 +61,7 @@ Line::~Line()
     std::cout << "Line::~Line()" << std::endl;
 }
 
-void Line::setCoords(glm::vec3 from_coords, glm::vec3 to_coords)
+void Line::setCoords(const glm::vec3& from_coords, const glm::vec3& to_coords)
 {
     from_world_coords_ = from_coords;
     to_world_coords_ = to_coords;

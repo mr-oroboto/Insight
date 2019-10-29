@@ -301,13 +301,13 @@ void Tesselation::initVertices()
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * total_vertices_ * 9, vertices_, GL_STATIC_DRAW);
 }
 
-void Tesselation::setPreviousBottomRowBottomRightY(std::vector<GLfloat> initial_previous_bottom_row_bottom_right_y)
+void Tesselation::setPreviousBottomRowBottomRightY(const std::vector<GLfloat>& initial_previous_bottom_row_bottom_right_y)
 {
     previous_row_bottom_right_y_ = initial_previous_bottom_row_bottom_right_y;
     setBorderTop(false);
 }
 
-void Tesselation::setPreviousRightColumnBottomRightY(std::vector<GLfloat> initial_previous_right_column_bottom_right_y)
+void Tesselation::setPreviousRightColumnBottomRightY(const std::vector<GLfloat>& initial_previous_right_column_bottom_right_y)
 {
     previous_right_column_bottom_right_y_ = initial_previous_right_column_bottom_right_y;
     setBorderLeft(false);
