@@ -60,16 +60,15 @@ void SceneObject::draw(GLfloat secs_since_start, GLfloat secs_since_last_frame, 
         model_transform = line->getScaleTransform(model_transform);
     }
 
-    glUniformMatrix4fv(display_manager_->getModelTransformUniform(), 1 /* number of matrices to upload */, GL_FALSE, glm::value_ptr(model_transform));
+    display_manager_->getObjectShader()->setModelTransform(model_transform);
 
     if (use_colour)
     {
-        glUniform1i(display_manager_->getModelDoOverrideColourUniform(), 1);
-        glUniform3f(display_manager_->getModelOverrideColourUniform(), colour_.r, colour_.g, colour_.b);
+        display_manager_->getObjectShader()->setOverrideModelColour(true, colour_);
     }
     else
     {
-        glUniform1i(display_manager_->getModelDoOverrideColourUniform(), 0);
+        display_manager_->getObjectShader()->setOverrideModelColour(false);
     }
 
     primitive_->draw();

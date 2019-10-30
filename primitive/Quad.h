@@ -8,10 +8,13 @@
 class Quad : public Primitive
 {
 public:
-    Quad(GLuint position_attribute, GLuint normal_attribute, GLuint colour_attribute);
+    Quad(StandardShader *shader) : Primitive(shader) { initialise(); }
     ~Quad();
 
     void draw();
+
+protected:
+    void initialise();
 };
 
 #endif //INSIGHT_PRIMITIVE_QUAD_H

@@ -4,7 +4,12 @@
 #include <iostream>
 #include <random>
 
-Tesselation::Tesselation(GLuint position_attribute, GLuint normal_attribute, GLuint colour_attribute)
+Tesselation::~Tesselation()
+{
+    std::cout << "Tesselation::~Tesselation()" << std::endl;
+}
+
+void Tesselation::initialise()
 {
     type_ = Primitive::TESSELATION;
 
@@ -51,24 +56,24 @@ Tesselation::Tesselation(GLuint position_attribute, GLuint normal_attribute, GLu
     glBindBuffer(GL_ARRAY_BUFFER, vbo_);
 
     // Must be done after glBindVertexArray() so the mapping is associated with the vao (and inherently the vbo)
-    glEnableVertexAttribArray(position_attribute);
-    glVertexAttribPointer(position_attribute,
+    glEnableVertexAttribArray(object_shader_->getPositionAttribute());
+    glVertexAttribPointer(object_shader_->getPositionAttribute(),
                           3,                  /* num of values to read from array per vertex */
                           GL_FLOAT,           /* type of those values */
                           GL_FALSE,           /* normalise to -1.0, 1.0 if not floats? */
                           9 * sizeof(float),  /* stride: each (x,y,z) pos now has RGBUV data in between */
                           0                   /* offset */);
 
-    glEnableVertexAttribArray(normal_attribute);
-    glVertexAttribPointer(normal_attribute,
+    glEnableVertexAttribArray(object_shader_->getNormalAttribute());
+    glVertexAttribPointer(object_shader_->getNormalAttribute(),
                           3,                         /* num of values to read from array per vertex */
                           GL_FLOAT,                  /* type of those values */
                           GL_FALSE,                  /* normalise to -1.0, 1.0 if not floats? */
                           9 * sizeof(float),         /* stride: each (x,y,z) pos now has RGBUV data in between */
                           (void*)(3 * sizeof(float)) /* offset */);
 
-    glEnableVertexAttribArray(colour_attribute);
-    glVertexAttribPointer(colour_attribute,
+    glEnableVertexAttribArray(object_shader_->getColourAttribute());
+    glVertexAttribPointer(object_shader_->getColourAttribute(),
                           3,                         /* num of values to read from array per vertex */
                           GL_FLOAT,                  /* type of those values */
                           GL_FALSE,                  /* normalise to -1.0, 1.0 if not floats? */
@@ -76,11 +81,6 @@ Tesselation::Tesselation(GLuint position_attribute, GLuint normal_attribute, GLu
                           (void*)(6 * sizeof(float)) /* offset: the colour block starts 3 floats (x,y,z) into the array */);
 
     initVertices();
-}
-
-Tesselation::~Tesselation()
-{
-    std::cout << "Tesselation::~Tesselation()" << std::endl;
 }
 
 void Tesselation::resetSeamVertices()

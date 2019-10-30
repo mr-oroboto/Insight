@@ -8,10 +8,13 @@
 class Cube : public Primitive
 {
 public:
-    Cube(GLuint position_attribute, GLuint normal_attribute, GLuint colour_attribute);
+    Cube(StandardShader* shader) : Primitive(shader) { initialise(); }
     ~Cube();
 
     void draw();
+
+protected:
+    void initialise();
 };
 
 #endif //INSIGHT_PRIMITIVE_CUBE_H

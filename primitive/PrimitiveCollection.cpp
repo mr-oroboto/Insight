@@ -8,15 +8,16 @@
 #include "Quad.h"
 #include "Tesselation.h"
 #include "Rectangle.h"
+#include "shader/StandardShader.h"
 
-PrimitiveCollection::PrimitiveCollection(GLuint position_attribute, GLuint normal_attribute, GLuint colour_attribute)
+PrimitiveCollection::PrimitiveCollection(StandardShader* shader)
 {
-    primitives_[Primitive::Type::CUBE] = new Cube(position_attribute, normal_attribute, colour_attribute);
-    primitives_[Primitive::Type::TRIANGLE] = new Triangle(position_attribute, normal_attribute, colour_attribute);
-    primitives_[Primitive::Type::LINE] = new Line(position_attribute, normal_attribute, colour_attribute);
-    primitives_[Primitive::Type::QUAD] = new Quad(position_attribute, normal_attribute, colour_attribute);
-    primitives_[Primitive::Type::TESSELATION] = new Tesselation(position_attribute, normal_attribute, colour_attribute);
-    primitives_[Primitive::Type::RECTANGLE] = new Rectangle(position_attribute, normal_attribute, colour_attribute);
+    primitives_[Primitive::Type::CUBE] = new Cube(shader);
+    primitives_[Primitive::Type::TRIANGLE] = new Triangle(shader);
+    primitives_[Primitive::Type::LINE] = new Line(shader);
+    primitives_[Primitive::Type::QUAD] = new Quad(shader);
+    primitives_[Primitive::Type::TESSELATION] = new Tesselation(shader);
+    primitives_[Primitive::Type::RECTANGLE] = new Rectangle(shader);
 }
 
 PrimitiveCollection::~PrimitiveCollection()

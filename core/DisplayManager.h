@@ -8,7 +8,9 @@
 #include <GL/glew.h>                    // must be included before gl.h (which is via SDL_opengl.h)
 
 #include "FrameQueue.h"
+#include "TextDrawer.h"
 #include "primitive/PrimitiveCollection.h"
+#include "shader/StandardShader.h"
 
 class DisplayManager
 {
@@ -26,78 +28,39 @@ public:
     void setPerspective(GLfloat near_plane, GLfloat far_plane, GLfloat fov);
 
     PrimitiveCollection* getPrimitiveCollection();
-
-    GLuint getModelTransformUniform();
-    GLuint getModelDoOverrideColourUniform();
-    GLuint getModelOverrideColourUniform();
+    StandardShader* getObjectShader();
 
     glm::vec3 getCameraDirectionVector();
     glm::vec3 getCameraUpVector();
+
+    glm::mat4 getViewTransform();
+    glm::mat4 getProjectionTransform();
 
     void drawScene();
     void drawText(const std::string& text, const glm::vec3& world_coords, bool ortho = true, GLfloat scale = 1.0f, const glm::vec3& colour = glm::vec3(1.0f, 1.0f, 1.0f));
 
 private:
-    struct Character
-    {
-        GLuint texture_id;
-        glm::ivec2 size;
-        glm::ivec2 bearing;
-        GLuint advance;
-    };
-
-    bool initialiseFreeType();
     void teardown();
-    bool isShaderInitialised(GLuint shader);
 
-    glm::mat4 getViewTransform();
+    bool initialised_;
 
     PrimitiveCollection* primitives_;
     FrameQueue* frame_queue_;
 
-    bool initialised_;
-
     GLuint wnd_width_, wnd_height_;
 
-    GLuint shader_program_;
-    GLuint vertex_shader_;
-    GLuint fragment_shader_;
-
-    GLuint uni_model_transform_;
-    GLuint uni_model_do_override_colour_;
-    GLuint uni_model_override_colour_;
+    StandardShader* object_shader_;
+    TextDrawer* text_drawer_;
 
     glm::vec3 camera_coords_;
     glm::vec3 camera_direction_vector_;
-    GLuint uni_camera_coords_;
-    GLuint uni_view_transform_;
 
     glm::mat4 projection_transform_;
-    GLuint uni_projection_transform_;
 
     GLuint lighting_on_;
-    GLuint uni_lighting_on_;
     glm::vec3 light_colour_;
-    GLuint uni_light_colour_;
     glm::vec3 light_coords_;
-    GLuint uni_light_coords_;
     GLfloat light_intensity_;
-    GLuint uni_light_intensity_;
-
-    std::map<GLchar, Character> characters_;
-
-    GLuint text_shader_program_;
-    GLuint text_vertex_shader_;
-    GLuint text_fragment_shader_;
-
-    GLuint text_vao_;
-    GLuint text_vbo_;
-
-    glm::mat4 text_projection_transform_;
-
-    GLuint uni_text_view_transform_;
-    GLuint uni_text_projection_transform_;
-    GLuint uni_text_colour_;
 };
 
 #endif //INSIGHT_CORE_DISPLAYMANAGER_H

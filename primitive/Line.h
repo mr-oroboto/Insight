@@ -9,7 +9,7 @@
 class Line : public Primitive
 {
 public:
-    Line(GLuint position_attribute, GLuint normal_attribute, GLuint colour_attribute);
+    Line(StandardShader* shader) : Primitive(shader) { initialise(); }
     ~Line();
 
     void setCoords(const glm::vec3& from_coords, const glm::vec3& to_coords);
@@ -18,6 +18,9 @@ public:
     glm::mat4 getTranslationTransform(const glm::mat4& model_transform);
 
     void draw();
+
+protected:
+    void initialise();
 
 private:
     glm::vec3 from_world_coords_;

@@ -25,3 +25,8 @@ Primitive::Type Primitive::getType()
     return type_;
 }
 
+void Primitive::initialise()
+{
+
+}
+

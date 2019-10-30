@@ -10,7 +10,7 @@
 class Tesselation : public Primitive
 {
 public:
-    Tesselation(GLuint position_attribute, GLuint normal_attribute, GLuint colour_attribute);
+    Tesselation(StandardShader* shader) : Primitive(shader) { initialise(); }
     ~Tesselation();
 
     enum Type
@@ -45,6 +45,8 @@ public:
     GLfloat getYFree();
 
 protected:
+    void initialise();
+
     Type tesselation_type_;
 
     GLfloat width_;

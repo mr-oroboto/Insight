@@ -3,11 +3,11 @@
 
 #include <GL/glew.h>
 
+#include "shader/StandardShader.h"
+
 class Primitive
 {
 public:
-    Primitive() {}
-    Primitive(GLuint position_attribute, GLuint normal_attribute, GLuint colour_attribute) {}
     virtual ~Primitive();
 
     enum Type
@@ -27,7 +27,14 @@ public:
     virtual void draw() = 0;
 
 protected:
+    Primitive(StandardShader* shader) : object_shader_(shader) { }
+
+    virtual void initialise() = 0;
+
     Primitive::Type type_;
+
+    StandardShader* object_shader_;
+
     GLuint vao_;
     GLuint vbo_;
     GLfloat* vertices_;

@@ -6,11 +6,12 @@
 #include <GL/glew.h>
 
 #include "Primitive.h"
+#include "shader/StandardShader.h"
 
 class PrimitiveCollection
 {
 public:
-    PrimitiveCollection(GLuint position_attribute, GLuint normal_attribute, GLuint colour_attribute);
+    PrimitiveCollection(StandardShader* object_shader);
     ~PrimitiveCollection();
 
     Primitive* selectPrimitive(Primitive::Type primitive);
