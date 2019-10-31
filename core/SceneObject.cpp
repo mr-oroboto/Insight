@@ -102,3 +102,14 @@ Primitive* SceneObject::getPrimitive()
 {
     return primitive_;
 }
+
+SceneObject* SceneObject::clone()
+{
+    SceneObject* clone = new SceneObject(display_manager_, primitive_->getType(), world_coords_, colour_);
+
+    clone->setTexture(texture_);
+    clone->setAdditionalCoords(additional_world_coords_);
+    clone->setScale(scale_);
+
+    return clone;
+}

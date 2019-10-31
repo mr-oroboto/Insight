@@ -24,6 +24,10 @@ public:
 
     void draw(GLfloat secs_since_start, GLfloat secs_since_last_frame);
 
+    Frame* clone();     // prefer to copy ctor so subclasses of Frame keep control
+
+    GLuint deleteObjectsAtPosition(const glm::vec3& world_coords, Primitive::Type primitive_type);
+
 private:
     struct Text
     {

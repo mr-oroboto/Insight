@@ -9,7 +9,7 @@
 class HeapArray
 {
 public:
-    HeapArray(HeapDecorator* decorator);
+    HeapArray(HeapDecorator* decorator = nullptr);
 
     void insert(int value);
     bool validate();

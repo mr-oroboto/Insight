@@ -23,6 +23,8 @@ public:
 
     void draw(GLfloat secs_since_start, GLfloat secs_since_last_frame, bool use_colour = true);
 
+    SceneObject* clone();       // prefer to copy ctor so subclasses of Frame keep control
+
 protected:
     DisplayManager* display_manager_;
 

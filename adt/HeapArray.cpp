@@ -3,7 +3,11 @@
 HeapArray::HeapArray(HeapDecorator* decorator)
 {
     decorator_ = decorator;
-    decorator_->setHeap(this);
+
+    if (decorator_)
+    {
+        decorator_->setHeap(this);
+    }
 }
 
 unsigned long HeapArray::getNodeCount()
@@ -81,8 +85,11 @@ void HeapArray::insert(int value)
     size_t insert_index = store_.size();
     store_.push_back(value);
 
-    decorator_->setHightlightedNodeValue(value);
-    decorator_->decorate();
+    if (decorator_)
+    {
+        decorator_->setHightlightedNodeValue(value);
+        decorator_->decorate();
+    }
 
     heapifyUp(insert_index);
 }
@@ -100,7 +107,10 @@ void HeapArray::heapifyUp(size_t node_index)
             store_[parent_index] = store_[node_index];
             store_[node_index] = temp;
 
-            decorator_->decorate();
+            if (decorator_)
+            {
+                decorator_->decorate();
+            }
 
             heapifyUp(parent_index);
         }
@@ -141,7 +151,10 @@ void HeapArray::heapifyDown(size_t node_index)
             store_[node_index] = store_[index_of_node_to_swap_with];
             store_[index_of_node_to_swap_with] = temp;
 
-            decorator_->decorate();
+            if (decorator_)
+            {
+                decorator_->decorate();
+            }
 
             heapifyDown(index_of_node_to_swap_with);
         }
@@ -178,7 +191,10 @@ int HeapArray::extractRoot()
     store_[0] = node_value_to_remove;
     store_.pop_back();
 
-    decorator_->decorate();
+    if (decorator_)
+    {
+        decorator_->decorate();
+    }
 
     heapifyDown(0);
 

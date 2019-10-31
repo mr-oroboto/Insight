@@ -237,3 +237,47 @@ void Frame::drawTesselatedFloorWithIsolatedTiles()
         }
     }
 }
+
+Frame* Frame::clone()
+{
+    Frame* clone = new Frame(display_manager_, draw_object_positions_, draw_reference_axes_, draw_floor_);
+
+    for (SceneObject* object : objects_)
+    {
+        clone->objects_.push_back(object->clone());
+    }
+
+    for (Text text : texts_)
+    {
+        clone->texts_.push_back(text);
+    }
+
+    return clone;
+}
+
+GLuint Frame::deleteObjectsAtPosition(const glm::vec3 &world_coords, Primitive::Type primitive_type)
+{
+    bool object_deleted = false;
+    bool objects_deleted = 0;
+
+    do
+    {
+        object_deleted = false;
+
+        for (std::vector<SceneObject*>::iterator it = objects_.begin(); it != objects_.end(); it++)
+        {
+            glm::vec3 object_position = (*it)->getPosition();
+            if (object_position.x == world_coords.x && object_position.y == world_coords.y && object_position.z == world_coords.z && (*it)->getPrimitive()->getType() == primitive_type)
+            {
+                delete *it;
+                objects_.erase(it);
+
+                object_deleted = true;
+                objects_deleted++;
+                break;
+            }
+        }
+    } while (object_deleted);
+
+    return objects_deleted;
+}
