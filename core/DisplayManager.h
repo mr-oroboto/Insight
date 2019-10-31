@@ -11,6 +11,7 @@
 #include "TextDrawer.h"
 #include "primitive/PrimitiveCollection.h"
 #include "shader/StandardShader.h"
+#include "TextureCollection.h"
 
 class DisplayManager
 {
@@ -28,6 +29,7 @@ public:
     void setPerspective(GLfloat near_plane, GLfloat far_plane, GLfloat fov);
 
     PrimitiveCollection* getPrimitiveCollection();
+    TextureCollection* getTextureCollection();
     StandardShader* getObjectShader();
 
     glm::vec3 getCameraDirectionVector();
@@ -45,6 +47,7 @@ private:
     bool initialised_;
 
     PrimitiveCollection* primitives_;
+    TextureCollection* textures_;
     FrameQueue* frame_queue_;
 
     GLuint wnd_width_, wnd_height_;

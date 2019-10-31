@@ -8,6 +8,7 @@
 
 #include "SceneObject.h"
 #include "primitive/Primitive.h"
+#include "Texture.h"
 
 class DisplayManager;
 
@@ -17,7 +18,7 @@ public:
     Frame(DisplayManager* display_manager, bool draw_object_position = false, bool draw_reference_axes = false, bool draw_floor = true);
     ~Frame();
 
-    void addObject(Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour, GLfloat scale = 1.0f);
+    void addObject(Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour, Texture* texture = nullptr, GLfloat scale = 1.0f);
     void addText(const std::string& text, GLfloat x, GLfloat y, GLfloat z = 0.0f, bool ortho = true, GLfloat scale = 1.0f, const glm::vec3& colour = glm::vec3(1.0f, 1.0f, 1.0f));
     void addLine(const glm::vec3& from_world_coords, const glm::vec3& to_world_coords, const glm::vec3& colour = glm::vec3(1.0f, 1.0f, 1.0f));
 

@@ -59,6 +59,11 @@ bool FrameQueue::enqueueFrame(Frame* frame)
     return true;
 }
 
+DisplayManager* FrameQueue::getDisplayManager()
+{
+    return display_manager_;
+}
+
 /**
  * Sets this FrameQueue as the active FrameQueue for the DisplayManager.
  *

@@ -22,29 +22,13 @@ bool StandardShader::initialise()
             throw "Can't initialise base shader";
         }
 
+        // These values come from the layout statements in the shader's GLSL program
+        position_attribute_ = 0;
+        normal_attribute_ = 1;
+        colour_attribute_ = 2;
+        texture_coords_attribute_ = 3;
+
         GLint reference;
-
-        reference = glGetAttribLocation(shader_program_, "position");
-        if (reference < 0)
-        {
-            throw "Can't find position attribute in shader program";
-        }
-        position_attribute_ = static_cast<GLuint>(reference);
-
-        reference = glGetAttribLocation(shader_program_, "inNormal");
-        if (reference < 0)
-        {
-            throw "Can't find normal attribute in shader program";
-        }
-        normal_attribute_ = static_cast<GLuint>(reference);
-
-        // Add an entirely new attribute mapping for the model colour data we added to the vertex attributes
-        reference = glGetAttribLocation(shader_program_, "inColour");
-        if (reference < 0)
-        {
-            throw "Can't find colour attribute in shader program";
-        }
-        colour_attribute_ = static_cast<GLuint>(reference);
 
         reference = glGetUniformLocation(shader_program_, "model");
         if (reference < 0)
@@ -116,6 +100,13 @@ bool StandardShader::initialise()
         }
         uni_light_coords_ = static_cast<GLuint>(reference);
 
+        reference = glGetUniformLocation(shader_program_, "texturesOn");
+        if (reference < 0)
+        {
+            throw "Can't find texture control in shader program";
+        }
+        uni_textures_on_ = static_cast<GLuint>(reference);
+
         initialised_ = true;
     }
     catch (const char* exception)
@@ -183,6 +174,19 @@ void StandardShader::setOverrideModelColour(bool override, const glm::vec3& colo
     }
 }
 
+void StandardShader::setTexturesOn(bool on)
+{
+    use();
+    glUniform1i(uni_textures_on_, on ? 1 : 0);
+}
+
+void StandardShader::setTextureSamplerTextureUnit(GLuint texture_unit)
+{
+    // This shader has one texture sampler, tell it which texture unit to sample from (Texture assigns the texture to that unit)
+    use();
+    glUniform1i(uni_texture_sampler_, texture_unit);
+}
+
 GLuint StandardShader::getPositionAttribute()
 {
     return position_attribute_;
@@ -198,17 +202,24 @@ GLuint StandardShader::getColourAttribute()
     return colour_attribute_;
 }
 
+GLuint StandardShader::getTextureCoordsAttribute()
+{
+    return texture_coords_attribute_;
+}
+
 
 const char* StandardShader::vertex_source_ = R"glsl(
-    #version 150 core
+    #version 330 core
 
-    in vec3 position;
-    in vec3 inNormal;
-    in vec3 inColour;
+    layout (location = 0) in vec3 inPosition;
+    layout (location = 1) in vec3 inNormal;
+    layout (location = 2) in vec3 inColour;
+    layout (location = 3) in vec2 inTexCoords;
 
     out vec3 colour;
     out vec3 normal;
     out vec3 fragmentPosition;      // in world (not normalised device) co-ords for lighting
+    out vec2 texCoords;
 
     uniform mat4 model;
     uniform mat4 view;
@@ -218,9 +229,10 @@ const char* StandardShader::vertex_source_ = R"glsl(
 
     void main()
     {
-        gl_Position = projection * view * model * vec4(position, 1.0);  // simple matrix * column vector
-        fragmentPosition = vec3(model * vec4(position, 1.0));
-//      normal = inNormal;                                              // doesn't support object scaling
+        gl_Position = projection * view * model * vec4(inPosition, 1.0);  // simple matrix * column vector
+
+        fragmentPosition = vec3(model * vec4(inPosition, 1.0));
+
         normal = mat3(transpose(inverse(model))) * inNormal;
 
         if (doOverrideColour == 1)
@@ -231,15 +243,18 @@ const char* StandardShader::vertex_source_ = R"glsl(
         {
            colour = inColour;
         }
+
+        texCoords = inTexCoords;
     }
 )glsl";
 
 const char* StandardShader::fragment_source_ = R"glsl(
-    #version 150 core
+    #version 330 core
 
     in vec3 colour;                     // object / vertex colour
     in vec3 normal;                     // normal to vertex face
     in vec3 fragmentPosition;           // vertex position in world (not normalised device) co-ords
+    in vec2 texCoords;
 
     uniform int lightingOn;
     uniform vec3 lightPosition;
@@ -247,38 +262,46 @@ const char* StandardShader::fragment_source_ = R"glsl(
     uniform float lightIntensity;
     uniform vec3 cameraPosition;        // view / camera location in world co-ords
 
+    uniform int texturesOn;
+    uniform sampler2D textureSampler;
+
     out vec4 outColour;                 // final fragment colour
 
     void main()
     {
-        float specularStrength = 0.5;
+        vec3 fragmentColour = colour;
 
-        vec3 ambient = lightIntensity * lightColour;
-
-        // Calculate the direction vector between the light source and the fragment
-        vec3 lightingDirection = normalize(lightPosition - fragmentPosition);
-
-        // Calculate the angle (actually just dot product) between the light direction vector and the fragment face's normal
-        vec3 normalisedNormal = normalize(normal);
-        float diffuseIntensity = max(dot(normalisedNormal, lightingDirection), 0.0);
-
-        // Calculate the diffuse light intensity based on the angle between the light and the normal
-        vec3 diffuse = diffuseIntensity * lightColour;
-
-        // Calculate the direction vector between the camera / view location and the fragment (to determine reflection intensity)
-        vec3 cameraDirection = normalize(cameraPosition - fragmentPosition);
-        vec3 reflectionDirection = reflect(-lightingDirection, normalisedNormal);
-
-        float specularIntensity = pow(max(dot(cameraDirection, reflectionDirection), 0.0), 32);   // 32 is the shininess of the object
-        vec3 specular = specularStrength * specularIntensity * lightColour;
-
-        vec3 fragmentColour = (ambient + diffuse + specular) * colour;
-
-        if (lightingOn == 0)
+        if (lightingOn == 1)
         {
-            fragmentColour = colour;
+            float specularStrength = 0.5;
+
+            vec3 ambient = lightIntensity * lightColour;
+
+            // Calculate the direction vector between the light source and the fragment
+            vec3 lightingDirection = normalize(lightPosition - fragmentPosition);
+
+            // Calculate the angle (actually just dot product) between the light direction vector and the fragment face's normal
+            vec3 normalisedNormal = normalize(normal);
+            float diffuseIntensity = max(dot(normalisedNormal, lightingDirection), 0.0);
+
+            // Calculate the diffuse light intensity based on the angle between the light and the normal
+            vec3 diffuse = diffuseIntensity * lightColour;
+
+            // Calculate the direction vector between the camera / view location and the fragment (to determine reflection intensity)
+            vec3 cameraDirection = normalize(cameraPosition - fragmentPosition);
+            vec3 reflectionDirection = reflect(-lightingDirection, normalisedNormal);
+
+            float specularIntensity = pow(max(dot(cameraDirection, reflectionDirection), 0.0), 32);   // 32 is the shininess of the object
+            vec3 specular = specularStrength * specularIntensity * lightColour;
+
+            fragmentColour = (ambient + diffuse + specular) * colour;
         }
 
         outColour = vec4(fragmentColour, 1.0);
+
+        if (texturesOn == 1)
+        {
+            outColour = texture(textureSampler, texCoords) * vec4(fragmentColour, 1.0);
+        }
     }
 )glsl";

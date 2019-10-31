@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 
 #include "primitive/Primitive.h"
+#include "Texture.h"
 
 class DisplayManager;
 
@@ -15,6 +16,7 @@ public:
 
     void setScale(GLfloat scale);
     void setAdditionalCoords(const glm::vec3& world_coords);
+    void setTexture(Texture* texture);
 
     glm::vec3 getPosition();
     Primitive* getPrimitive();
@@ -25,6 +27,8 @@ protected:
     DisplayManager* display_manager_;
 
     Primitive* primitive_;
+    Texture* texture_;
+
     glm::vec3 world_coords_;
     glm::vec3 additional_world_coords_;
     GLfloat scale_;

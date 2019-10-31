@@ -23,6 +23,8 @@ public:
     bool setActive();
     bool setReady();
 
+    DisplayManager* getDisplayManager();
+
     void drawCurrentFrame();
 
 protected:

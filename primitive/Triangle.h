@@ -8,7 +8,7 @@
 class Triangle : public Primitive
 {
 public:
-    Triangle(StandardShader* shader) : Primitive(shader) {}
+    Triangle(StandardShader* shader) : Primitive(shader) { initialise(); }
     ~Triangle();
 
     void draw();

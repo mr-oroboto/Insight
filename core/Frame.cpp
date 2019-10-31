@@ -27,10 +27,13 @@ Frame::~Frame()
     }
 }
 
-void Frame::addObject(Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour, GLfloat scale)
+void Frame::addObject(Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour, Texture* texture, GLfloat scale)
 {
     SceneObject* object = new SceneObject(display_manager_, type, world_coords, colour);
+
     object->setScale(scale);
+    object->setTexture(texture);
+
     objects_.push_back(object);
 }
 
@@ -77,13 +80,13 @@ void Frame::draw(GLfloat secs_since_start, GLfloat secs_since_last_frame)
         to = glm::vec3(0, 0, 10);
         addLine(from, to, colour);
 
-        addObject(Primitive::Type::CUBE, glm::vec3(0, 0, 0),   glm::vec3(1, 1, 1), 0.5);
-        addObject(Primitive::Type::CUBE, glm::vec3(-10, 0, 0), glm::vec3(1, 0, 0), 0.2);
-        addObject(Primitive::Type::CUBE, glm::vec3(10, 0, 0),  glm::vec3(0, 0, 1), 0.2);
-        addObject(Primitive::Type::CUBE, glm::vec3(0, -10, 0), glm::vec3(1, 0, 0), 0.2);
-        addObject(Primitive::Type::CUBE, glm::vec3(0, 10, 0),  glm::vec3(1, 1, 1), 0.2);
-        addObject(Primitive::Type::CUBE, glm::vec3(0, 0, -10), glm::vec3(1, 0, 0), 0.2);
-        addObject(Primitive::Type::CUBE, glm::vec3(0, 0, 10),  glm::vec3(1, 1, 0), 0.2);
+        addObject(Primitive::Type::CUBE, glm::vec3(0, 0, 0),   glm::vec3(1, 1, 1), nullptr, 0.5);
+        addObject(Primitive::Type::CUBE, glm::vec3(-10, 0, 0), glm::vec3(1, 0, 0), nullptr, 0.2);
+        addObject(Primitive::Type::CUBE, glm::vec3(10, 0, 0),  glm::vec3(0, 0, 1), nullptr, 0.2);
+        addObject(Primitive::Type::CUBE, glm::vec3(0, -10, 0), glm::vec3(1, 0, 0), nullptr, 0.2);
+        addObject(Primitive::Type::CUBE, glm::vec3(0, 10, 0),  glm::vec3(1, 1, 1), nullptr, 0.2);
+        addObject(Primitive::Type::CUBE, glm::vec3(0, 0, -10), glm::vec3(1, 0, 0), nullptr, 0.2);
+        addObject(Primitive::Type::CUBE, glm::vec3(0, 0, 10),  glm::vec3(1, 1, 0), nullptr, 0.2);
     }
 
     // We must first render all objects before we render any text
@@ -116,7 +119,7 @@ void Frame::draw(GLfloat secs_since_start, GLfloat secs_since_last_frame)
  */
 void Frame::drawTesselatedFloor()
 {
-    bool useVertexColours = true;
+    bool useVertexColours = false;
 
     GLfloat y_pos = -3.0f;
 
@@ -144,8 +147,11 @@ void Frame::drawTesselatedFloor()
 
         for (x = floor_x_start; x < (floor_x_start + floor_length); x += tile_dimension)
         {
-            SceneObject* object = new SceneObject(display_manager_, Primitive::Type::TESSELATION, glm::vec3(x, y_pos, z),  glm::vec3(1, 1, 1));
+            SceneObject* object = new SceneObject(display_manager_, Primitive::Type::TESSELATION, glm::vec3(x, y_pos, z), glm::vec3(1, 1, 1));
             Tesselation* tile = dynamic_cast<Tesselation*>(object->getPrimitive());
+
+            Texture* texture = display_manager_->getTextureCollection()->getTexture("water");
+            object->setTexture(texture);
 
             tile->setRandomisePeaks(false);
             tile->setType(Tesselation::Type::RANDOM);

@@ -13,6 +13,7 @@ DisplayManager::DisplayManager()
 
     frame_queue_ = nullptr;
     primitives_ = nullptr;
+    textures_ = nullptr;
 
     object_shader_ = nullptr;
     text_drawer_ = nullptr;
@@ -53,6 +54,16 @@ bool DisplayManager::initialise(GLuint wnd_width, GLuint wnd_height)
         }
 
         primitives_ = new PrimitiveCollection(object_shader_);
+        textures_ = new TextureCollection(object_shader_);
+        textures_->registerTexture("/home/sysop/textures/conifer.jpg", "conifer");
+        textures_->registerTexture("/home/sysop/textures/foam.jpg", "foam");
+        textures_->registerTexture("/home/sysop/textures/ice.jpg", "ice");
+        textures_->registerTexture("/home/sysop/textures/leaves.jpg", "leaves");
+        textures_->registerTexture("/home/sysop/textures/orange_leather.jpg", "leather");
+        textures_->registerTexture("/home/sysop/textures/sky.jpg", "sky");
+        textures_->registerTexture("/home/sysop/textures/slate.jpg", "slate");
+        textures_->registerTexture("/home/sysop/textures/water.jpg", "water");
+        textures_->registerTexture("/home/sysop/textures/wood.jpg", "wood");
 
         setPerspective(0.1f, 100.0f, 45.0f);
         setCameraCoords(glm::vec3(0, 0, 0));
@@ -78,6 +89,12 @@ void DisplayManager::teardown()
     {
         delete primitives_;
         primitives_ = nullptr;
+    }
+
+    if (textures_)
+    {
+        delete textures_;
+        textures_ = nullptr;
     }
 
     if (frame_queue_)
@@ -187,6 +204,11 @@ void DisplayManager::setFrameQueue(FrameQueue* queue)
 PrimitiveCollection* DisplayManager::getPrimitiveCollection()
 {
     return primitives_;
+}
+
+TextureCollection* DisplayManager::getTextureCollection()
+{
+    return textures_;
 }
 
 StandardShader* DisplayManager::getObjectShader()

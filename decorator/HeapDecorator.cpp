@@ -3,6 +3,7 @@
 #include <math.h>
 
 #include "adt/HeapArray.h"
+#include "core/DisplayManager.h"
 
 void HeapDecorator::setHeap(HeapArray* heapArray)
 {
@@ -65,6 +66,7 @@ void HeapDecorator::dft(size_t node_index, unsigned long node_level, const glm::
     // Draw the node
     int node_value = heap_->getNodeValue(node_index);
     glm::vec3 node_colour;
+
     if (node_value == highlighted_node_value_)
     {
         node_colour = glm::vec3(1, 0, 0);
@@ -74,7 +76,8 @@ void HeapDecorator::dft(size_t node_index, unsigned long node_level, const glm::
         node_colour = glm::vec3(0.8, 0.8, 0.8);
     }
 
-    current_frame_->addObject(Primitive::Type::CUBE, node_position, node_colour, 1.5);
+    Texture* texture = frame_queue_->getDisplayManager()->getTextureCollection()->getTexture("slate");
+    current_frame_->addObject(Primitive::Type::CUBE, node_position, node_colour, texture, 1.5);
 
     if (node_index != 0)
     {

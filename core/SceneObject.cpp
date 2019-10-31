@@ -13,6 +13,7 @@ SceneObject::SceneObject(DisplayManager* display_manager, Primitive::Type type, 
     display_manager_ = display_manager;
 
     primitive_ = display_manager_->getPrimitiveCollection()->selectPrimitive(type);
+    texture_ = nullptr;
 
     world_coords_ = world_coords;
     additional_world_coords_ = world_coords;
@@ -29,6 +30,11 @@ SceneObject::~SceneObject()
 void SceneObject::setScale(GLfloat s)
 {
     scale_ = s;
+}
+
+void SceneObject::setTexture(Texture* texture)
+{
+    texture_ = texture;
 }
 
 void SceneObject::setAdditionalCoords(const glm::vec3& world_coords)
@@ -69,6 +75,17 @@ void SceneObject::draw(GLfloat secs_since_start, GLfloat secs_since_last_frame, 
     else
     {
         display_manager_->getObjectShader()->setOverrideModelColour(false);
+    }
+
+    if (texture_)
+    {
+        display_manager_->getObjectShader()->setTexturesOn(true);
+        display_manager_->getObjectShader()->setTextureSamplerTextureUnit(0);
+        texture_->use(0);
+    }
+    else
+    {
+        display_manager_->getObjectShader()->setTexturesOn(false);
     }
 
     primitive_->draw();

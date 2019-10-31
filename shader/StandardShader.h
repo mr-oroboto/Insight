@@ -17,6 +17,7 @@ public:
     GLuint getPositionAttribute();
     GLuint getNormalAttribute();
     GLuint getColourAttribute();
+    GLuint getTextureCoordsAttribute();
 
     void setCameraCoords(const glm::vec3& world_coords);
 
@@ -30,6 +31,9 @@ public:
 
     void setOverrideModelColour(bool override, const glm::vec3& colour = glm::vec3(1.0f, 1.0f, 1.0f));
 
+    void setTexturesOn(bool on);
+    void setTextureSamplerTextureUnit(GLuint texture_unit);
+
 protected:
     static const char* vertex_source_;
     static const char* fragment_source_;
@@ -37,6 +41,7 @@ protected:
     GLuint position_attribute_;
     GLuint normal_attribute_;
     GLuint colour_attribute_;
+    GLuint texture_coords_attribute_;
 
     GLuint uni_model_transform_;
     GLuint uni_model_do_override_colour_;
@@ -50,6 +55,9 @@ protected:
     GLuint uni_light_colour_;
     GLuint uni_light_coords_;
     GLuint uni_light_intensity_;
+
+    GLuint uni_textures_on_;
+    GLuint uni_texture_sampler_;
 };
 
 
