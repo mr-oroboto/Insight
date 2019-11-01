@@ -10,7 +10,7 @@ public:
     Decorator(FrameQueue* queue) : frame_queue_(queue) { current_frame_ = nullptr; }
     virtual ~Decorator();
 
-    virtual bool decorate() = 0;
+    virtual void decorate() = 0;
 
 protected:
     FrameQueue* frame_queue_;

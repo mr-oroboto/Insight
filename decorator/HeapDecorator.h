@@ -23,12 +23,14 @@ public:
     void setHeap(HeapArray* heap);
     void setHightlightedNodeValue(int node_value);
 
-    bool decorate();
-    bool decorateDft(TraverseOrder traverse_order);
+    void decorate();
+    void decorateDft(TraverseOrder traverse_order);
+    void decorateBft();
 
 protected:
     void dft(size_t node_index, unsigned long node_level, const glm::vec3& last_node_coords, bool is_left_of_parent, TraverseOrder traverse_order = TraverseOrder::IN_ORDER, Frame* prototype_frame = nullptr);
     void drawNode(size_t node_index, const glm::vec3& node_position, const glm::vec3& last_node_coords, Frame* prototype_frame);
+    void bft(Frame* prototype_frame);
 
     HeapArray* heap_;
     int highlighted_node_value_;

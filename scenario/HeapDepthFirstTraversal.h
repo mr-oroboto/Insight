@@ -2,6 +2,7 @@
 #define INSIGHT_SCENARIO_HEAPDEPTHFIRSTTRAVERSAL_H
 
 #include "Scenario.h"
+#include "decorator/HeapDecorator.h"
 
 class HeapDepthFirstTraversal : public Scenario
 {
@@ -10,6 +11,7 @@ public:
     ~HeapDepthFirstTraversal();
 
     void run();
+    void run(HeapDecorator::TraverseOrder traverse_order);
 };
 
 

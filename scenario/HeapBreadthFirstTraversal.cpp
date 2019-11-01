@@ -1,4 +1,4 @@
-#include "HeapDepthFirstTraversal.h"
+#include "HeapBreadthFirstTraversal.h"
 
 #include <iostream>
 
@@ -6,17 +6,12 @@
 #include "decorator/HeapDecorator.h"
 #include "core/FrameQueue.h"
 
-HeapDepthFirstTraversal::~HeapDepthFirstTraversal()
+HeapBreadthFirstTraversal::~HeapBreadthFirstTraversal()
 {
-    std::cout << "HeapDepthFirstTraversal::~HeapDepthFirstTraversal()" << std::endl;
+    std::cout << "HeapBreadthFirstTraversal::~HeapBreadthFirstTraversal()" << std::endl;
 }
 
-void HeapDepthFirstTraversal::run()
-{
-    run(HeapDecorator::TraverseOrder::IN_ORDER);
-}
-
-void HeapDepthFirstTraversal::run(HeapDecorator::TraverseOrder traverse_order)
+void HeapBreadthFirstTraversal::run()
 {
     FrameQueue* frame_queue = new FrameQueue(display_manager_, true);
     frame_queue->setFrameRate(1);
@@ -36,7 +31,7 @@ void HeapDepthFirstTraversal::run(HeapDecorator::TraverseOrder traverse_order)
 
     heap.validate();
 
-    decorator->decorateDft(traverse_order);
+    decorator->decorateBft();
 
     frame_queue->setReady();
     frame_queue->setActive();    // transfer ownership to DisplayManager

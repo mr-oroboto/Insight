@@ -1,8 +1,7 @@
 #include <iostream>
 
 #include "core/WindowManager.h"
-#include "scenario/MinHeap.h"
-#include "scenario/HeapDepthFirstTraversal.h"
+#include "scenario/HeapBreadthFirstTraversal.h"
 
 #define WINDOW_FULLSCREEN false
 #define WINDOW_X_SIZE 2560
@@ -26,8 +25,7 @@ int main(int argc, char *argv[])
     }
 
     {
-//        MinHeap scenario(window_manager->getDisplayManager());
-        HeapDepthFirstTraversal scenario(window_manager->getDisplayManager());
+        HeapBreadthFirstTraversal scenario(window_manager->getDisplayManager());
         scenario.run();
     }
 
