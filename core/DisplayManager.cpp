@@ -14,6 +14,7 @@ DisplayManager::DisplayManager()
     frame_queue_ = nullptr;
     primitives_ = nullptr;
     textures_ = nullptr;
+    update_scene_callback_ = nullptr;
 
     object_shader_ = nullptr;
     text_drawer_ = nullptr;
@@ -160,7 +161,7 @@ void DisplayManager::setPerspective(GLfloat near_plane, GLfloat far_plane, GLflo
     object_shader_->setProjectionTransform(projection_transform_);
 }
 
-void DisplayManager::drawScene()
+void DisplayManager::drawScene(GLfloat secs_since_last_frame)
 {
     if ( ! initialised_)
     {
@@ -177,6 +178,11 @@ void DisplayManager::drawScene()
     if (frame_queue_)
     {
         frame_queue_->drawCurrentFrame();
+    }
+
+    if (update_scene_callback_)
+    {
+        update_scene_callback_(secs_since_last_frame);
     }
 }
 
@@ -199,6 +205,11 @@ void DisplayManager::setFrameQueue(FrameQueue* queue)
     }
 
     frame_queue_ = queue;
+}
+
+void DisplayManager::setUpdateSceneCallback(std::function<void(GLfloat)> callback)
+{
+    update_scene_callback_ = callback;
 }
 
 PrimitiveCollection* DisplayManager::getPrimitiveCollection()

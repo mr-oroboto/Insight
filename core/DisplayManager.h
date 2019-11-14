@@ -3,6 +3,7 @@
 
 #include <map>
 #include <string>
+#include <functional>
 
 #include <glm/glm.hpp>
 #include <GL/glew.h>                    // must be included before gl.h (which is via SDL_opengl.h)
@@ -16,6 +17,8 @@
 class DisplayManager
 {
 public:
+    typedef void (*UpdateSceneCallback)(GLfloat);
+
     DisplayManager();
     ~DisplayManager();
 
@@ -27,6 +30,7 @@ public:
     void setLightCoords(const glm::vec3& world_coords);
     void setLightColour(const glm::vec3& colour, GLfloat intensity = 1.0);
     void setPerspective(GLfloat near_plane, GLfloat far_plane, GLfloat fov);
+    void setUpdateSceneCallback(std::function<void(GLfloat)> callback);
 
     PrimitiveCollection* getPrimitiveCollection();
     TextureCollection* getTextureCollection();
@@ -38,7 +42,7 @@ public:
     glm::mat4 getViewTransform();
     glm::mat4 getProjectionTransform();
 
-    void drawScene();
+    void drawScene(GLfloat secs_since_last_frame);
     void drawText(const std::string& text, const glm::vec3& world_coords, bool ortho = true, GLfloat scale = 1.0f, const glm::vec3& colour = glm::vec3(1.0f, 1.0f, 1.0f));
 
 private:
@@ -49,6 +53,7 @@ private:
     PrimitiveCollection* primitives_;
     TextureCollection* textures_;
     FrameQueue* frame_queue_;
+    std::function<void(GLfloat)> update_scene_callback_;
 
     GLuint wnd_width_, wnd_height_;
 

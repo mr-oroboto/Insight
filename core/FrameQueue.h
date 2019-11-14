@@ -16,7 +16,7 @@ public:
     FrameQueue(DisplayManager* display_manager, bool repeats);
     ~FrameQueue();
 
-    Frame* newFrame();
+    Frame* newFrame(bool draw_object_position = false, bool draw_reference_axes = false, bool draw_floor = false);
     bool enqueueFrame(Frame*);
 
     void setFrameRate(GLfloat fps);

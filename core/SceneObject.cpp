@@ -93,6 +93,11 @@ void SceneObject::draw(GLfloat secs_since_start, GLfloat secs_since_last_frame, 
     glDisable(GL_DEPTH_TEST);
 }
 
+void SceneObject::update(GLfloat secs_since_last_frame)
+{
+
+}
+
 glm::vec3 SceneObject::getPosition()
 {
     return world_coords_;

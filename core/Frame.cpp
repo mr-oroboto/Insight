@@ -34,6 +34,11 @@ void Frame::addObject(Primitive::Type type, const glm::vec3& world_coords, const
     object->setScale(scale);
     object->setTexture(texture);
 
+    addObject(object);
+}
+
+void Frame::addObject(SceneObject* object)
+{
     objects_.push_back(object);
 }
 
@@ -280,4 +285,12 @@ GLuint Frame::deleteObjectsAtPosition(const glm::vec3 &world_coords, Primitive::
     } while (object_deleted);
 
     return objects_deleted;
+}
+
+void Frame::updateObjects(GLfloat secs_since_last_frame)
+{
+    for (SceneObject* object : objects_)
+    {
+        object->update(secs_since_last_frame);
+    }
 }

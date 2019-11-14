@@ -33,9 +33,9 @@ FrameQueue::~FrameQueue()
  *
  * This Frame should either be passed back to this FrameQueue using enqueueFrame(), or deleted by the caller.
  */
-Frame* FrameQueue::newFrame()
+Frame* FrameQueue::newFrame(bool draw_object_position, bool draw_reference_axes, bool draw_floor)
 {
-    Frame* frame = new Frame(display_manager_);
+    Frame* frame = new Frame(display_manager_, draw_object_position, draw_reference_axes, draw_floor);
 
     return frame;
 }

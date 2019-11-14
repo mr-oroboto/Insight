@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "core/WindowManager.h"
-#include "scenario/HeapBreadthFirstTraversal.h"
+#include "scenario/StarField/StarField.h"
 
 #define WINDOW_FULLSCREEN false
 #define WINDOW_X_SIZE 2560
@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
     }
 
     {
-        HeapBreadthFirstTraversal scenario(window_manager->getDisplayManager());
+        StarField scenario(window_manager->getDisplayManager());
         scenario.run();
     }
 

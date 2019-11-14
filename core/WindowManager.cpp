@@ -143,7 +143,7 @@ bool WindowManager::run()
             display_manager_->setLightCoords(light_coords_);
         }
 
-        display_manager_->drawScene();
+        display_manager_->drawScene(secs_since_last_frame);
 
         // swap the (presumably prepared elsewhere) back-buffer into the front-buffer
         SDL_GL_SwapWindow(window_);

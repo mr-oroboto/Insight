@@ -12,7 +12,7 @@ class SceneObject
 {
 public:
     SceneObject(DisplayManager* display_manager, Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour);
-    ~SceneObject();
+    virtual ~SceneObject();
 
     void setScale(GLfloat scale);
     void setAdditionalCoords(const glm::vec3& world_coords);
@@ -22,6 +22,7 @@ public:
     Primitive* getPrimitive();
 
     void draw(GLfloat secs_since_start, GLfloat secs_since_last_frame, bool use_colour = true);
+    virtual void update(GLfloat secs_since_last_frame);
 
     SceneObject* clone();       // prefer to copy ctor so subclasses of Frame keep control
 
