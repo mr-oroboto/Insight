@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "core/WindowManager.h"
-#include "scenario/StarField/StarField.h"
+#include "scenario/AutoPilot/AutoPilot.h"
 
 #define WINDOW_FULLSCREEN false
 #define WINDOW_X_SIZE 2560
@@ -25,11 +25,10 @@ int main(int argc, char *argv[])
     }
 
     {
-        StarField scenario(window_manager->getDisplayManager());
+        AutoPilot scenario(window_manager->getDisplayManager());
         scenario.run();
+        window_manager->run();
     }
-
-    window_manager->run();
 
     delete window_manager;
 

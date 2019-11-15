@@ -23,14 +23,14 @@ WindowManager::WindowManager(GLuint wnd_size_x, GLuint wnd_size_y, bool fullscre
     window_ = nullptr;
     display_manager_ = nullptr;
 
-    t_last_frame_drawn_at_ = std::chrono::high_resolution_clock::now();
+    t_last_renderloop_at_ = std::chrono::high_resolution_clock::now();
 
     camera_speed_ = 10.0f;
     pitch_speed_ = 30.0f;
     yaw_speed_ = 30.0f;
 
     camera_coords_ = initial_camera_coords;
-    camera_direction_ = glm::vec3(0, 0, -1);    // facing into screen
+    camera_pointing_vector_ = glm::vec3(0, 0, -1);    // facing into screen
     camera_pitch_degrees_ = 0.0f;
     camera_yaw_degrees_ = 270.0f;               // so that we're initially facing into screen (-z)
 
@@ -117,9 +117,10 @@ bool WindowManager::run()
         return false;
     }
 
-    t_last_frame_drawn_at_ = std::chrono::high_resolution_clock::now();
+    t_rendering_started_at_ = t_last_renderloop_at_ =  std::chrono::high_resolution_clock::now();
 
-    display_manager_->setCameraCoords(camera_coords_, camera_direction_);
+    display_manager_->setCameraCoords(camera_coords_);
+    display_manager_->setCameraPointingVector(camera_pointing_vector_);
     display_manager_->setLightCoords(light_coords_);
     display_manager_->setLightColour(glm::vec3(1, 1, 1), 0.5);
 
@@ -128,10 +129,12 @@ bool WindowManager::run()
     while (continue_rendering)
     {
         auto t_now = std::chrono::high_resolution_clock::now();
-        GLfloat secs_since_last_frame = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(t_now - t_last_frame_drawn_at_).count();
-        t_last_frame_drawn_at_ = t_now;
 
-        continue_rendering = processEvents(secs_since_last_frame);
+        GLfloat secs_since_last_renderloop = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(t_now - t_last_renderloop_at_).count();
+        GLfloat secs_since_rendering_started = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(t_now - t_rendering_started_at_).count();
+        t_last_renderloop_at_ = t_now;
+
+        continue_rendering = processEvents(secs_since_last_renderloop);
 
         if (rotate_light_)
         {
@@ -143,7 +146,7 @@ bool WindowManager::run()
             display_manager_->setLightCoords(light_coords_);
         }
 
-        display_manager_->drawScene(secs_since_last_frame);
+        display_manager_->drawScene(secs_since_rendering_started, secs_since_last_renderloop);
 
         // swap the (presumably prepared elsewhere) back-buffer into the front-buffer
         SDL_GL_SwapWindow(window_);
@@ -152,16 +155,16 @@ bool WindowManager::run()
     return true;
 }
 
-bool WindowManager::processEvents(GLfloat secs_since_last_frame)
+bool WindowManager::processEvents(GLfloat secs_since_last_renderloop)
 {
     bool continue_rendering = true;
     bool update_camera = false;
 
     SDL_Event window_event;
 
-    GLfloat camera_speed_increment = camera_speed_ * secs_since_last_frame;
-    GLfloat pitch_speed_increment = pitch_speed_ * secs_since_last_frame;
-    GLfloat yaw_speed_increment = yaw_speed_ * secs_since_last_frame;
+    GLfloat camera_speed_increment = camera_speed_ * secs_since_last_renderloop;
+    GLfloat pitch_speed_increment = pitch_speed_ * secs_since_last_renderloop;
+    GLfloat yaw_speed_increment = yaw_speed_ * secs_since_last_renderloop;
 
     while (SDL_PollEvent(&window_event))                // gather clicks, keystrokes, window movements, resizes etc
     {
@@ -204,21 +207,21 @@ bool WindowManager::processEvents(GLfloat secs_since_last_frame)
         {
             if (window_event.key.keysym.sym == SDLK_w)
             {
-                camera_coords_ += camera_speed_increment * display_manager_->getCameraDirectionVector();
+                camera_coords_ += camera_speed_increment * display_manager_->getCameraPointingVector();
             }
             else if (window_event.key.keysym.sym == SDLK_s)
             {
-                camera_coords_ -= camera_speed_increment * display_manager_->getCameraDirectionVector();
+                camera_coords_ -= camera_speed_increment * display_manager_->getCameraPointingVector();
             }
             else if (window_event.key.keysym.sym == SDLK_a)
             {
                 // move left along normal to the camera direction and world up
-                camera_coords_ -= glm::normalize(glm::cross(display_manager_->getCameraDirectionVector(), display_manager_->getCameraUpVector())) * camera_speed_increment;
+                camera_coords_ -= glm::normalize(glm::cross(display_manager_->getCameraPointingVector(), display_manager_->getCameraUpVector())) * camera_speed_increment;
             }
             else if (window_event.key.keysym.sym == SDLK_d)
             {
                 // move right along normal to camera direction and world up
-                camera_coords_ += glm::normalize(glm::cross(display_manager_->getCameraDirectionVector(), display_manager_->getCameraUpVector())) * camera_speed_increment;
+                camera_coords_ += glm::normalize(glm::cross(display_manager_->getCameraPointingVector(), display_manager_->getCameraUpVector())) * camera_speed_increment;
             }
             else if (window_event.key.keysym.sym == SDLK_UP)
             {
@@ -270,12 +273,13 @@ bool WindowManager::processEvents(GLfloat secs_since_last_frame)
 
     if (update_camera)
     {
-        camera_direction_.x = cos(glm::radians(camera_pitch_degrees_)) * cos(glm::radians(camera_yaw_degrees_));
-        camera_direction_.y = sin(glm::radians(camera_pitch_degrees_));
-        camera_direction_.z = cos(glm::radians(camera_pitch_degrees_)) * sin(glm::radians(camera_yaw_degrees_));
-        camera_direction_ = glm::normalize(camera_direction_);
+        camera_pointing_vector_.x = cos(glm::radians(camera_pitch_degrees_)) * cos(glm::radians(camera_yaw_degrees_));
+        camera_pointing_vector_.y = sin(glm::radians(camera_pitch_degrees_));
+        camera_pointing_vector_.z = cos(glm::radians(camera_pitch_degrees_)) * sin(glm::radians(camera_yaw_degrees_));
+        camera_pointing_vector_ = glm::normalize(camera_pointing_vector_);
 
-        display_manager_->setCameraCoords(camera_coords_, camera_direction_);
+        display_manager_->setCameraCoords(camera_coords_);
+        display_manager_->setCameraPointingVector(camera_pointing_vector_);
     }
 
     return continue_rendering;

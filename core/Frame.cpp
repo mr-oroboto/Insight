@@ -64,7 +64,7 @@ void Frame::addText(const std::string& text, GLfloat x, GLfloat y, GLfloat z, bo
     texts_.push_back(textObj);
 }
 
-void Frame::draw(GLfloat secs_since_start, GLfloat secs_since_last_frame)
+void Frame::draw(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame)
 {
     if (draw_floor_)
     {
@@ -97,7 +97,7 @@ void Frame::draw(GLfloat secs_since_start, GLfloat secs_since_last_frame)
     // We must first render all objects before we render any text
     for (SceneObject* object : objects_)
     {
-        object->draw(secs_since_start, secs_since_last_frame);
+        object->draw(secs_since_rendering_started, secs_since_framequeue_started, secs_since_last_renderloop, secs_since_last_frame);
     }
 
     // Now text can be rendered
@@ -130,15 +130,15 @@ void Frame::drawTesselatedFloor()
 
     GLfloat floor_x_start = -12.0f;
     GLfloat floor_z_start = -12.0f;
-    GLfloat floor_width = 24.0;      // y-dimension
-    GLfloat floor_length = 24.0;     // x-dimension
-    GLfloat tile_dimension = 6.0;    // assumes square tiles, this is actually defined in Tesselation (DRAGON)
+    GLfloat floor_width_z = 24.0;
+    GLfloat floor_width_x = 24.0;
+    GLfloat tile_dimension = TESSELATION_WIDTH;                                     // DRAGON: assumes square tiles
     GLfloat x, z;
-    GLuint tiles_long = floor_length / tile_dimension;    // how many tiles wide (in y-dimension) is this surface?
-    GLuint tiles_wide = floor_width / tile_dimension;
+    GLuint tiles_wide_x = static_cast<GLuint>(floor_width_x / tile_dimension);      // how many tiles wide (in x-dimension) is this surface?
+    GLuint tiles_wide_z = static_cast<GLuint>(floor_width_z / tile_dimension);      // how many tiles wide (in z-dimension) is this surface?
 
-    std::vector<std::vector<GLfloat>> previous_bottom_row_bottom_right_y(tiles_wide);
-    std::vector<GLfloat> previous_right_column_bottom_right_y;
+    std::vector<std::vector<GLfloat>> previous_bottom_row_bottom_right_y(tiles_wide_x);     // the top of each tile in each subsequent z row joins up against this (one per column along the x-axis)
+    std::vector<GLfloat> previous_right_column_bottom_right_y;                              // the left of each subsequent x column joins up against this
     GLuint current_column = 0, current_row = 0;
     GLfloat last_yfree;
 
@@ -146,11 +146,11 @@ void Frame::drawTesselatedFloor()
      * The floor is made of tiles (Tesselation primitives), each of which itself is made of sub-tiles. For the seam
      * joining to work correctly, we must "grow" the floor in the positive z and positive x directions.
      */
-    for (z = floor_z_start; z < (floor_z_start + floor_width); z += tile_dimension)
+    for (z = floor_z_start; z < (floor_z_start + floor_width_z); z += tile_dimension)
     {
-        current_column = 0;
+        current_column = 0;     // we make columns along the x-axis and rows along the z-axis
 
-        for (x = floor_x_start; x < (floor_x_start + floor_length); x += tile_dimension)
+        for (x = floor_x_start; x < (floor_x_start + floor_width_x); x += tile_dimension)
         {
             SceneObject* object = new SceneObject(display_manager_, Primitive::Type::TESSELATION, glm::vec3(x, y_pos, z), glm::vec3(1, 1, 1));
             Tesselation* tile = dynamic_cast<Tesselation*>(object->getPrimitive());
@@ -181,12 +181,12 @@ void Frame::drawTesselatedFloor()
                 tile->setPreviousRightColumnBottomRightY(previous_right_column_bottom_right_y);
             }
 
-            if (current_column == tiles_long - 1)
+            if (current_column == tiles_wide_x - 1)
             {
                 tile->setBorderRight(true);
             }
 
-            if (current_row == tiles_wide - 1)
+            if (current_row == tiles_wide_z - 1)
             {
                 tile->setBorderBottom(true);
             }
@@ -197,7 +197,7 @@ void Frame::drawTesselatedFloor()
             previous_right_column_bottom_right_y = tile->getRightColumnBottomRightY();
             last_yfree = tile->getYFree();
 
-            object->draw(0, 0, ! useVertexColours);
+            object->draw(0, 0, 0, 0, ! useVertexColours);
 
             delete object;
 
@@ -236,7 +236,7 @@ void Frame::drawTesselatedFloorWithIsolatedTiles()
             tile->setIsolated();
             tile->initVertices();
 
-            object->draw(0, 0, ! useVertexColours);
+            object->draw(0, 0, 0, 0, ! useVertexColours);
 
             delete object;
         }
@@ -287,10 +287,50 @@ GLuint Frame::deleteObjectsAtPosition(const glm::vec3 &world_coords, Primitive::
     return objects_deleted;
 }
 
-void Frame::updateObjects(GLfloat secs_since_last_frame)
+GLuint Frame::deleteObjectsOutsideBoundary(const glm::vec3 &world_coords, GLfloat bounding_width, Primitive::Type primitive_type)
+{
+    bool object_deleted = false;
+    bool objects_deleted = 0;
+
+    do
+    {
+        object_deleted = false;
+
+        for (std::vector<SceneObject*>::iterator it = objects_.begin(); it != objects_.end(); it++)
+        {
+            glm::vec3 object_position = (*it)->getPosition();
+
+            if (coordinatesAreOutsideBoundary(object_position, world_coords, bounding_width) && (*it)->getPrimitive()->getType() == primitive_type)
+            {
+                delete *it;
+                objects_.erase(it);
+
+                object_deleted = true;
+                objects_deleted++;
+                break;
+            }
+        }
+    } while (object_deleted);
+
+    return objects_deleted;
+}
+
+bool Frame::coordinatesAreOutsideBoundary(const glm::vec3& world_coords, const glm::vec3& reference_coords, GLfloat bounding_width)
+{
+    if ((world_coords.x < (reference_coords.x - bounding_width)) || (world_coords.x > (reference_coords.x + bounding_width)) ||
+        (world_coords.y < (reference_coords.y - bounding_width)) || (world_coords.y > (reference_coords.y + bounding_width)) ||
+        (world_coords.z < (reference_coords.z - bounding_width)) || (world_coords.z > (reference_coords.z + bounding_width)))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+void Frame::updateObjects(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame)
 {
     for (SceneObject* object : objects_)
     {
-        object->update(secs_since_last_frame);
+        object->update(secs_since_rendering_started, secs_since_framequeue_started, secs_since_last_renderloop, secs_since_last_frame);
     }
 }

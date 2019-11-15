@@ -9,7 +9,25 @@ public:
     Star(DisplayManager* display_manager, Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour);
     ~Star();
 
-    virtual void update(GLfloat secs_since_last_frame);
+    enum Colour
+    {
+        WHITE = 0,
+        RED = 1,
+        BLUE = 2
+    };
+
+    void setNearAndFarPlane(GLfloat near, GLfloat far);
+    void setForwardUnitsPerSec(GLfloat forward_units_per_sec);
+    void setStarColour(Star::Colour colour);
+
+    virtual void update(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame);
+
+private:
+    Colour star_colour_;
+
+    GLfloat forward_units_per_sec_;
+    GLfloat fov_near_z_;                // front of screen (where stars disappear)
+    GLfloat fov_far_z_;                 // rear of screen (where stars appear)
 };
 
 

@@ -38,7 +38,7 @@ void Tesselation::initialise()
         random_height_seeds_.push_back(distribution(gen));
     }
 
-    width_ = 6.0f;
+    width_ = TESSELATION_WIDTH;
     length_ = width_;                     // DRAGON: don't change this, we assume the tesselation is a square
 
     vertices_per_subtile_ = 12;           // 4 triangles with open base

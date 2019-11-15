@@ -13,7 +13,7 @@ public:
     void run();
 
 private:
-    void updateSceneCallback(GLfloat secs_since_last_frame);
+    void updateSceneCallback(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame);
 
     Frame* frame_;
 };

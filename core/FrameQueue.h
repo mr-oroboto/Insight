@@ -25,7 +25,7 @@ public:
 
     DisplayManager* getDisplayManager();
 
-    void drawCurrentFrame();
+    void drawCurrentFrame(GLfloat secs_since_rendering_started, GLfloat& secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat& secs_since_last_frame);
 
 protected:
     bool repeating_;

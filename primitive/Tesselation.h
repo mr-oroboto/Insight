@@ -7,6 +7,8 @@
 
 #include "Primitive.h"
 
+#define TESSELATION_WIDTH 6.0f
+
 class Tesselation : public Primitive
 {
 public:

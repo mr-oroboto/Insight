@@ -23,12 +23,14 @@ public:
     void addText(const std::string& text, GLfloat x, GLfloat y, GLfloat z = 0.0f, bool ortho = true, GLfloat scale = 1.0f, const glm::vec3& colour = glm::vec3(1.0f, 1.0f, 1.0f));
     void addLine(const glm::vec3& from_world_coords, const glm::vec3& to_world_coords, const glm::vec3& colour = glm::vec3(1.0f, 1.0f, 1.0f));
 
-    void draw(GLfloat secs_since_start, GLfloat secs_since_last_frame);
-    void updateObjects(GLfloat secs_since_last_frame);
+    void draw(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame);
+    void updateObjects(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame);
 
     Frame* clone();     // prefer to copy ctor so subclasses of Frame keep control
 
     GLuint deleteObjectsAtPosition(const glm::vec3& world_coords, Primitive::Type primitive_type);
+    GLuint deleteObjectsOutsideBoundary(const glm::vec3 &world_coords, GLfloat bounding_width, Primitive::Type primitive_type);
+    bool coordinatesAreOutsideBoundary(const glm::vec3& world_coords, const glm::vec3& reference_coords, GLfloat bounding_width);
 
 private:
     struct Text

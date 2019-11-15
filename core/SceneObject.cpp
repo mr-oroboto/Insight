@@ -37,12 +37,17 @@ void SceneObject::setTexture(Texture* texture)
     texture_ = texture;
 }
 
+void SceneObject::setColour(const glm::vec3& colour)
+{
+    colour_ = colour;
+}
+
 void SceneObject::setAdditionalCoords(const glm::vec3& world_coords)
 {
     additional_world_coords_ = world_coords;
 }
 
-void SceneObject::draw(GLfloat secs_since_start, GLfloat secs_since_last_frame, bool use_colour)
+void SceneObject::draw(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame, bool use_colour)
 {
     glEnable(GL_DEPTH_TEST);
 
@@ -93,7 +98,7 @@ void SceneObject::draw(GLfloat secs_since_start, GLfloat secs_since_last_frame, 
     glDisable(GL_DEPTH_TEST);
 }
 
-void SceneObject::update(GLfloat secs_since_last_frame)
+void SceneObject::update(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame)
 {
 
 }

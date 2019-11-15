@@ -52,13 +52,13 @@ void StarField::run()
 
     frame_queue->enqueueFrame(frame_);  // @todo we should use a shared pointer so we also retain ownership
 
-    display_manager_->setUpdateSceneCallback(std::bind(&StarField::updateSceneCallback, this, std::placeholders::_1));
+    display_manager_->setUpdateSceneCallback(std::bind(&StarField::updateSceneCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
 
     frame_queue->setReady();
     frame_queue->setActive();    // transfer ownership to DisplayManager
 }
 
-void StarField::updateSceneCallback(GLfloat secs_since_last_frame)
+void StarField::updateSceneCallback(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame)
 {
-    frame_->updateObjects(secs_since_last_frame);
+    frame_->updateObjects(secs_since_rendering_started, secs_since_framequeue_started, secs_since_last_renderloop, secs_since_last_frame);
 }

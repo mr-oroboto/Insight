@@ -20,7 +20,7 @@ public:
     bool run();
 
 private:
-    bool processEvents(GLfloat secs_since_last_frame);
+    bool processEvents(GLfloat secs_since_last_renderloop);
 
     SDL_Window* window_;
     SDL_GLContext opengl_context_;
@@ -35,10 +35,11 @@ private:
     GLfloat mouse_start_x_, mouse_start_y_;
     GLfloat mouse_sensitivity_;
 
-    std::chrono::high_resolution_clock::time_point t_last_frame_drawn_at_;
+    std::chrono::high_resolution_clock::time_point t_last_renderloop_at_;
+    std::chrono::high_resolution_clock::time_point t_rendering_started_at_;
 
     glm::vec3 camera_coords_;
-    glm::vec3 camera_direction_;
+    glm::vec3 camera_pointing_vector_;
     GLfloat camera_pitch_degrees_;
     GLfloat camera_yaw_degrees_;
 

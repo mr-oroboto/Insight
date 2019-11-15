@@ -108,7 +108,14 @@ void FrameQueue::setFrameRate(GLfloat fps)
     first_frame_drawn_at_ = last_frame_drawn_at_ = std::chrono::high_resolution_clock::now();
 }
 
-void FrameQueue::drawCurrentFrame()
+/**
+ * secs_since_rendering_started (in)   marks the time since the main rendering loop started
+ * secs_since_framequeue_started (out) marks the time since this FrameQueue started
+ * secs_since_last_renderloop (in)     marks the time since the last rendering loop ran
+ * secs_since_last_frame (out)         marks the time since the last frame switch in this FrameQueue
+ *
+ */
+void FrameQueue::drawCurrentFrame(GLfloat secs_since_rendering_started, GLfloat& secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat& secs_since_last_frame)
 {
     if (queue_.empty())
     {
@@ -117,14 +124,14 @@ void FrameQueue::drawCurrentFrame()
 
     auto t_now = std::chrono::high_resolution_clock::now();
 
-    GLfloat secs_since_start = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(t_now - first_frame_drawn_at_).count();
-    GLfloat secs_since_last_frame = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(t_now - last_frame_drawn_at_).count();
+    secs_since_framequeue_started = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(t_now - first_frame_drawn_at_).count();
+    secs_since_last_frame = std::chrono::duration_cast<std::chrono::duration<GLfloat>>(t_now - last_frame_drawn_at_).count();
 
     Frame* frame = queue_.front();
 
     if (frame)
     {
-        frame->draw(secs_since_start, secs_since_last_frame);
+        frame->draw(secs_since_rendering_started, secs_since_framequeue_started, secs_since_last_renderloop, secs_since_last_frame);
 
         if (secs_since_last_frame >= secs_per_frame_)
         {

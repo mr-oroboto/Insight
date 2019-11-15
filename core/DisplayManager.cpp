@@ -67,6 +67,9 @@ bool DisplayManager::initialise(GLuint wnd_width, GLuint wnd_height)
         textures_->registerTexture("/home/sysop/textures/wood.jpg", "wood");
 
         setPerspective(0.1f, 100.0f, 45.0f);
+
+        setCameraUpVector(glm::vec3(0.0f, 1.0f, 0.0f));     // OpenGL right-handed co-ordinate system (+y is up)
+        setCameraPointingVector(glm::vec3(0, 0, -1));       // facing into screen
         setCameraCoords(glm::vec3(0, 0, 0));
 
         setLightingOn(true);
@@ -119,12 +122,20 @@ void DisplayManager::teardown()
     initialised_ = false;
 }
 
-void DisplayManager::setCameraCoords(const glm::vec3& world_coords, const glm::vec3& camera_direction_vector)
+void DisplayManager::setCameraCoords(const glm::vec3& world_coords)
 {
     camera_coords_ = world_coords;
-    camera_direction_vector_ = camera_direction_vector;
-
     object_shader_->setCameraCoords(camera_coords_);
+}
+
+void DisplayManager::setCameraPointingVector(const glm::vec3 &vector)
+{
+    camera_pointing_vector_ = glm::normalize(vector);
+}
+
+void DisplayManager::setCameraUpVector(const glm::vec3 &vector)
+{
+    camera_up_vector_ = vector;
 }
 
 void DisplayManager::setLightingOn(bool on)
@@ -161,7 +172,7 @@ void DisplayManager::setPerspective(GLfloat near_plane, GLfloat far_plane, GLflo
     object_shader_->setProjectionTransform(projection_transform_);
 }
 
-void DisplayManager::drawScene(GLfloat secs_since_last_frame)
+void DisplayManager::drawScene(GLfloat secs_since_rendering_started, GLfloat secs_since_last_renderloop)
 {
     if ( ! initialised_)
     {
@@ -175,14 +186,16 @@ void DisplayManager::drawScene(GLfloat secs_since_last_frame)
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);               // clear screen to black, otherwise we'll paint over the last frame which looks weird
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // also clear the colour buffer if we've got GL_DEPTH_TEST enabled (this fixes the glitchy graphics)
 
+    GLfloat secs_since_framequeue_started = 0, secs_since_last_frame = 0;
+
     if (frame_queue_)
     {
-        frame_queue_->drawCurrentFrame();
+        frame_queue_->drawCurrentFrame(secs_since_rendering_started, secs_since_framequeue_started, secs_since_last_renderloop, secs_since_last_frame);
     }
 
     if (update_scene_callback_)
     {
-        update_scene_callback_(secs_since_last_frame);
+        update_scene_callback_(secs_since_rendering_started, secs_since_framequeue_started, secs_since_last_renderloop, secs_since_last_frame);
     }
 }
 
@@ -207,7 +220,7 @@ void DisplayManager::setFrameQueue(FrameQueue* queue)
     frame_queue_ = queue;
 }
 
-void DisplayManager::setUpdateSceneCallback(std::function<void(GLfloat)> callback)
+void DisplayManager::setUpdateSceneCallback(std::function<void(GLfloat, GLfloat, GLfloat, GLfloat)> callback)
 {
     update_scene_callback_ = callback;
 }
@@ -227,15 +240,14 @@ StandardShader* DisplayManager::getObjectShader()
     return object_shader_;
 }
 
-glm::vec3 DisplayManager::getCameraDirectionVector()
+glm::vec3 DisplayManager::getCameraPointingVector()
 {
-    return camera_direction_vector_;
+    return camera_pointing_vector_;
 }
 
 glm::vec3 DisplayManager::getCameraUpVector()
 {
-    // OpenGL right-handed co-ordinate system (+y is up)
-    return glm::vec3(0.0f, 1.0f, 0.0f);
+    return camera_up_vector_;
 }
 
 glm::mat4 DisplayManager::getViewTransform()
@@ -252,7 +264,7 @@ glm::mat4 DisplayManager::getViewTransform()
      */
     glm::mat4 view_transform = glm::lookAt(
             camera_coords_,                                                   // camera position within world co-ordinates
-            camera_coords_ + getCameraDirectionVector(),                      // looking at target (facing whatever direction is specified (into screen by default))
+            camera_coords_ + getCameraPointingVector(),                       // looking at target (facing whatever direction is specified (into screen by default))
             getCameraUpVector()                                               // OpenGL right-handed co-ordinates (+y is up)
     );
 
