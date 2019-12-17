@@ -48,6 +48,8 @@ void AutoPilot::run()
 
 void AutoPilot::setupStarField(GLuint num_stars, const glm::vec3& origin, GLfloat x_spread, GLfloat y_spread, GLfloat z_spread)
 {
+    stars_.clear();
+
     std::random_device rd;
     std::mt19937 gen(rd());
 

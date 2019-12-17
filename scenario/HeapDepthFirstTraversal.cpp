@@ -13,7 +13,9 @@ HeapDepthFirstTraversal::~HeapDepthFirstTraversal()
 
 void HeapDepthFirstTraversal::run()
 {
-    run(HeapDecorator::TraverseOrder::IN_ORDER);
+    display_manager_->setUpdateSceneCallback(nullptr);
+
+    run(HeapDecorator::TraverseOrder::PRE_ORDER);
 }
 
 void HeapDepthFirstTraversal::run(HeapDecorator::TraverseOrder traverse_order)

@@ -27,7 +27,7 @@ void HeapDecorator::decorate()
     unsigned long heap_levels = floor(log(node_count) / log(2.0));
 
     char msg[64];
-    sprintf(msg, "current value: %d, levels: %lu", highlighted_node_value_, heap_levels);
+    sprintf(msg, "Heap. [current value: %d, levels: %lu]", highlighted_node_value_, heap_levels);
     current_frame_->addText(msg, 10, 10);
 
     dft(0, heap_levels + 1, last_node_coords, false);
@@ -48,13 +48,13 @@ void HeapDecorator::decorateDft(TraverseOrder traverse_order)
     switch (traverse_order)
     {
         case TraverseOrder::PRE_ORDER:
-            sprintf(msg, "pre-order depth first traversal, levels: %lu", heap_levels);
+            sprintf(msg, "Heap, pre-order depth first traversal. [levels: %lu]", heap_levels);
             break;
         case TraverseOrder::IN_ORDER:
-            sprintf(msg, "in-order depth first traversal, levels: %lu", heap_levels);
+            sprintf(msg, "Heap, in-order depth first traversal. [levels: %lu]", heap_levels);
             break;
         case TraverseOrder::POST_ORDER:
-            sprintf(msg, "post-order depth first traversal, levels: %lu", heap_levels);
+            sprintf(msg, "Heap, post-order depth first traversal. [levels: %lu]", heap_levels);
             break;
     }
     current_frame_->addText(msg, 10, 10);
@@ -186,7 +186,7 @@ void HeapDecorator::decorateBft()
     unsigned long heap_levels = floor(log(node_count) / log(2.0));
 
     char msg[64];
-    sprintf(msg, "breadth first traversal, levels: %lu", heap_levels);
+    sprintf(msg, "Heap, breadth first traversal. [levels: %lu]", heap_levels);
     current_frame_->addText(msg, 10, 10);
 
     // Do a BFT to render all the nodes into a frame (which will be used as a prototype frame)

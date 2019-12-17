@@ -4,7 +4,6 @@
 #include <cmath>
 #include <iostream>
 
-#include <SDL2/SDL.h>
 #include <SDL2/SDL_mouse.h>
 #include <GL/glew.h>                    // must be included before gl.h (which is via SDL_opengl.h)
 
@@ -19,6 +18,7 @@ WindowManager::WindowManager(GLuint wnd_size_x, GLuint wnd_size_y, bool fullscre
 
     tracking_mouse_ = false;
     mouse_sensitivity_ = 0.001f;
+    handle_keystroke_callback_ = nullptr;
 
     window_ = nullptr;
     display_manager_ = nullptr;
@@ -29,10 +29,8 @@ WindowManager::WindowManager(GLuint wnd_size_x, GLuint wnd_size_y, bool fullscre
     pitch_speed_ = 30.0f;
     yaw_speed_ = 30.0f;
 
-    camera_coords_ = initial_camera_coords;
-    camera_pointing_vector_ = glm::vec3(0, 0, -1);    // facing into screen
-    camera_pitch_degrees_ = 0.0f;
-    camera_yaw_degrees_ = 270.0f;               // so that we're initially facing into screen (-z)
+    initial_camera_coords_ = initial_camera_coords;
+    resetCamera();
 
     lighting_on_ = true;
     rotate_light_ = true;
@@ -105,6 +103,26 @@ bool WindowManager::initialise()
     return true;
 }
 
+void WindowManager::setHandleKeystrokeCallback(std::function<bool(WindowManager*, SDL_Event, GLfloat)> callback)
+{
+    handle_keystroke_callback_ = callback;
+}
+
+void WindowManager::resetCamera()
+{
+    camera_coords_ = initial_camera_coords_;
+    camera_pointing_vector_ = glm::vec3(0, 0, -1);    // facing into screen
+    camera_pitch_degrees_ = 0.0f;
+    camera_yaw_degrees_ = 270.0f;               // so that we're initially facing into screen (-z)
+
+    if (display_manager_)
+    {
+        display_manager_->setCameraCoords(camera_coords_);
+        display_manager_->setCameraPointingVector(camera_pointing_vector_);
+        display_manager_->setCameraUpVector(glm::vec3(0.0f, 1.0f, 0.0f));
+    }
+}
+
 DisplayManager* WindowManager::getDisplayManager()
 {
     return display_manager_;
@@ -119,8 +137,7 @@ bool WindowManager::run()
 
     t_rendering_started_at_ = t_last_renderloop_at_ =  std::chrono::high_resolution_clock::now();
 
-    display_manager_->setCameraCoords(camera_coords_);
-    display_manager_->setCameraPointingVector(camera_pointing_vector_);
+    resetCamera();
     display_manager_->setLightCoords(light_coords_);
     display_manager_->setLightColour(glm::vec3(1, 1, 1), 0.5);
 
@@ -162,10 +179,6 @@ bool WindowManager::processEvents(GLfloat secs_since_last_renderloop)
 
     SDL_Event window_event;
 
-    GLfloat camera_speed_increment = camera_speed_ * secs_since_last_renderloop;
-    GLfloat pitch_speed_increment = pitch_speed_ * secs_since_last_renderloop;
-    GLfloat yaw_speed_increment = yaw_speed_ * secs_since_last_renderloop;
-
     while (SDL_PollEvent(&window_event))                // gather clicks, keystrokes, window movements, resizes etc
     {
         if (window_event.type == SDL_QUIT)
@@ -203,70 +216,21 @@ bool WindowManager::processEvents(GLfloat secs_since_last_renderloop)
             update_camera = true;
         }
 
-        if (window_event.type == SDL_KEYDOWN)
+        if (window_event.type == SDL_KEYDOWN || window_event.type == SDL_KEYUP)
         {
-            if (window_event.key.keysym.sym == SDLK_w)
+            bool continue_keystroke_processing = true;
+
+            if (handle_keystroke_callback_ != nullptr)
             {
-                camera_coords_ += camera_speed_increment * display_manager_->getCameraPointingVector();
-            }
-            else if (window_event.key.keysym.sym == SDLK_s)
-            {
-                camera_coords_ -= camera_speed_increment * display_manager_->getCameraPointingVector();
-            }
-            else if (window_event.key.keysym.sym == SDLK_a)
-            {
-                // move left along normal to the camera direction and world up
-                camera_coords_ -= glm::normalize(glm::cross(display_manager_->getCameraPointingVector(), display_manager_->getCameraUpVector())) * camera_speed_increment;
-            }
-            else if (window_event.key.keysym.sym == SDLK_d)
-            {
-                // move right along normal to camera direction and world up
-                camera_coords_ += glm::normalize(glm::cross(display_manager_->getCameraPointingVector(), display_manager_->getCameraUpVector())) * camera_speed_increment;
-            }
-            else if (window_event.key.keysym.sym == SDLK_UP)
-            {
-                // adjust pitch (Euler angle around x-axis)
-                camera_pitch_degrees_ += pitch_speed_increment;
-            }
-            else if (window_event.key.keysym.sym == SDLK_DOWN)
-            {
-                // adjust pitch (Euler angle around x-axis)
-                camera_pitch_degrees_ -= pitch_speed_increment;
-            }
-            else if (window_event.key.keysym.sym == SDLK_LEFT)
-            {
-                // adjust yaw (Euler angle around y-axis)
-                camera_yaw_degrees_ -= yaw_speed_increment;
-            }
-            else if (window_event.key.keysym.sym == SDLK_RIGHT)
-            {
-                // adjust yaw (Euler angle around y-axis)
-                camera_yaw_degrees_ += yaw_speed_increment;
+                continue_keystroke_processing = handle_keystroke_callback_(this, window_event, secs_since_last_renderloop);
             }
 
-            // clamp to sane values
-            if (camera_pitch_degrees_ > 89.0f)
+            if (continue_keystroke_processing)
             {
-                camera_pitch_degrees_ = 89.0f;
-            }
-            else if (camera_pitch_degrees_ < -89.0f)
-            {
-                camera_pitch_degrees_ = -89.0f;
-            }
-
-            update_camera = true;
-        }
-        else if (window_event.type == SDL_KEYUP)
-        {
-            if (window_event.key.keysym.sym == SDLK_q)
-            {
-                continue_rendering = false;
-                break;
-            }
-            else if (window_event.key.keysym.sym == SDLK_l)
-            {
-                lighting_on_ = ! lighting_on_;
-                display_manager_->setLightingOn(lighting_on_);
+                if ( ! (continue_rendering = handleKeystroke(window_event, secs_since_last_renderloop, update_camera)))
+                {
+                    break;
+                }
             }
         }
     }
@@ -280,6 +244,83 @@ bool WindowManager::processEvents(GLfloat secs_since_last_renderloop)
 
         display_manager_->setCameraCoords(camera_coords_);
         display_manager_->setCameraPointingVector(camera_pointing_vector_);
+    }
+
+    return continue_rendering;
+}
+
+bool WindowManager::handleKeystroke(SDL_Event keystroke_event, GLfloat secs_since_last_renderloop, bool& update_camera)
+{
+    bool continue_rendering = true;
+
+    GLfloat camera_speed_increment = camera_speed_ * secs_since_last_renderloop;
+    GLfloat pitch_speed_increment = pitch_speed_ * secs_since_last_renderloop;
+    GLfloat yaw_speed_increment = yaw_speed_ * secs_since_last_renderloop;
+
+    if (keystroke_event.type == SDL_KEYDOWN)
+    {
+        if (keystroke_event.key.keysym.sym == SDLK_w)
+        {
+            camera_coords_ += camera_speed_increment * display_manager_->getCameraPointingVector();
+        }
+        else if (keystroke_event.key.keysym.sym == SDLK_s)
+        {
+            camera_coords_ -= camera_speed_increment * display_manager_->getCameraPointingVector();
+        }
+        else if (keystroke_event.key.keysym.sym == SDLK_a)
+        {
+            // move left along normal to the camera direction and world up
+            camera_coords_ -= glm::normalize(glm::cross(display_manager_->getCameraPointingVector(), display_manager_->getCameraUpVector())) * camera_speed_increment;
+        }
+        else if (keystroke_event.key.keysym.sym == SDLK_d)
+        {
+            // move right along normal to camera direction and world up
+            camera_coords_ += glm::normalize(glm::cross(display_manager_->getCameraPointingVector(), display_manager_->getCameraUpVector())) * camera_speed_increment;
+        }
+        else if (keystroke_event.key.keysym.sym == SDLK_UP)
+        {
+            // adjust pitch (Euler angle around x-axis)
+            camera_pitch_degrees_ += pitch_speed_increment;
+        }
+        else if (keystroke_event.key.keysym.sym == SDLK_DOWN)
+        {
+            // adjust pitch (Euler angle around x-axis)
+            camera_pitch_degrees_ -= pitch_speed_increment;
+        }
+        else if (keystroke_event.key.keysym.sym == SDLK_LEFT)
+        {
+            // adjust yaw (Euler angle around y-axis)
+            camera_yaw_degrees_ -= yaw_speed_increment;
+        }
+        else if (keystroke_event.key.keysym.sym == SDLK_RIGHT)
+        {
+            // adjust yaw (Euler angle around y-axis)
+            camera_yaw_degrees_ += yaw_speed_increment;
+        }
+
+        // clamp to sane values
+        if (camera_pitch_degrees_ > 89.0f)
+        {
+            camera_pitch_degrees_ = 89.0f;
+        }
+        else if (camera_pitch_degrees_ < -89.0f)
+        {
+            camera_pitch_degrees_ = -89.0f;
+        }
+
+        update_camera = true;
+    }
+    else if (keystroke_event.type == SDL_KEYUP)
+    {
+        if (keystroke_event.key.keysym.sym == SDLK_q)
+        {
+            continue_rendering = false;
+        }
+        else if (keystroke_event.key.keysym.sym == SDLK_l)
+        {
+            lighting_on_ = ! lighting_on_;
+            display_manager_->setLightingOn(lighting_on_);
+        }
     }
 
     return continue_rendering;

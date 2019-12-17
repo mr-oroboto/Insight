@@ -13,6 +13,8 @@ MinHeap::~MinHeap()
 
 void MinHeap::run()
 {
+    display_manager_->setUpdateSceneCallback(nullptr);
+
     FrameQueue* frame_queue = new FrameQueue(display_manager_, true);
     frame_queue->setFrameRate(1);
 
