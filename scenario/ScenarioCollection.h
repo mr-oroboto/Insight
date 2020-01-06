@@ -10,6 +10,7 @@ class ScenarioCollection
 {
 public:
     ScenarioCollection();
+    ~ScenarioCollection();
 
     void initialise(WindowManager* window_manager);
     void addScenario(Scenario* scenario);

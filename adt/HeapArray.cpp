@@ -1,6 +1,6 @@
 #include "HeapArray.h"
 
-HeapArray::HeapArray(HeapDecorator* decorator)
+HeapArray::HeapArray(Decorators::HeapDecorator* decorator)
 {
     decorator_ = decorator;
 

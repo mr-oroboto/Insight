@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-Decorator::~Decorator()
+Decorators::Decorator::~Decorator()
 {
     std::cout << "Decorator::~Decorator()" << std::endl;
 }

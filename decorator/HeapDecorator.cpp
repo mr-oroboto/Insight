@@ -7,17 +7,17 @@
 #include "adt/HeapArray.h"
 #include "core/DisplayManager.h"
 
-void HeapDecorator::setHeap(HeapArray* heapArray)
+void Decorators::HeapDecorator::setHeap(HeapArray* heapArray)
 {
     heap_ = heapArray;
 }
 
-void HeapDecorator::setHightlightedNodeValue(int node_value)
+void Decorators::HeapDecorator::setHightlightedNodeValue(int node_value)
 {
     highlighted_node_value_ = node_value;
 }
 
-void HeapDecorator::decorate()
+void Decorators::HeapDecorator::decorate()
 {
     current_frame_ = frame_queue_->newFrame();
 
@@ -27,7 +27,7 @@ void HeapDecorator::decorate()
     unsigned long heap_levels = floor(log(node_count) / log(2.0));
 
     char msg[64];
-    sprintf(msg, "Heap. [current value: %d, levels: %lu]", highlighted_node_value_, heap_levels);
+    sprintf(msg, "Heap insertion. [current value: %d, levels: %lu]", highlighted_node_value_, heap_levels);
     current_frame_->addText(msg, 10, 10);
 
     dft(0, heap_levels + 1, last_node_coords, false);
@@ -35,7 +35,7 @@ void HeapDecorator::decorate()
     frame_queue_->enqueueFrame(current_frame_);
 }
 
-void HeapDecorator::decorateDft(TraverseOrder traverse_order)
+void Decorators::HeapDecorator::decorateDft(TraverseOrder traverse_order)
 {
     current_frame_ = frame_queue_->newFrame();
 
@@ -69,7 +69,7 @@ void HeapDecorator::decorateDft(TraverseOrder traverse_order)
     frame_queue_->enqueueFrame(current_frame_);
 }
 
-void HeapDecorator::dft(size_t node_index, unsigned long node_level, const glm::vec3& last_node_coords, bool is_left_of_parent, TraverseOrder traverse_order, Frame* prototype_frame)
+void Decorators::HeapDecorator::dft(size_t node_index, unsigned long node_level, const glm::vec3& last_node_coords, bool is_left_of_parent, TraverseOrder traverse_order, Frame* prototype_frame)
 {
     int left_index = heap_->getLeftIndex(node_index);
     int right_index = heap_->getRightIndex(node_index);
@@ -139,7 +139,7 @@ void HeapDecorator::dft(size_t node_index, unsigned long node_level, const glm::
     }
 }
 
-void HeapDecorator::drawNode(size_t node_index, const glm::vec3& node_position, const glm::vec3& last_node_coords, Frame* prototype_frame)
+void Decorators::HeapDecorator::drawNode(size_t node_index, const glm::vec3& node_position, const glm::vec3& last_node_coords, Frame* prototype_frame)
 {
     int node_value = heap_->getNodeValue(node_index);
     glm::vec3 node_colour;
@@ -178,7 +178,7 @@ void HeapDecorator::drawNode(size_t node_index, const glm::vec3& node_position, 
     }
 }
 
-void HeapDecorator::decorateBft()
+void Decorators::HeapDecorator::decorateBft()
 {
     current_frame_ = frame_queue_->newFrame();
 
@@ -200,7 +200,7 @@ void HeapDecorator::decorateBft()
     frame_queue_->enqueueFrame(current_frame_);
 }
 
-void HeapDecorator::bft(Frame* prototype_frame)
+void Decorators::HeapDecorator::bft(Frame* prototype_frame)
 {
     struct NodeDetails {
         size_t node_index;

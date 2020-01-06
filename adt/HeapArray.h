@@ -9,7 +9,7 @@
 class HeapArray
 {
 public:
-    HeapArray(HeapDecorator* decorator = nullptr);
+    HeapArray(Decorators::HeapDecorator* decorator = nullptr);
 
     void insert(int value);
     bool validate();
@@ -29,7 +29,7 @@ protected:
     virtual bool shouldSwapInHeapifyDown(int node_value, int comparison_node_value) = 0;
 
     std::vector<int> store_;
-    HeapDecorator* decorator_;
+    Decorators::HeapDecorator* decorator_;
 
 private:
     void heapifyUp(size_t node_index);
@@ -39,7 +39,7 @@ private:
 class MaxHeapArray : public HeapArray
 {
 public:
-    MaxHeapArray(HeapDecorator* decorator) : HeapArray(decorator) {}
+    MaxHeapArray(Decorators::HeapDecorator* decorator) : HeapArray(decorator) {}
 
     int max();
     int extractMax() { return extractRoot(); }
@@ -52,7 +52,7 @@ protected:
 class MinHeapArray : public HeapArray
 {
 public:
-    MinHeapArray(HeapDecorator* decorator) : HeapArray(decorator) {}
+    MinHeapArray(Decorators::HeapDecorator* decorator) : HeapArray(decorator) {}
 
     int min();
     int extractMin() { return extractRoot(); }

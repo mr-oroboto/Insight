@@ -4,17 +4,20 @@
 #include "core/FrameQueue.h"
 #include "core/Frame.h"
 
-class Decorator
-{
-public:
-    Decorator(FrameQueue* queue) : frame_queue_(queue) { current_frame_ = nullptr; }
-    virtual ~Decorator();
+namespace Decorators {
 
-    virtual void decorate() = 0;
+    class Decorator {
+    public:
+        Decorator(FrameQueue *queue) : frame_queue_(queue) { current_frame_ = nullptr; }
+        virtual ~Decorator();
 
-protected:
-    FrameQueue* frame_queue_;
-    Frame* current_frame_;
-};
+        virtual void decorate() = 0;
+
+    protected:
+        FrameQueue *frame_queue_;
+        Frame *current_frame_;
+    };
+
+}
 
 #endif //INSIGHT_DECORATOR_DECORATOR_H

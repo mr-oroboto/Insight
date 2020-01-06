@@ -11,7 +11,7 @@ public:
     ~HeapDepthFirstTraversal();
 
     void run();
-    void run(HeapDecorator::TraverseOrder traverse_order);
+    void run(Decorators::HeapDecorator::TraverseOrder traverse_order);
 };
 
 

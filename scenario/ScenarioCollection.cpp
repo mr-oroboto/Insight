@@ -5,11 +5,20 @@
 #include "scenario/HeapDepthFirstTraversal.h"
 #include "scenario/HeapBreadthFirstTraversal.h"
 #include "scenario/MinHeap.h"
+#include "scenario/MergeSort.h"
 
 ScenarioCollection::ScenarioCollection()
 {
     window_manager_ = nullptr;
     current_scenario_ = 0;
+}
+
+ScenarioCollection::~ScenarioCollection()
+{
+    for (Scenario* s : scenarios_)
+    {
+        delete s;
+    }
 }
 
 void ScenarioCollection::initialise(WindowManager* window_manager)
@@ -18,6 +27,9 @@ void ScenarioCollection::initialise(WindowManager* window_manager)
 
     AutoPilot* autopilot = new AutoPilot(window_manager_->getDisplayManager());
     addScenario(autopilot);
+
+    MergeSort* mergeSort = new MergeSort(window_manager_->getDisplayManager());
+    addScenario(mergeSort);
 
     MinHeap* minHeap = new MinHeap(window_manager_->getDisplayManager());
     addScenario(minHeap);
@@ -45,5 +57,6 @@ void ScenarioCollection::nextScenario()
     }
 
     window_manager_->resetCamera();
+    window_manager_->getDisplayManager()->setUpdateSceneCallback(nullptr);
     scenarios_[current_scenario_]->run();
 }

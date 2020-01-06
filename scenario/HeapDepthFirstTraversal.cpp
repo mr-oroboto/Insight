@@ -15,15 +15,15 @@ void HeapDepthFirstTraversal::run()
 {
     display_manager_->setUpdateSceneCallback(nullptr);
 
-    run(HeapDecorator::TraverseOrder::PRE_ORDER);
+    run(Decorators::HeapDecorator::TraverseOrder::PRE_ORDER);
 }
 
-void HeapDepthFirstTraversal::run(HeapDecorator::TraverseOrder traverse_order)
+void HeapDepthFirstTraversal::run(Decorators::HeapDecorator::TraverseOrder traverse_order)
 {
     FrameQueue* frame_queue = new FrameQueue(display_manager_, true);
     frame_queue->setFrameRate(1);
 
-    HeapDecorator* decorator = new HeapDecorator(frame_queue);
+    Decorators::HeapDecorator* decorator = new Decorators::HeapDecorator(frame_queue);
     MinHeapArray heap(nullptr);
     decorator->setHeap(dynamic_cast<HeapArray*>(&heap));
 
