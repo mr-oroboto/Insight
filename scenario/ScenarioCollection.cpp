@@ -24,14 +24,28 @@ void ScenarioCollection::addScenario(Scenario* scenario)
     scenarios_.push_back(scenario);
 }
 
-void ScenarioCollection::nextScenario()
+void ScenarioCollection::nextScenario(bool reset_camera)
 {
     if (++current_scenario_ > scenarios_.size() - 1)
     {
         current_scenario_ = 0;
     }
 
-    window_manager_->resetCamera();
+    selectScenario(current_scenario_, reset_camera);
+}
+
+void ScenarioCollection::selectScenario(size_t scenario, bool reset_camera)
+{
+    if (scenario >= scenarios_.size())
+    {
+        return;
+    }
+
+    if (reset_camera)
+    {
+        window_manager_->resetCamera();
+    }
+
     window_manager_->getDisplayManager()->setUpdateSceneCallback(nullptr);
-    scenarios_[current_scenario_]->run();
+    scenarios_[scenario]->run();
 }

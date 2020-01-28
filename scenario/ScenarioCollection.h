@@ -14,7 +14,8 @@ public:
 
     void initialise(WindowManager* window_manager);
     void addScenario(Scenario* scenario);
-    void nextScenario();
+    void nextScenario(bool reset_camera = true);
+    void selectScenario(size_t scenario, bool reset_camera = true);
 
 private:
     std::vector<Scenario*> scenarios_;
