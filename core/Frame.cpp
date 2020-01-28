@@ -327,10 +327,10 @@ bool Frame::coordinatesAreOutsideBoundary(const glm::vec3& world_coords, const g
     return false;
 }
 
-void Frame::updateObjects(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame)
+void Frame::updateObjects(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame, void* context)
 {
     for (SceneObject* object : objects_)
     {
-        object->update(secs_since_rendering_started, secs_since_framequeue_started, secs_since_last_renderloop, secs_since_last_frame);
+        object->update(secs_since_rendering_started, secs_since_framequeue_started, secs_since_last_renderloop, secs_since_last_frame, context);
     }
 }

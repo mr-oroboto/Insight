@@ -24,7 +24,7 @@ public:
     bool initialise(GLuint wnd_width, GLuint wnd_height);
     bool registerFont(Font::Type font_type, const std::string& path);
 
-    void print(const std::string& text, const glm::vec3& world_coords, bool ortho = true, Font::Type font_type = Font::Type::FONT_VERA, GLfloat scale = 1.0f, const glm::vec3& colour = glm::vec3(1.0f, 1.0f, 1.0f));
+    void print(const std::string& text, const glm::vec3& world_coords, bool ortho = true, Font::Type font_type = Font::Type::FONT_DEFAULT, GLfloat scale = 1.0f, const glm::vec3& colour = glm::vec3(1.0f, 1.0f, 1.0f));
 
 private:
     bool initialised_;

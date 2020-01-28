@@ -20,7 +20,7 @@ public:
     void setForwardUnitsPerSec(GLfloat forward_units_per_sec);
     void setStarColour(Star::Colour colour);
 
-    virtual void update(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame);
+    virtual void update(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame, void* context);
 
 private:
     Colour star_colour_;

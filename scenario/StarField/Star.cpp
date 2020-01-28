@@ -46,7 +46,7 @@ void Star::setStarColour(Star::Colour colour)
     }
 }
 
-void Star::update(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame)
+void Star::update(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame, void* context)
 {
     world_coords_.z += (forward_units_per_sec_ * secs_since_last_renderloop);
 

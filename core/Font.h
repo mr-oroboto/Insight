@@ -15,7 +15,7 @@ class Font
 public:
     enum Type
     {
-        FONT_VERA = 0,
+        FONT_DEFAULT = 0,
     };
 
     Font(const std::string& path, FT_Library freetype);

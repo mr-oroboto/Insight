@@ -34,6 +34,7 @@ public:
 
     PrimitiveCollection* getPrimitiveCollection();
     TextureCollection* getTextureCollection();
+    TextDrawer* getTextDrawer();
     StandardShader* getObjectShader();
 
     glm::vec3 getCameraPointingVector();

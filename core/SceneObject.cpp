@@ -17,7 +17,7 @@ SceneObject::SceneObject(DisplayManager* display_manager, Primitive::Type type, 
 
     world_coords_ = world_coords;
     additional_world_coords_ = world_coords;
-    scale_ = 1.0f;
+    scale_x_ = scale_y_ = scale_z_ = 1.0f;
 
     colour_ = colour;
 }
@@ -29,7 +29,14 @@ SceneObject::~SceneObject()
 
 void SceneObject::setScale(GLfloat s)
 {
-    scale_ = s;
+    scale_x_ = scale_y_ = scale_z_ = s;
+}
+
+void SceneObject::setScale(GLfloat x, GLfloat y, GLfloat z)
+{
+    scale_x_ = x;
+    scale_y_ = y;
+    scale_z_ = z;
 }
 
 void SceneObject::setTexture(Texture* texture)
@@ -52,23 +59,21 @@ void SceneObject::draw(GLfloat secs_since_rendering_started, GLfloat secs_since_
     glEnable(GL_DEPTH_TEST);
 
     glm::mat4 model_transform = glm::mat4(1.0f);      // identity matrix
-    glm::vec3 scale_vector = glm::vec3(scale_, scale_, scale_);
+    glm::vec3 scale_vector = glm::vec3(scale_x_, scale_y_, scale_z_);
 
     // Multiply the identity matrix by various transformations to translate, scale and rotate the primitive
 
     model_transform = glm::translate(model_transform, world_coords_);
     model_transform = glm::scale(model_transform, scale_vector);
 
-    if (primitive_->getType() == Primitive::LINE)
+    if (primitive_->getSupportsTransforms())
     {
-        Line* line = dynamic_cast<Line*>(primitive_);
-
-        line->setCoords(world_coords_, additional_world_coords_);
+        primitive_->setCoords(world_coords_, additional_world_coords_);
 
         // order of operations is important
-        model_transform = line->getTranslationTransform(glm::mat4(1.0f));
-        model_transform = line->getRotationTransform(model_transform);
-        model_transform = line->getScaleTransform(model_transform);
+        model_transform = primitive_->getTranslationTransform(glm::mat4(1.0f));
+        model_transform = primitive_->getRotationTransform(model_transform);
+        model_transform = primitive_->getScaleTransform(model_transform);
     }
 
     display_manager_->getObjectShader()->setModelTransform(model_transform);
@@ -98,7 +103,7 @@ void SceneObject::draw(GLfloat secs_since_rendering_started, GLfloat secs_since_
     glDisable(GL_DEPTH_TEST);
 }
 
-void SceneObject::update(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame)
+void SceneObject::update(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame, void* context)
 {
 
 }
@@ -119,7 +124,7 @@ SceneObject* SceneObject::clone()
 
     clone->setTexture(texture_);
     clone->setAdditionalCoords(additional_world_coords_);
-    clone->setScale(scale_);
+    clone->setScale(scale_x_, scale_y_, scale_z_);
 
     return clone;
 }

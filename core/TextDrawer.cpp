@@ -53,11 +53,6 @@ bool TextDrawer::initialise(GLuint wnd_width, GLuint wnd_height)
             throw "Failed to initialise FreeType";
         }
 
-        if ( ! registerFont(Font::Type::FONT_VERA, "/home/sysop/ClionProjects/Insight/font/Vera.ttf"))   // @todo: fixme
-        {
-            throw "Failed to register a font";
-        }
-
         shader_ = new TextShader();
         if ( ! shader_->initialise())
         {

@@ -15,6 +15,7 @@ public:
     virtual ~SceneObject();
 
     void setScale(GLfloat scale);
+    void setScale(GLfloat x, GLfloat y, GLfloat z);
     void setAdditionalCoords(const glm::vec3& world_coords);
     void setTexture(Texture* texture);
     void setColour(const glm::vec3& colour);
@@ -22,8 +23,8 @@ public:
     glm::vec3 getPosition();
     Primitive* getPrimitive();
 
-    void draw(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame, bool use_colour = true);
-    virtual void update(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame);
+    virtual void draw(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame, bool use_colour = true);
+    virtual void update(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame, void* context);
 
     SceneObject* clone();       // prefer to copy ctor so subclasses of Frame keep control
 
@@ -35,7 +36,9 @@ protected:
 
     glm::vec3 world_coords_;
     glm::vec3 additional_world_coords_;
-    GLfloat scale_;
+    GLfloat scale_x_;
+    GLfloat scale_y_;
+    GLfloat scale_z_;
     glm::vec3 colour_;
 };
 

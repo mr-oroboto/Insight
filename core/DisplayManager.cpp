@@ -56,15 +56,6 @@ bool DisplayManager::initialise(GLuint wnd_width, GLuint wnd_height)
 
         primitives_ = new PrimitiveCollection(object_shader_);
         textures_ = new TextureCollection(object_shader_);
-        textures_->registerTexture("/home/sysop/textures/conifer.jpg", "conifer");
-        textures_->registerTexture("/home/sysop/textures/foam.jpg", "foam");
-        textures_->registerTexture("/home/sysop/textures/ice.jpg", "ice");
-        textures_->registerTexture("/home/sysop/textures/leaves.jpg", "leaves");
-        textures_->registerTexture("/home/sysop/textures/orange_leather.jpg", "leather");
-        textures_->registerTexture("/home/sysop/textures/sky.jpg", "sky");
-        textures_->registerTexture("/home/sysop/textures/slate.jpg", "slate");
-        textures_->registerTexture("/home/sysop/textures/water.jpg", "water");
-        textures_->registerTexture("/home/sysop/textures/wood.jpg", "wood");
 
         setPerspective(0.1f, 100.0f, 45.0f);
 
@@ -206,7 +197,7 @@ void DisplayManager::drawText(const std::string& text, const glm::vec3& world_co
         return;
     }
 
-    text_drawer_->print(text, world_coords, ortho, Font::Type::FONT_VERA, scale, colour);
+    text_drawer_->print(text, world_coords, ortho, Font::Type::FONT_DEFAULT, scale, colour);
 }
 
 void DisplayManager::setFrameQueue(FrameQueue* queue)
@@ -233,6 +224,11 @@ PrimitiveCollection* DisplayManager::getPrimitiveCollection()
 TextureCollection* DisplayManager::getTextureCollection()
 {
     return textures_;
+}
+
+TextDrawer* DisplayManager::getTextDrawer()
+{
+    return text_drawer_;
 }
 
 StandardShader* DisplayManager::getObjectShader()

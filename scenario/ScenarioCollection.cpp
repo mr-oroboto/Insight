@@ -1,12 +1,5 @@
 #include "ScenarioCollection.h"
 
-#include "scenario/AutoPilot/AutoPilot.h"
-#include "scenario/StarField/StarField.h"
-#include "scenario/HeapDepthFirstTraversal.h"
-#include "scenario/HeapBreadthFirstTraversal.h"
-#include "scenario/MinHeap.h"
-#include "scenario/MergeSort.h"
-
 ScenarioCollection::ScenarioCollection()
 {
     window_manager_ = nullptr;
@@ -24,24 +17,6 @@ ScenarioCollection::~ScenarioCollection()
 void ScenarioCollection::initialise(WindowManager* window_manager)
 {
     window_manager_ = window_manager;
-
-    AutoPilot* autopilot = new AutoPilot(window_manager_->getDisplayManager());
-    addScenario(autopilot);
-
-    MergeSort* mergeSort = new MergeSort(window_manager_->getDisplayManager());
-    addScenario(mergeSort);
-
-    MinHeap* minHeap = new MinHeap(window_manager_->getDisplayManager());
-    addScenario(minHeap);
-
-    HeapDepthFirstTraversal* dft = new HeapDepthFirstTraversal(window_manager_->getDisplayManager());
-    addScenario(dft);
-
-    HeapBreadthFirstTraversal* bft = new HeapBreadthFirstTraversal(window_manager_->getDisplayManager());
-    addScenario(bft);
-
-    StarField* starfield = new StarField(window_manager_->getDisplayManager());
-    addScenario(starfield);
 }
 
 void ScenarioCollection::addScenario(Scenario* scenario)
