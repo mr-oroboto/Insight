@@ -73,7 +73,7 @@ void SceneObject::draw(GLfloat secs_since_rendering_started, GLfloat secs_since_
         // order of operations is important
         model_transform = primitive_->getTranslationTransform(glm::mat4(1.0f));
         model_transform = primitive_->getRotationTransform(model_transform);
-        model_transform = primitive_->getScaleTransform(model_transform);
+        model_transform = primitive_->getScaleTransform(model_transform, scale_vector);
     }
 
     display_manager_->getObjectShader()->setModelTransform(model_transform);

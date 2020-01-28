@@ -46,7 +46,7 @@ glm::mat4 Primitive::getRotationTransform(const glm::mat4& model_transform)
     return glm::mat4(1.0f);
 }
 
-glm::mat4 Primitive::getScaleTransform(const glm::mat4& model_transform)
+glm::mat4 Primitive::getScaleTransform(const glm::mat4& model_transform, const glm::vec3& scale_vector)
 {
     return glm::mat4(1.0f);
 }

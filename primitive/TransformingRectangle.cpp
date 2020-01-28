@@ -61,11 +61,11 @@ glm::mat4 TransformingRectangle::getRotationTransform(const glm::mat4 &model_tra
     return glm::rotate(model_transform, radians, rotation_axis);
 }
 
-glm::mat4 TransformingRectangle::getScaleTransform(const glm::mat4 &model_transform)
+glm::mat4 TransformingRectangle::getScaleTransform(const glm::mat4 &model_transform, const glm::vec3& scale_vector)
 {
     glm::vec3 direction_vector = from_world_coords_ - to_world_coords_;
-    glm::vec3 scale_vector = glm::vec3(1.0, glm::length(direction_vector), 1.0);
+    glm::vec3 adjusted_scale_vector = glm::vec3(scale_vector.x, glm::length(direction_vector), scale_vector.z);
 
-    return glm::scale(model_transform, scale_vector);
+    return glm::scale(model_transform, adjusted_scale_vector);
 }
 

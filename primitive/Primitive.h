@@ -29,7 +29,7 @@ public:
     bool getSupportsTransforms();
     void setCoords(const glm::vec3& from_coords, const glm::vec3& to_coords);
     virtual glm::mat4 getRotationTransform(const glm::mat4& model_transform);
-    virtual glm::mat4 getScaleTransform(const glm::mat4& model_transform);
+    virtual glm::mat4 getScaleTransform(const glm::mat4& model_transform, const glm::vec3& scale_vector);
     virtual glm::mat4 getTranslationTransform(const glm::mat4& model_transform);
 
     virtual void draw() = 0;

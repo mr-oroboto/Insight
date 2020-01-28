@@ -100,7 +100,7 @@ glm::mat4 Line::getRotationTransform(const glm::mat4 &model_transform)
     return glm::mat4(1.0f);
 }
 
-glm::mat4 Line::getScaleTransform(const glm::mat4 &model_transform)
+glm::mat4 Line::getScaleTransform(const glm::mat4 &model_transform, const glm::vec3& scale_vector)
 {
     if (USE_TRANSFORMS)
     {
