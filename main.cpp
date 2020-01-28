@@ -1,14 +1,12 @@
 #include <iostream>
 
-#include "core/WindowManager.h"
-#include "scenario/ScenarioCollection.h"
+#include "Insight.h"
 #include "scenario/HeapBreadthFirstTraversal.h"
 #include "scenario/HeapDepthFirstTraversal.h"
 #include "scenario/MergeSort.h"
 #include "scenario/MinHeap.h"
 #include "scenario/AutoPilot/AutoPilot.h"
 #include "scenario/StarField/StarField.h"
-#include "primitive/Tesselation.h"
 
 #define WINDOW_FULLSCREEN false
 #define WINDOW_X_SIZE 2560
