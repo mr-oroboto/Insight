@@ -15,6 +15,7 @@ public:
     ~PrimitiveCollection();
 
     Primitive* selectPrimitive(Primitive::Type primitive);
+    bool addPrimitive(Primitive::Type primitive_type, Primitive* primitive);
 
 private:
     std::unordered_map<Primitive::Type, Primitive*> primitives_;

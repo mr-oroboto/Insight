@@ -8,13 +8,16 @@
 class Rectangle : public Primitive
 {
 public:
-    Rectangle(StandardShader* shader) : Primitive(shader) { initialise(); }
+    Rectangle(StandardShader* shader);
     ~Rectangle();
 
     void draw();
 
 protected:
     void initialise();
+
+    unsigned int attributes_per_vertex_;
+    unsigned int total_vertices_;
 };
 
 #endif //INSIGHT_PRIMITIVE_RECTANGLE_H

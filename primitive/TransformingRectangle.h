@@ -1,25 +1,23 @@
-#ifndef INSIGHT_PRIMITIVE_LINE_H
-#define INSIGHT_PRIMITIVE_LINE_H
+#ifndef INSIGHT_PRIMITIVE_TRANSFORMINGRECTANGLE_H
+#define INSIGHT_PRIMITIVE_TRANSFORMINGRECTANGLE_H
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
-#include "Primitive.h"
+#include "Rectangle.h"
 
-class Line : public Primitive
+class TransformingRectangle : public Rectangle
 {
 public:
-    Line(StandardShader* shader) : Primitive(shader) { initialise(); }
-    ~Line();
+    TransformingRectangle(StandardShader* shader);
+    ~TransformingRectangle();
 
     glm::mat4 getRotationTransform(const glm::mat4& model_transform);
     glm::mat4 getScaleTransform(const glm::mat4& model_transform);
     glm::mat4 getTranslationTransform(const glm::mat4& model_transform);
 
-    void draw();
-
 protected:
     void initialise();
 };
 
-#endif //INSIGHT_PRIMITIVE_LINE_H
+#endif //INSIGHT_PRIMITIVE_TRANSFORMINGRECTANGLE_H

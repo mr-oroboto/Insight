@@ -45,7 +45,7 @@ void Tesselation::initialise()
 
     total_vertices_ = static_cast<GLuint>((width_ / x_increment_) * (length_ / z_increment_) * vertices_per_subtile_);
     vertices_ = new GLfloat[total_vertices_ * ATTRIBUTES_PER_VERTEX];
-    std::cout << "creating " << total_vertices_ << " vertices for tesselation, allocated " << (sizeof(GLfloat) * total_vertices_ * 8) << " byte vertice buffer at " << vertices_ << std::endl;
+    std::cout << "Creating " << total_vertices_ << " vertices for tesselation, allocated " << (sizeof(GLfloat) * total_vertices_ * 8) << " byte vertice buffer at " << vertices_ << std::endl;
 
     resetSeamVertices();
 

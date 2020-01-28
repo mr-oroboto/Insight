@@ -15,6 +15,7 @@ Line::~Line()
 void Line::initialise()
 {
     type_ = Primitive::LINE;
+    supports_transforms_ = USE_TRANSFORMS;
 
     /**
      * OpenGL Right-Handed Co-ordinates (+y is up, +x is right, +z is out of screen)
@@ -59,12 +60,6 @@ void Line::initialise()
                           9 * sizeof(float),         /* stride: each colour block has (x,y,z) data in between */
                           (void*)(6 * sizeof(float)) /* offset: the colour block starts 3 floats (x,y,z) into the array */);
 
-}
-
-void Line::setCoords(const glm::vec3& from_coords, const glm::vec3& to_coords)
-{
-    from_world_coords_ = from_coords;
-    to_world_coords_ = to_coords;
 }
 
 glm::mat4 Line::getRotationTransform(const glm::mat4 &model_transform)

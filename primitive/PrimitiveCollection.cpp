@@ -8,6 +8,7 @@
 #include "Quad.h"
 #include "Tesselation.h"
 #include "Rectangle.h"
+#include "TransformingRectangle.h"
 #include "shader/StandardShader.h"
 
 PrimitiveCollection::PrimitiveCollection(StandardShader* shader)
@@ -16,31 +17,31 @@ PrimitiveCollection::PrimitiveCollection(StandardShader* shader)
     primitives_[Primitive::Type::TRIANGLE] = new Triangle(shader);
     primitives_[Primitive::Type::LINE] = new Line(shader);
     primitives_[Primitive::Type::QUAD] = new Quad(shader);
-    primitives_[Primitive::Type::TESSELATION] = new Tesselation(shader);
     primitives_[Primitive::Type::RECTANGLE] = new Rectangle(shader);
+    primitives_[Primitive::Type::TRANSFORMING_RECTANGLE] = new TransformingRectangle(shader);
 }
 
 PrimitiveCollection::~PrimitiveCollection()
 {
     std::cout << "PrimitiveCollection::~PrimitiveCollection()" << std::endl;
 
-    delete primitives_[Primitive::Type::CUBE];
-    primitives_[Primitive::Type::CUBE] = nullptr;
+    for (std::unordered_map<Primitive::Type, Primitive*>::iterator i = primitives_.begin(); i != primitives_.end(); i++)
+    {
+        delete reinterpret_cast<Primitive*>(i->second);
+        primitives_[i->first] = nullptr;
+    }
+}
 
-    delete primitives_[Primitive::Type::TRIANGLE];
-    primitives_[Primitive::Type::TRIANGLE] = nullptr;
+bool PrimitiveCollection::addPrimitive(Primitive::Type primitive_type, Primitive* primitive)
+{
+    if (primitives_.find(primitive_type) != primitives_.end())
+    {
+        return false;
+    }
 
-    delete primitives_[Primitive::Type::LINE];
-    primitives_[Primitive::Type::LINE] = nullptr;
+    primitives_[primitive_type] = primitive;
 
-    delete primitives_[Primitive::Type::QUAD];
-    primitives_[Primitive::Type::QUAD] = nullptr;
-
-    delete primitives_[Primitive::Type::TESSELATION];
-    primitives_[Primitive::Type::TESSELATION] = nullptr;
-
-    delete primitives_[Primitive::Type::RECTANGLE];
-    primitives_[Primitive::Type::RECTANGLE] = nullptr;
+    return true;
 }
 
 Primitive* PrimitiveCollection::selectPrimitive(Primitive::Type primitive)
