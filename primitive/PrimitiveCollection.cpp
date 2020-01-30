@@ -23,8 +23,6 @@ PrimitiveCollection::PrimitiveCollection(StandardShader* shader)
 
 PrimitiveCollection::~PrimitiveCollection()
 {
-    std::cout << "PrimitiveCollection::~PrimitiveCollection()" << std::endl;
-
     for (std::unordered_map<Primitive::Type, Primitive*>::iterator i = primitives_.begin(); i != primitives_.end(); i++)
     {
         delete reinterpret_cast<Primitive*>(i->second);

@@ -24,7 +24,6 @@ SceneObject::SceneObject(DisplayManager* display_manager, Primitive::Type type, 
 
 SceneObject::~SceneObject()
 {
-//  std::cout << "SceneObject::~SceneObject()" << std::endl;
 }
 
 void SceneObject::setScale(GLfloat s)

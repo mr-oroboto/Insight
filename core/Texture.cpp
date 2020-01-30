@@ -16,8 +16,6 @@ Texture::Texture(const std::string& path, StandardShader* shader)
 
 Texture::~Texture()
 {
-    std::cout << "Texture::~Texture()" << std::endl;
-
     glDeleteTextures(1, &texture_id_);
 }
 

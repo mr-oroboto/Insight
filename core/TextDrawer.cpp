@@ -21,8 +21,6 @@ TextDrawer::TextDrawer(DisplayManager* display_manager)
 
 TextDrawer::~TextDrawer()
 {
-    std::cout << "TextDrawer::~TextDrawer()" << std::endl;
-
     FT_Done_FreeType(freetype_);
 
     for (std::unordered_map<Font::Type, Font*>::iterator it = fonts_.begin(); it != fonts_.end(); it++)

@@ -4,8 +4,6 @@
 
 Primitive::~Primitive()
 {
-    std::cout << "Primitive::~Primitive()" << std::endl;
-
     glDeleteBuffers(1, &vbo_);
     glDeleteVertexArrays(1, &vao_);
 

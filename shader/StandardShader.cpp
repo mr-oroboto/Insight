@@ -10,7 +10,6 @@ StandardShader::StandardShader()
 
 StandardShader::~StandardShader()
 {
-    std::cout << "StandardShader::~StandardShader()" << std::endl;
 }
 
 bool StandardShader::initialise()

@@ -9,8 +9,6 @@ Shader::Shader()
 
 Shader::~Shader()
 {
-    std::cout << "Shader::~Shader()" << std::endl;
-
     glDeleteProgram(shader_program_);
     glDeleteShader(vertex_shader_);
     glDeleteShader(fragment_shader_);

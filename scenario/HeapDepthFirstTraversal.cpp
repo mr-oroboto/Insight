@@ -8,7 +8,6 @@
 
 HeapDepthFirstTraversal::~HeapDepthFirstTraversal()
 {
-    std::cout << "HeapDepthFirstTraversal::~HeapDepthFirstTraversal()" << std::endl;
 }
 
 void HeapDepthFirstTraversal::run()

@@ -8,7 +8,6 @@
 
 HeapBreadthFirstTraversal::~HeapBreadthFirstTraversal()
 {
-    std::cout << "HeapBreadthFirstTraversal::~HeapBreadthFirstTraversal()" << std::endl;
 }
 
 void HeapBreadthFirstTraversal::run()

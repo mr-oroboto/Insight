@@ -10,7 +10,6 @@ TextShader::TextShader()
 
 TextShader::~TextShader()
 {
-    std::cout << "TextShader::~TextShader()" << std::endl;
 }
 
 bool TextShader::initialise()

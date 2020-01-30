@@ -6,7 +6,6 @@
 
 Cube::~Cube()
 {
-    std::cout << "Cube::~Cube()" << std::endl;
 }
 
 void Cube::initialise()

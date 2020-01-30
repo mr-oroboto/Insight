@@ -17,8 +17,6 @@ FrameQueue::FrameQueue(DisplayManager* display_manager, bool repeats)
 
 FrameQueue::~FrameQueue()
 {
-    std::cout << "FrameQueue::~FrameQueue()" << std::endl;
-
     while ( ! queue_.empty())
     {
         Frame* frame = queue_.front();

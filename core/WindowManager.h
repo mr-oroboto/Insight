@@ -17,14 +17,17 @@ public:
     bool initialise();
 
     void setHandleKeystrokeCallback(std::function<bool(WindowManager*, SDL_Event, GLfloat)> callback);
+
     void resetCamera();
+    void setCameraCoords(const glm::vec3& world_coords);
+    void setCameraPointingVector(const glm::vec3& vector);
 
     DisplayManager* getDisplayManager();
     bool run();
 
 private:
     bool processEvents(GLfloat secs_since_last_renderloop);
-    bool handleKeystroke(SDL_Event keystroke_event, GLfloat secs_since_last_renderloop, bool& update_camera);
+    bool handleKeystroke(SDL_Event keystroke_event, GLfloat secs_since_last_renderloop, bool& update_camera_coords, bool& update_camera_pointing_vector);
 
     SDL_Window* window_;
     SDL_GLContext opengl_context_;

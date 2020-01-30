@@ -13,7 +13,6 @@ Font::Font(const std::string& path, FT_Library freetype)
 
 Font::~Font()
 {
-    std::cout << "Font::~Font()" << std::endl;
 }
 
 bool Font::initialise()

@@ -37,6 +37,7 @@ public:
     TextDrawer* getTextDrawer();
     StandardShader* getObjectShader();
 
+    glm::vec3 getCameraCoords();
     glm::vec3 getCameraPointingVector();
     glm::vec3 getCameraUpVector();
 

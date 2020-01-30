@@ -6,7 +6,6 @@
 
 RotationTest::~RotationTest()
 {
-    std::cout << "RotationTest::~RotationTest()" << std::endl;
 }
 
 void RotationTest::run()

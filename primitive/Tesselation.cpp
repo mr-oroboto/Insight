@@ -8,7 +8,6 @@
 
 Tesselation::~Tesselation()
 {
-    std::cout << "Tesselation::~Tesselation()" << std::endl;
 }
 
 void Tesselation::initialise()

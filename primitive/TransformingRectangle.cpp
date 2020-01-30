@@ -13,7 +13,6 @@ TransformingRectangle::TransformingRectangle(StandardShader *shader)
 
 TransformingRectangle::~TransformingRectangle()
 {
-    std::cout << "TransformingRectangle::~TransformingRectangle()" << std::endl;
 }
 
 void TransformingRectangle::initialise()

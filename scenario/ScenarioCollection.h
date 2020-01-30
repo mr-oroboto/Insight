@@ -14,12 +14,17 @@ public:
 
     void initialise(WindowManager* window_manager);
     void addScenario(Scenario* scenario);
+
+    unsigned long getScenarioCount();
+    Scenario* getScenario(unsigned long scenario_index);
+
     void nextScenario(bool reset_camera = true);
+    void previousScenario(bool reset_camera = true);
     void selectScenario(size_t scenario, bool reset_camera = true);
 
 private:
     std::vector<Scenario*> scenarios_;
-    unsigned int current_scenario_;
+    unsigned long current_scenario_;
 
     WindowManager* window_manager_;
 };

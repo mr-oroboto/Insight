@@ -9,7 +9,6 @@
 
 Line::~Line()
 {
-    std::cout << "Line::~Line()" << std::endl;
 }
 
 void Line::initialise()

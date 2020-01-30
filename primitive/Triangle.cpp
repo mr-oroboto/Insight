@@ -4,7 +4,6 @@
 
 Triangle::~Triangle()
 {
-    std::cout << "Triangle::~Triangle()" << std::endl;
 }
 
 void Triangle::initialise()

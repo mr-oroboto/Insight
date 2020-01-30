@@ -10,7 +10,6 @@
 
 AutoPilot::~AutoPilot()
 {
-    std::cout << "AutoPilot::~AutoPilot()" << std::endl;
 }
 
 void AutoPilot::run()

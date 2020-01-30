@@ -22,8 +22,6 @@ DisplayManager::DisplayManager()
 
 DisplayManager::~DisplayManager()
 {
-    std::cout << "DisplayManager::~DisplayManager()" << std::endl;
-
     if (initialised_)
     {
         teardown();
@@ -234,6 +232,11 @@ TextDrawer* DisplayManager::getTextDrawer()
 StandardShader* DisplayManager::getObjectShader()
 {
     return object_shader_;
+}
+
+glm::vec3 DisplayManager::getCameraCoords()
+{
+    return camera_coords_;
 }
 
 glm::vec3 DisplayManager::getCameraPointingVector()

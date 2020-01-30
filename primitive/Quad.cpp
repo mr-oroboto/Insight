@@ -4,7 +4,6 @@
 
 Quad::~Quad()
 {
-    std::cout << "Quad::~Quad()" << std::endl;
 }
 
 void Quad::initialise()

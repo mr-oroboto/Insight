@@ -4,5 +4,4 @@
 
 Decorators::Decorator::~Decorator()
 {
-    std::cout << "Decorator::~Decorator()" << std::endl;
 }

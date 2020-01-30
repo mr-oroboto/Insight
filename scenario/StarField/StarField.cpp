@@ -16,7 +16,6 @@
 
 StarField::~StarField()
 {
-    std::cout << "StarField::~StarField()" << std::endl;
 }
 
 void StarField::run()

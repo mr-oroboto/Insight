@@ -18,8 +18,6 @@ Frame::Frame(DisplayManager* display_manager, bool draw_object_position, bool dr
 
 Frame::~Frame()
 {
-    std::cout << "Frame::~Frame()" << std::endl;
-
     // Delete all the scene objects that belong to this frame.
     for (SceneObject* object : objects_)
     {

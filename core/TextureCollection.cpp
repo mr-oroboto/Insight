@@ -2,8 +2,6 @@
 
 TextureCollection::~TextureCollection()
 {
-    std::cout << "TextureCollection::~TextureCollection()" << std::endl;
-
     for (std::unordered_map<std::string, Texture*>::iterator it = textures_.begin(); it != textures_.end(); it++)
     {
         if (it->second != nullptr)

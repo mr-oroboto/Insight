@@ -13,7 +13,6 @@ Star::Star(DisplayManager* display_manager, Primitive::Type type, const glm::vec
 
 Star::~Star()
 {
-    std::cout << "Star::~Star()" << std::endl;
 }
 
 void Star::setNearAndFarPlane(GLfloat near, GLfloat far)

@@ -110,16 +110,35 @@ void WindowManager::setHandleKeystrokeCallback(std::function<bool(WindowManager*
 
 void WindowManager::resetCamera()
 {
-    camera_coords_ = initial_camera_coords_;
-    camera_pointing_vector_ = glm::vec3(0, 0, -1);    // facing into screen
+    setCameraCoords(initial_camera_coords_);
+    setCameraPointingVector(glm::vec3(0, 0, -1));       // facing into screen
+
     camera_pitch_degrees_ = 0.0f;
     camera_yaw_degrees_ = 270.0f;               // so that we're initially facing into screen (-z)
 
     if (display_manager_)
     {
-        display_manager_->setCameraCoords(camera_coords_);
-        display_manager_->setCameraPointingVector(camera_pointing_vector_);
         display_manager_->setCameraUpVector(glm::vec3(0.0f, 1.0f, 0.0f));
+    }
+}
+
+void WindowManager::setCameraCoords(const glm::vec3& world_coords)
+{
+    camera_coords_ = world_coords;
+
+    if (display_manager_)
+    {
+        display_manager_->setCameraCoords(camera_coords_);
+    }
+}
+
+void WindowManager::setCameraPointingVector(const glm::vec3& vector)
+{
+    camera_pointing_vector_ = vector;
+
+    if (display_manager_)
+    {
+        display_manager_->setCameraPointingVector(camera_pointing_vector_);
     }
 }
 
@@ -175,7 +194,8 @@ bool WindowManager::run()
 bool WindowManager::processEvents(GLfloat secs_since_last_renderloop)
 {
     bool continue_rendering = true;
-    bool update_camera = false;
+    bool update_camera_coords = false;
+    bool update_camera_pointing_vector = false;
 
     SDL_Event window_event;
 
@@ -213,7 +233,7 @@ bool WindowManager::processEvents(GLfloat secs_since_last_renderloop)
             camera_pitch_degrees_ += mouse_diff_y * mouse_sensitivity_;
             camera_yaw_degrees_ += mouse_diff_x * mouse_sensitivity_;
 
-            update_camera = true;
+            update_camera_pointing_vector = true;
         }
 
         if (window_event.type == SDL_KEYDOWN || window_event.type == SDL_KEYUP)
@@ -227,7 +247,7 @@ bool WindowManager::processEvents(GLfloat secs_since_last_renderloop)
 
             if (continue_keystroke_processing)
             {
-                if ( ! (continue_rendering = handleKeystroke(window_event, secs_since_last_renderloop, update_camera)))
+                if ( ! (continue_rendering = handleKeystroke(window_event, secs_since_last_renderloop, update_camera_coords, update_camera_pointing_vector)))
                 {
                     break;
                 }
@@ -235,21 +255,25 @@ bool WindowManager::processEvents(GLfloat secs_since_last_renderloop)
         }
     }
 
-    if (update_camera)
+    if (update_camera_coords)
+    {
+        setCameraCoords(camera_coords_);
+    }
+
+    if (update_camera_pointing_vector)
     {
         camera_pointing_vector_.x = cos(glm::radians(camera_pitch_degrees_)) * cos(glm::radians(camera_yaw_degrees_));
         camera_pointing_vector_.y = sin(glm::radians(camera_pitch_degrees_));
         camera_pointing_vector_.z = cos(glm::radians(camera_pitch_degrees_)) * sin(glm::radians(camera_yaw_degrees_));
         camera_pointing_vector_ = glm::normalize(camera_pointing_vector_);
 
-        display_manager_->setCameraCoords(camera_coords_);
-        display_manager_->setCameraPointingVector(camera_pointing_vector_);
+        setCameraPointingVector(camera_pointing_vector_);
     }
 
     return continue_rendering;
 }
 
-bool WindowManager::handleKeystroke(SDL_Event keystroke_event, GLfloat secs_since_last_renderloop, bool& update_camera)
+bool WindowManager::handleKeystroke(SDL_Event keystroke_event, GLfloat secs_since_last_renderloop, bool& update_camera_coords, bool& update_camera_pointing_vector)
 {
     bool continue_rendering = true;
 
@@ -262,40 +286,48 @@ bool WindowManager::handleKeystroke(SDL_Event keystroke_event, GLfloat secs_sinc
         if (keystroke_event.key.keysym.sym == SDLK_w)
         {
             camera_coords_ += camera_speed_increment * display_manager_->getCameraPointingVector();
+            update_camera_coords = true;
         }
         else if (keystroke_event.key.keysym.sym == SDLK_s)
         {
             camera_coords_ -= camera_speed_increment * display_manager_->getCameraPointingVector();
+            update_camera_coords = true;
         }
         else if (keystroke_event.key.keysym.sym == SDLK_a)
         {
             // move left along normal to the camera direction and world up
             camera_coords_ -= glm::normalize(glm::cross(display_manager_->getCameraPointingVector(), display_manager_->getCameraUpVector())) * camera_speed_increment;
+            update_camera_coords = true;
         }
         else if (keystroke_event.key.keysym.sym == SDLK_d)
         {
             // move right along normal to camera direction and world up
             camera_coords_ += glm::normalize(glm::cross(display_manager_->getCameraPointingVector(), display_manager_->getCameraUpVector())) * camera_speed_increment;
+            update_camera_coords = true;
         }
         else if (keystroke_event.key.keysym.sym == SDLK_UP)
         {
             // adjust pitch (Euler angle around x-axis)
             camera_pitch_degrees_ += pitch_speed_increment;
+            update_camera_pointing_vector = true;
         }
         else if (keystroke_event.key.keysym.sym == SDLK_DOWN)
         {
             // adjust pitch (Euler angle around x-axis)
             camera_pitch_degrees_ -= pitch_speed_increment;
+            update_camera_pointing_vector = true;
         }
         else if (keystroke_event.key.keysym.sym == SDLK_LEFT)
         {
             // adjust yaw (Euler angle around y-axis)
             camera_yaw_degrees_ -= yaw_speed_increment;
+            update_camera_pointing_vector = true;
         }
         else if (keystroke_event.key.keysym.sym == SDLK_RIGHT)
         {
             // adjust yaw (Euler angle around y-axis)
             camera_yaw_degrees_ += yaw_speed_increment;
+            update_camera_pointing_vector = true;
         }
 
         // clamp to sane values
@@ -307,8 +339,6 @@ bool WindowManager::handleKeystroke(SDL_Event keystroke_event, GLfloat secs_sinc
         {
             camera_pitch_degrees_ = -89.0f;
         }
-
-        update_camera = true;
     }
     else if (keystroke_event.type == SDL_KEYUP)
     {

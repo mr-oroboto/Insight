@@ -13,7 +13,6 @@ Rectangle::Rectangle(StandardShader *shader)
 
 Rectangle::~Rectangle()
 {
-    std::cout << "Rectangle::~Rectangle()" << std::endl;
 }
 
 void Rectangle::initialise()

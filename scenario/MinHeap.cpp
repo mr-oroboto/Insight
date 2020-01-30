@@ -8,7 +8,6 @@
 
 MinHeap::~MinHeap()
 {
-    std::cout << "MinHeap::~MinHeap()" << std::endl;
 }
 
 void MinHeap::run()
