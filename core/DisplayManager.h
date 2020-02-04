@@ -40,9 +40,12 @@ public:
     glm::vec3 getCameraCoords();
     glm::vec3 getCameraPointingVector();
     glm::vec3 getCameraUpVector();
+    glm::vec3 getRayFromCamera(GLuint to_mouse_x, GLuint to_mouse_y);
 
     glm::mat4 getViewTransform();
     glm::mat4 getProjectionTransform();
+    GLuint getWindowWidth();
+    GLuint getWindowHeight();
 
     void drawScene(GLfloat secs_since_rendering_started, GLfloat secs_since_last_renderloop);
     void drawText(const std::string& text, const glm::vec3& world_coords, bool ortho = true, GLfloat scale = 1.0f, const glm::vec3& colour = glm::vec3(1.0f, 1.0f, 1.0f));

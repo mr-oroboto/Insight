@@ -6,6 +6,7 @@
 
 #include <SDL2/SDL_mouse.h>
 #include <GL/glew.h>                    // must be included before gl.h (which is via SDL_opengl.h)
+#include <glm/gtc/matrix_transform.hpp> // makes view and projection matrices easier to generate
 
 WindowManager::WindowManager(GLuint wnd_size_x, GLuint wnd_size_y, bool fullscreen, const glm::vec3& initial_camera_coords)
 {
@@ -19,6 +20,7 @@ WindowManager::WindowManager(GLuint wnd_size_x, GLuint wnd_size_y, bool fullscre
     tracking_mouse_ = false;
     mouse_sensitivity_ = 0.001f;
     handle_keystroke_callback_ = nullptr;
+    handle_mouse_callback_ = nullptr;
 
     window_ = nullptr;
     display_manager_ = nullptr;
@@ -106,6 +108,11 @@ bool WindowManager::initialise()
 void WindowManager::setHandleKeystrokeCallback(std::function<bool(WindowManager*, SDL_Event, GLfloat)> callback)
 {
     handle_keystroke_callback_ = callback;
+}
+
+void WindowManager::setHandleMouseCallback(std::function<bool(WindowManager*, SDL_Event, GLfloat)> callback)
+{
+    handle_mouse_callback_ = callback;
 }
 
 void WindowManager::resetCamera()
@@ -213,27 +220,19 @@ bool WindowManager::processEvents(GLfloat secs_since_last_renderloop)
             break;
         }
 
-        if (window_event.type == SDL_MOUSEBUTTONDOWN && window_event.button.button == SDL_BUTTON_LEFT)
+        if (window_event.type == SDL_MOUSEBUTTONDOWN || window_event.type == SDL_MOUSEBUTTONUP || window_event.type == SDL_MOUSEMOTION)
         {
-            tracking_mouse_ = true;
+            bool continue_mouse_processing = true;
 
-            mouse_start_x_ = window_event.motion.x;
-            mouse_start_y_ = window_event.motion.y;
-        }
-        else if (window_event.type == SDL_MOUSEBUTTONUP)
-        {
-            tracking_mouse_ = false;
-        }
+            if (handle_mouse_callback_)
+            {
+                continue_mouse_processing = handle_mouse_callback_(this, window_event, secs_since_last_renderloop);
+            }
 
-        if (window_event.type == SDL_MOUSEMOTION && tracking_mouse_)
-        {
-            GLfloat mouse_diff_x = (mouse_start_x_ - window_event.motion.x) * -1.0f;     // flip left / right
-            GLfloat mouse_diff_y = mouse_start_y_ - window_event.motion.y;
-
-            camera_pitch_degrees_ += mouse_diff_y * mouse_sensitivity_;
-            camera_yaw_degrees_ += mouse_diff_x * mouse_sensitivity_;
-
-            update_camera_pointing_vector = true;
+            if (continue_mouse_processing)
+            {
+                handleMouse(window_event, secs_since_last_renderloop, update_camera_coords, update_camera_pointing_vector);
+            }
         }
 
         if (window_event.type == SDL_KEYDOWN || window_event.type == SDL_KEYUP)
@@ -354,4 +353,29 @@ bool WindowManager::handleKeystroke(SDL_Event keystroke_event, GLfloat secs_sinc
     }
 
     return continue_rendering;
+}
+
+void WindowManager::handleMouse(SDL_Event mouse_event, GLfloat secs_since_last_renderloop, bool& update_camera_coords, bool& update_camera_pointing_vector)
+{
+    if (mouse_event.type == SDL_MOUSEBUTTONDOWN && mouse_event.button.button == SDL_BUTTON_LEFT)
+    {
+        tracking_mouse_ = true;
+
+        mouse_start_x_ = mouse_event.motion.x;
+        mouse_start_y_ = mouse_event.motion.y;
+    }
+    else if (mouse_event.type == SDL_MOUSEBUTTONUP)
+    {
+        tracking_mouse_ = false;
+    }
+    else if (mouse_event.type == SDL_MOUSEMOTION && tracking_mouse_)
+    {
+        GLfloat mouse_diff_x = (mouse_start_x_ - mouse_event.motion.x) * -1.0f;     // flip left / right
+        GLfloat mouse_diff_y = mouse_start_y_ - mouse_event.motion.y;
+
+        camera_pitch_degrees_ += mouse_diff_y * mouse_sensitivity_;
+        camera_yaw_degrees_ += mouse_diff_x * mouse_sensitivity_;
+
+        update_camera_pointing_vector = true;
+    }
 }

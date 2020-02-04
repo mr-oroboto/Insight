@@ -17,17 +17,20 @@ public:
     bool initialise();
 
     void setHandleKeystrokeCallback(std::function<bool(WindowManager*, SDL_Event, GLfloat)> callback);
+    void setHandleMouseCallback(std::function<bool(WindowManager*, SDL_Event, GLfloat)> callback);
 
     void resetCamera();
     void setCameraCoords(const glm::vec3& world_coords);
     void setCameraPointingVector(const glm::vec3& vector);
 
     DisplayManager* getDisplayManager();
+
     bool run();
 
 private:
     bool processEvents(GLfloat secs_since_last_renderloop);
     bool handleKeystroke(SDL_Event keystroke_event, GLfloat secs_since_last_renderloop, bool& update_camera_coords, bool& update_camera_pointing_vector);
+    void handleMouse(SDL_Event mouse_event, GLfloat secs_since_last_renderloop, bool& update_camera_coords, bool& update_camera_pointing_vector);
 
     SDL_Window* window_;
     SDL_GLContext opengl_context_;
@@ -42,6 +45,7 @@ private:
     GLfloat mouse_start_x_, mouse_start_y_;
     GLfloat mouse_sensitivity_;
     std::function<bool(WindowManager*, SDL_Event, GLfloat)> handle_keystroke_callback_;
+    std::function<bool(WindowManager*, SDL_Event, GLfloat)> handle_mouse_callback_;
 
     std::chrono::high_resolution_clock::time_point t_last_renderloop_at_;
     std::chrono::high_resolution_clock::time_point t_rendering_started_at_;

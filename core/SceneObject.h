@@ -21,6 +21,7 @@ public:
     void setColour(const glm::vec3& colour);
 
     glm::vec3 getPosition();
+    glm::vec3 getScale();
     Primitive* getPrimitive();
 
     virtual void draw(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame, bool use_colour = true);

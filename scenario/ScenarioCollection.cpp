@@ -74,3 +74,13 @@ void ScenarioCollection::selectScenario(size_t scenario, bool reset_camera)
     window_manager_->getDisplayManager()->setUpdateSceneCallback(nullptr);
     scenarios_[scenario]->run();
 }
+
+Scenario* ScenarioCollection::getCurrentScenario()
+{
+    if (scenarios_.size() == 0)
+    {
+        return nullptr;
+    }
+
+    return scenarios_[current_scenario_];
+}

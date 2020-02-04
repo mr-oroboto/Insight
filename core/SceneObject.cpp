@@ -112,6 +112,11 @@ glm::vec3 SceneObject::getPosition()
     return world_coords_;
 }
 
+glm::vec3 SceneObject::getScale()
+{
+    return glm::vec3(scale_x_, scale_y_, scale_z_);
+}
+
 Primitive* SceneObject::getPrimitive()
 {
     return primitive_;

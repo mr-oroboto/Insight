@@ -274,3 +274,37 @@ glm::mat4 DisplayManager::getProjectionTransform()
 {
     return projection_transform_;
 }
+
+GLuint DisplayManager::getWindowWidth()
+{
+    return wnd_width_;
+}
+
+GLuint DisplayManager::getWindowHeight()
+{
+    return wnd_height_;
+}
+
+/**
+ * Generate a ray from the camera (origin) to a picked mouse position (ray casting).
+ *
+ * http://antongerdelan.net/opengl/raycasting.html
+ * https://stackoverflow.com/questions/29997209/opengl-c-mouse-ray-picking-glmunproject
+ * http://www.iquilezles.org/www/articles/intersectors/intersectors.htm
+ */
+glm::vec3 DisplayManager::getRayFromCamera(GLuint to_mouse_x, GLuint to_mouse_y)
+{
+    GLfloat ndc_mouse_x = to_mouse_x / (getWindowWidth()  * 0.5f) - 1.0f;     // NDC (-1.0 to 1.0)
+    GLfloat ndc_mouse_y = to_mouse_y / (getWindowHeight() * 0.5f) - 1.0f;
+
+    glm::mat4 view = getViewTransform();
+    view = glm::lookAt(glm::vec3(0.0f), getCameraPointingVector(), getCameraUpVector());
+
+    glm::mat4 inverse_view_projection = glm::inverse(getProjectionTransform() * view);
+    glm::vec4 mouse_screen_coords = glm::vec4(ndc_mouse_x, -1.0 * ndc_mouse_y, 1.0f, 1.0f);
+    glm::vec4 mouse_world_coords = inverse_view_projection * mouse_screen_coords;
+
+    glm::vec3 ray_direction = glm::normalize(glm::vec3(mouse_world_coords));
+
+    return ray_direction;
+}

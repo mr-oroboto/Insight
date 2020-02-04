@@ -261,7 +261,7 @@ Frame* Frame::clone()
 GLuint Frame::deleteObjectsAtPosition(const glm::vec3 &world_coords, Primitive::Type primitive_type)
 {
     bool object_deleted = false;
-    bool objects_deleted = 0;
+    GLuint objects_deleted = 0;
 
     do
     {
@@ -288,7 +288,7 @@ GLuint Frame::deleteObjectsAtPosition(const glm::vec3 &world_coords, Primitive::
 GLuint Frame::deleteObjectsOutsideBoundary(const glm::vec3 &world_coords, GLfloat bounding_width, Primitive::Type primitive_type)
 {
     bool object_deleted = false;
-    bool objects_deleted = 0;
+    GLuint objects_deleted = 0;
 
     do
     {

@@ -17,6 +17,7 @@ public:
 
     unsigned long getScenarioCount();
     Scenario* getScenario(unsigned long scenario_index);
+    Scenario* getCurrentScenario();
 
     void nextScenario(bool reset_camera = true);
     void previousScenario(bool reset_camera = true);
