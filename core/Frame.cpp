@@ -14,6 +14,8 @@ Frame::Frame(DisplayManager* display_manager, bool draw_object_position, bool dr
     draw_object_positions_ = draw_object_position;
     draw_reference_axes_ = draw_reference_axes;
     draw_floor_ = draw_floor;
+
+    next_text_id_ = 0;
 }
 
 Frame::~Frame()
@@ -47,7 +49,7 @@ void Frame::addLine(const glm::vec3& from_world_coords, const glm::vec3& to_worl
     objects_.push_back(object);
 }
 
-void Frame::addText(const std::string& text, GLfloat x, GLfloat y, GLfloat z, bool ortho, GLfloat scale, const glm::vec3& colour)
+unsigned long Frame::addText(const std::string& text, GLfloat x, GLfloat y, GLfloat z, bool ortho, GLfloat scale, const glm::vec3& colour)
 {
     glm::vec3 position = glm::vec3(x, y, z);
 
@@ -59,7 +61,10 @@ void Frame::addText(const std::string& text, GLfloat x, GLfloat y, GLfloat z, bo
             colour
     };
 
-    texts_.push_back(textObj);
+    unsigned long text_id = next_text_id_++;
+    texts_[text_id] = textObj;
+
+    return text_id;
 }
 
 void Frame::draw(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame)
@@ -111,8 +116,9 @@ void Frame::draw(GLfloat secs_since_rendering_started, GLfloat secs_since_frameq
         }
     }
 
-    for (Text text : texts_)
+    for (std::unordered_map<unsigned long, Text>::iterator i = texts_.begin(); i != texts_.end(); i++)
     {
+        Text text = i->second;
         display_manager_->drawText(text.text, text.position, text.ortho, text.scale, text.colour);
     }
 }
@@ -250,9 +256,10 @@ Frame* Frame::clone()
         clone->objects_.push_back(object->clone());
     }
 
-    for (Text text : texts_)
+    for (std::unordered_map<unsigned long, Text>::iterator i = texts_.begin(); i != texts_.end(); i++)
     {
-        clone->texts_.push_back(text);
+        Text text = i->second;
+        clone->addText(text.text, text.position.x, text.position.y, text.position.z, text.ortho, text.scale, text.colour);
     }
 
     return clone;
@@ -311,6 +318,14 @@ GLuint Frame::deleteObjectsOutsideBoundary(const glm::vec3 &world_coords, GLfloa
     } while (object_deleted);
 
     return objects_deleted;
+}
+
+void Frame::deleteText(unsigned long text_id)
+{
+    if (texts_.find(text_id) != texts_.end())
+    {
+        texts_.erase(text_id);
+    }
 }
 
 bool Frame::coordinatesAreOutsideBoundary(const glm::vec3& world_coords, const glm::vec3& reference_coords, GLfloat bounding_width)
