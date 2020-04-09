@@ -34,3 +34,33 @@ a lot better on-screen!
 * libglew
 * libglm
 * libfreetype6
+
+## Building
+
+Insight uses CMake as its build system and can be built as a static library (for inclusion in other projects, such
+as https://github.com/mr-oroboto/Waveguide) or a stand-alone executable.
+
+```
+git clone https://github.com/mr-oroboto/Insight.git
+cd Insight
+mkdir build && cd build
+cmake ..
+make
+```
+
+## Running
+
+Run `InsightApp` from the build directory, it accepts the following command-line arguments:
+
+```
+-f <font_path>    /path/to/ttf/fonts
+-t <texture_path> /path/to/textures
+```
+
+As built, it requires one font (Vera.ttf, which is included with many stock Linux distributions) and one texture
+(water.jpg, which is included with the distribution).
+
+```
+cd build
+./InsightApp -f /usr/share/fonts/truetype/ttf-bitstream-vera -t /path/to/downloaded/source
+```

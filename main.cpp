@@ -102,7 +102,6 @@ int main(int argc, char *argv[])
     if ( ! display_manager->getTextureCollection()->registerTexture(texture_path.append("/water.jpg"), "water"))
     {
         std::cerr << "Failed to add water texture" << std::endl;
-        return -1;
     }
 
     if ( ! display_manager->getTextDrawer()->registerFont(Font::Type::FONT_DEFAULT, font_path.append("/Vera.ttf")))
