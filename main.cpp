@@ -1,3 +1,5 @@
+#include <argp.h>
+
 #include <iostream>
 
 #include "Insight.h"
@@ -12,11 +14,53 @@
 #define WINDOW_X_SIZE 2560
 #define WINDOW_Y_SIZE 1440
 
+ScenarioCollection scenarios;
+
 /**********************************************************************************************************************
- * Entry point
+ * Command-line argument parsing
  **********************************************************************************************************************/
 
-ScenarioCollection scenarios;
+std::string font_path = "/usr/share/fonts/truetype/ttf-bitstream-vera";
+std::string texture_path;
+
+static error_t parse(int key, char *arg)
+{
+    switch (key)
+    {
+        case 'f':
+            font_path = std::string(arg);
+            break;
+        case 't':
+            texture_path = std::string(arg);
+            break;
+        default:
+            return ARGP_ERR_UNKNOWN;
+    }
+
+    return 0;
+}
+
+static error_t parse_argument(int key, char *arg, struct argp_state* state)
+{
+    return parse(key, arg);
+}
+
+static argp_option options[] = {
+        {"font_path", 'f', "STRING", 0, "Full path (excluding trailing slash) to TTF fonts", 0},
+        {"texture_path", 't', "STRING", 0, "Full path (excluding trailing slash) to texture files", 0},
+        0
+};
+
+static argp parser = {
+        options,
+        parse_argument,
+        0,
+        0
+};
+
+/**********************************************************************************************************************
+ * WindowManager callbacks
+ **********************************************************************************************************************/
 
 bool handleKeystroke(WindowManager* window_manager, SDL_Event keystroke_event, GLfloat secs_since_last_renderloop)
 {
@@ -33,10 +77,15 @@ bool handleKeystroke(WindowManager* window_manager, SDL_Event keystroke_event, G
     return continue_processing_keystrokes;
 }
 
+/**********************************************************************************************************************
+ * Entry point
+ **********************************************************************************************************************/
+
 int main(int argc, char *argv[])
 {
-    WindowManager window_manager(WINDOW_X_SIZE, WINDOW_Y_SIZE, WINDOW_FULLSCREEN, glm::vec3(0, 5, 31));
+    argp_parse(&parser, argc, argv, 0, 0, NULL);
 
+    WindowManager window_manager(WINDOW_X_SIZE, WINDOW_Y_SIZE, WINDOW_FULLSCREEN, glm::vec3(0, 5, 31));
     if ( ! window_manager.initialise())
     {
         std::cerr << "Failed to initialise WindowManager" << std::endl;
@@ -44,20 +93,19 @@ int main(int argc, char *argv[])
     }
 
     DisplayManager* display_manager = window_manager.getDisplayManager();
-
     if ( ! display_manager->getPrimitiveCollection()->addPrimitive(Primitive::Type::TESSELATION, new Tesselation(window_manager.getDisplayManager()->getObjectShader())))
     {
         std::cerr << "Failed to add Tesselation primitive" << std::endl;
         return -1;
     }
 
-    if ( ! display_manager->getTextureCollection()->registerTexture("/home/sysop/textures/water.jpg", "water"))
+    if ( ! display_manager->getTextureCollection()->registerTexture(texture_path.append("/water.jpg"), "water"))
     {
         std::cerr << "Failed to add water texture" << std::endl;
         return -1;
     }
 
-    if ( ! display_manager->getTextDrawer()->registerFont(Font::Type::FONT_DEFAULT, "/home/sysop/ClionProjects/Insight/font/Vera.ttf"))
+    if ( ! display_manager->getTextDrawer()->registerFont(Font::Type::FONT_DEFAULT, font_path.append("/Vera.ttf")))
     {
         std::cerr << "Failed to register font" << std::endl;
         return -1;
