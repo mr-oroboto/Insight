@@ -18,8 +18,8 @@ void insight::scenario::HeapDepthFirstTraversal::run(decorator::HeapDecorator::T
     frame_queue->setFrameRate(1);
 
     decorator::HeapDecorator* decorator = new decorator::HeapDecorator(frame_queue.get());
-    MinHeapArray heap(nullptr);
-    decorator->setHeap(dynamic_cast<HeapArray*>(&heap));
+    adt::MinHeapArray heap(nullptr);
+    decorator->setHeap(dynamic_cast<adt::HeapArray*>(&heap));
 
     int heap_values[] = {
             4, 50, 7, 90, 55, 87, 2, 16, 23

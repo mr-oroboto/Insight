@@ -6,6 +6,9 @@
 
 #include "decorator/HeapDecorator.h"
 
+namespace insight {
+namespace adt {
+
 class HeapArray {
 public:
     HeapArray(insight::decorator::HeapDecorator* decorator = nullptr);
@@ -69,5 +72,8 @@ protected:
     bool shouldSwapInHeapifyUp(int node_value, int comparison_node_value);
     bool shouldSwapInHeapifyDown(int node_value, int comparison_node_value);
 };
+
+}   // namespace adt
+}   // namespace insight
 
 #endif //INSIGHT_ADT_HEAPARRAY_H

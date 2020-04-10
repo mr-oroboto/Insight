@@ -14,7 +14,7 @@ void insight::scenario::MinHeap::run()
     frame_queue->setFrameRate(1);
 
     decorator::HeapDecorator* decorator = new decorator::HeapDecorator(frame_queue.get());
-    MinHeapArray heap(decorator);
+    adt::MinHeapArray heap(decorator);
 
     int heap_values[] = {
             4, 50, 7, 90, 55, 87, 2, 16, 23

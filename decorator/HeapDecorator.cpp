@@ -7,7 +7,7 @@
 #include "adt/HeapArray.h"
 #include "core/DisplayManager.h"
 
-void insight::decorator::HeapDecorator::setHeap(HeapArray* heapArray)
+void insight::decorator::HeapDecorator::setHeap(adt::HeapArray* heapArray)
 {
     heap_ = heapArray;
 }

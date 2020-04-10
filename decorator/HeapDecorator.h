@@ -6,9 +6,12 @@
 #include "Decorator.h"
 #include "core/FrameQueue.h"
 
-class HeapArray;
-
 namespace insight {
+
+namespace adt {
+class HeapArray;
+}
+
 namespace decorator {
 
 class HeapDecorator : public Decorator {
@@ -21,7 +24,7 @@ public:
 
     HeapDecorator(FrameQueue *frame_queue) : Decorator(frame_queue) { }
 
-    void setHeap(HeapArray *heap);
+    void setHeap(adt::HeapArray *heap);
     void setHightlightedNodeValue(int node_value);
 
     void decorate();
@@ -33,7 +36,7 @@ protected:
     void drawNode(size_t node_index, const glm::vec3 &node_position, const glm::vec3 &last_node_coords, std::shared_ptr<Frame> prototype_frame);
     void bft(std::shared_ptr<Frame> prototype_frame);
 
-    HeapArray *heap_;
+    adt::HeapArray *heap_;
     int highlighted_node_value_;
 };
 
