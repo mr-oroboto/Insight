@@ -10,7 +10,7 @@ namespace primitive {
 
 class Quad : public Primitive {
 public:
-    Quad(insight::shader::StandardShader *shader) : Primitive(shader) { initialise(); }
+    Quad(shader::StandardShader *shader) : Primitive(shader) { initialise(); }
     ~Quad() = default;
 
     void draw();

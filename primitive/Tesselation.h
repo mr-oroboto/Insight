@@ -14,7 +14,7 @@ namespace primitive {
 
 class Tesselation : public Primitive {
 public:
-    Tesselation(insight::shader::StandardShader* shader) : Primitive(shader) { initialise(); }
+    Tesselation(shader::StandardShader* shader) : Primitive(shader) { initialise(); }
     ~Tesselation() = default;
 
     enum Type

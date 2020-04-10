@@ -6,7 +6,10 @@
 #include "core/DisplayManager.h"
 #include "decorator/HeapDecorator.h"
 
-void insight::scenario::HeapBreadthFirstTraversal::run()
+namespace insight {
+namespace scenario {
+
+void HeapBreadthFirstTraversal::run()
 {
     std::unique_ptr<FrameQueue> frame_queue = std::make_unique<FrameQueue>(display_manager_, true);
     frame_queue->setFrameRate(1);
@@ -37,3 +40,6 @@ void insight::scenario::HeapBreadthFirstTraversal::run()
 
     delete decorator;
 }
+
+}   // namespace scenario
+}   // namespace insight

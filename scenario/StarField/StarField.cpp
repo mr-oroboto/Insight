@@ -14,7 +14,11 @@
 #define MIN_Z -30
 #define MAX_Z 30
 
-void insight::scenario::StarField::run()
+namespace insight {
+namespace scenario {
+
+
+void StarField::run()
 {
     /**
      * 1. Create a new repeating FrameQueue
@@ -57,7 +61,11 @@ void insight::scenario::StarField::run()
     }
 }
 
-void insight::scenario::StarField::updateSceneCallback(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame)
+void StarField::updateSceneCallback(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame)
 {
     frame_->updateObjects(secs_since_rendering_started, secs_since_framequeue_started, secs_since_last_renderloop, secs_since_last_frame, nullptr);
 }
+
+
+}   // namespace scenario
+}   // namespace insight

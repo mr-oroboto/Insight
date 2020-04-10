@@ -7,17 +7,21 @@
 #include "adt/HeapArray.h"
 #include "core/DisplayManager.h"
 
-void insight::decorator::HeapDecorator::setHeap(adt::HeapArray* heapArray)
+namespace insight {
+namespace decorator {
+
+
+void HeapDecorator::setHeap(adt::HeapArray* heapArray)
 {
     heap_ = heapArray;
 }
 
-void insight::decorator::HeapDecorator::setHightlightedNodeValue(int node_value)
+void HeapDecorator::setHightlightedNodeValue(int node_value)
 {
     highlighted_node_value_ = node_value;
 }
 
-void insight::decorator::HeapDecorator::decorate()
+void HeapDecorator::decorate()
 {
     current_frame_ = frame_queue_->newFrame();
 
@@ -35,7 +39,7 @@ void insight::decorator::HeapDecorator::decorate()
     frame_queue_->enqueueFrame(current_frame_);
 }
 
-void insight::decorator::HeapDecorator::decorateDft(TraverseOrder traverse_order)
+void HeapDecorator::decorateDft(TraverseOrder traverse_order)
 {
     current_frame_ = frame_queue_->newFrame();
 
@@ -69,7 +73,7 @@ void insight::decorator::HeapDecorator::decorateDft(TraverseOrder traverse_order
     frame_queue_->enqueueFrame(current_frame_);
 }
 
-void insight::decorator::HeapDecorator::dft(size_t node_index, unsigned long node_level, const glm::vec3& last_node_coords, bool is_left_of_parent, TraverseOrder traverse_order, std::shared_ptr<Frame> prototype_frame)
+void HeapDecorator::dft(size_t node_index, unsigned long node_level, const glm::vec3& last_node_coords, bool is_left_of_parent, TraverseOrder traverse_order, std::shared_ptr<Frame> prototype_frame)
 {
     int left_index = heap_->getLeftIndex(node_index);
     int right_index = heap_->getRightIndex(node_index);
@@ -139,7 +143,7 @@ void insight::decorator::HeapDecorator::dft(size_t node_index, unsigned long nod
     }
 }
 
-void insight::decorator::HeapDecorator::drawNode(size_t node_index, const glm::vec3& node_position, const glm::vec3& last_node_coords, std::shared_ptr<Frame> prototype_frame)
+void HeapDecorator::drawNode(size_t node_index, const glm::vec3& node_position, const glm::vec3& last_node_coords, std::shared_ptr<Frame> prototype_frame)
 {
     int node_value = heap_->getNodeValue(node_index);
     glm::vec3 node_colour;
@@ -176,7 +180,7 @@ void insight::decorator::HeapDecorator::drawNode(size_t node_index, const glm::v
     }
 }
 
-void insight::decorator::HeapDecorator::decorateBft()
+void HeapDecorator::decorateBft()
 {
     current_frame_ = frame_queue_->newFrame();
 
@@ -198,7 +202,7 @@ void insight::decorator::HeapDecorator::decorateBft()
     frame_queue_->enqueueFrame(current_frame_);
 }
 
-void insight::decorator::HeapDecorator::bft(std::shared_ptr<Frame> prototype_frame)
+void HeapDecorator::bft(std::shared_ptr<Frame> prototype_frame)
 {
     struct NodeDetails {
         size_t node_index;
@@ -291,3 +295,7 @@ void insight::decorator::HeapDecorator::bft(std::shared_ptr<Frame> prototype_fra
         }
     }
 }
+
+
+}   // namespace decorator
+}   // namespace insight

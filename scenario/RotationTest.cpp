@@ -2,7 +2,10 @@
 
 #include "core/DisplayManager.h"
 
-void insight::scenario::RotationTest::run()
+namespace insight {
+namespace scenario {
+
+void RotationTest::run()
 {
     std::unique_ptr<FrameQueue> frame_queue = std::make_unique<FrameQueue>(display_manager_, true);
     frame_queue->setFrameRate(1);
@@ -20,3 +23,6 @@ void insight::scenario::RotationTest::run()
         display_manager_->setFrameQueue(std::move(frame_queue));
     }
 }
+
+}   // namespace scenario
+}   // namespace insight

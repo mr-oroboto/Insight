@@ -1,6 +1,10 @@
 #include "Quad.h"
 
-void insight::primitive::Quad::initialise()
+namespace insight {
+namespace primitive {
+
+        
+void Quad::initialise()
 {
     type_ = Primitive::QUAD;
 
@@ -54,8 +58,12 @@ void insight::primitive::Quad::initialise()
 
 }
 
-void insight::primitive::Quad::draw()
+void Quad::draw()
 {
     setActive();
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }
+
+
+}   // namespace primitive
+}   // namespace insight

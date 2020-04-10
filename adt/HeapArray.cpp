@@ -3,7 +3,7 @@
 namespace insight {
 namespace adt {
 
-HeapArray::HeapArray(insight::decorator::HeapDecorator* decorator)
+HeapArray::HeapArray(decorator::HeapDecorator* decorator)
 {
     decorator_ = decorator;
 

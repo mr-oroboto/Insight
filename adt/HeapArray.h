@@ -11,7 +11,7 @@ namespace adt {
 
 class HeapArray {
 public:
-    HeapArray(insight::decorator::HeapDecorator* decorator = nullptr);
+    HeapArray(decorator::HeapDecorator* decorator = nullptr);
 
     // Insert a new value into the heap.
     //
@@ -42,7 +42,7 @@ protected:
     virtual bool shouldSwapInHeapifyDown(int node_value, int comparison_node_value) = 0;
 
     std::vector<int> store_;
-    insight::decorator::HeapDecorator* decorator_;
+    decorator::HeapDecorator* decorator_;
 
 private:
     void heapifyUp(size_t node_index);
@@ -51,7 +51,7 @@ private:
 
 class MaxHeapArray : public HeapArray {
 public:
-    MaxHeapArray(insight::decorator::HeapDecorator* decorator) : HeapArray(decorator) {}
+    MaxHeapArray(decorator::HeapDecorator* decorator) : HeapArray(decorator) {}
 
     int max();
     int extractMax() { return extractRoot(); }
@@ -63,7 +63,7 @@ protected:
 
 class MinHeapArray : public HeapArray {
 public:
-    MinHeapArray(insight::decorator::HeapDecorator* decorator) : HeapArray(decorator) {}
+    MinHeapArray(decorator::HeapDecorator* decorator) : HeapArray(decorator) {}
 
     int min();
     int extractMin() { return extractRoot(); }

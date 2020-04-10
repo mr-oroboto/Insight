@@ -6,7 +6,10 @@
 #include "core/DisplayManager.h"
 #include "decorator/HeapDecorator.h"
 
-void insight::scenario::MinHeap::run()
+namespace insight {
+namespace scenario {
+
+void MinHeap::run()
 {
     display_manager_->setUpdateSceneCallback(nullptr);
 
@@ -36,3 +39,6 @@ void insight::scenario::MinHeap::run()
 
     delete decorator;
 }
+
+}   // namespace scenario
+}   // namespace insight

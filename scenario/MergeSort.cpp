@@ -2,7 +2,10 @@
 
 #include "core/DisplayManager.h"
 
-void insight::scenario::MergeSort::run()
+namespace insight {
+namespace scenario {
+
+void MergeSort::run()
 {
     std::unique_ptr<FrameQueue> frame_queue = std::make_unique<FrameQueue>(display_manager_, true);
     frame_queue->setFrameRate(1);
@@ -43,10 +46,10 @@ void insight::scenario::MergeSort::run()
  *       offset of the parent array that the left and right portion are coming from (see the 2, 1 and 90,32 split for
  *       an example).
  */
-std::vector<int> insight::scenario::MergeSort::sort(const std::vector<int>& v, unsigned int depth,
-                                                    decorator::vector::VectorDetail* parent_vector,
-                                                    decorator::vector::VectorDetail::RelationshipToParent child_type,
-                                                    decorator::vector::VectorDetail*& vector_detail)
+std::vector<int> MergeSort::sort(const std::vector<int>& v, unsigned int depth,
+                                 decorator::vector::VectorDetail* parent_vector,
+                                 decorator::vector::VectorDetail::RelationshipToParent child_type,
+                                 decorator::vector::VectorDetail*& vector_detail)
 {
     if (depth > deepest_depth_)
     {
@@ -79,7 +82,7 @@ std::vector<int> insight::scenario::MergeSort::sort(const std::vector<int>& v, u
     return sorted;
 }
 
-std::vector<int> insight::scenario::MergeSort::merge(const std::vector<int>& left, const std::vector<int>& right)
+std::vector<int> MergeSort::merge(const std::vector<int>& left, const std::vector<int>& right)
 {
     std::vector<int> merged = std::vector<int>();
 
@@ -114,3 +117,6 @@ std::vector<int> insight::scenario::MergeSort::merge(const std::vector<int>& lef
 
     return merged;
 }
+
+}   // namespace scenario
+}   // namespace insight

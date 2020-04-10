@@ -37,13 +37,13 @@ public:
     virtual void draw() = 0;
 
 protected:
-    Primitive(insight::shader::StandardShader* shader) : object_shader_(shader) { supports_transforms_ = false; }
+    Primitive(shader::StandardShader* shader) : object_shader_(shader) { supports_transforms_ = false; }
 
     virtual void initialise() = 0;
 
     Primitive::Type type_;
 
-    insight::shader::StandardShader* object_shader_;
+    shader::StandardShader* object_shader_;
 
     GLuint vao_;
     GLuint vbo_;

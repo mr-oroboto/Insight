@@ -10,7 +10,7 @@ namespace primitive {
 
 class Triangle : public Primitive {
 public:
-    Triangle(insight::shader::StandardShader* shader) : Primitive(shader) { initialise(); }
+    Triangle(shader::StandardShader* shader) : Primitive(shader) { initialise(); }
     ~Triangle() = default;
 
     void draw();

@@ -10,7 +10,7 @@ namespace primitive {
 
 class Cube : public Primitive {
 public:
-    Cube(insight::shader::StandardShader* shader) : Primitive(shader) { initialise(); }
+    Cube(shader::StandardShader* shader) : Primitive(shader) { initialise(); }
     ~Cube() = default;
 
     void draw();

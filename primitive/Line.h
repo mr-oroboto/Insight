@@ -11,7 +11,7 @@ namespace primitive {
 
 class Line : public Primitive {
 public:
-    Line(insight::shader::StandardShader* shader) : Primitive(shader) { initialise(); }
+    Line(shader::StandardShader* shader) : Primitive(shader) { initialise(); }
     ~Line() = default;
 
     glm::mat4 getRotationTransform(const glm::mat4& model_transform);

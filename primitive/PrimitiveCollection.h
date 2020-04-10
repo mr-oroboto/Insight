@@ -13,7 +13,7 @@ namespace primitive {
 
 class PrimitiveCollection {
 public:
-    PrimitiveCollection(insight::shader::StandardShader* object_shader);
+    PrimitiveCollection(shader::StandardShader* object_shader);
     ~PrimitiveCollection();
 
     Primitive* selectPrimitive(Primitive::Type primitive);

@@ -1,6 +1,10 @@
 #include "Triangle.h"
 
-void insight::primitive::Triangle::initialise()
+namespace insight {
+namespace primitive {
+
+
+void Triangle::initialise()
 {
     type_ = Primitive::TRIANGLE;
 
@@ -47,8 +51,12 @@ void insight::primitive::Triangle::initialise()
 
 }
 
-void insight::primitive::Triangle::draw()
+void Triangle::draw()
 {
     setActive();
     glDrawArrays(GL_TRIANGLES, 0, 3);
 }
+
+
+}   // namespace primitive
+}   // namespace insight

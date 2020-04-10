@@ -8,7 +8,11 @@
 #include "Rectangle.h"
 #include "TransformingRectangle.h"
 
-insight::primitive::PrimitiveCollection::PrimitiveCollection(insight::shader::StandardShader* shader)
+namespace insight {
+namespace primitive {
+
+    
+PrimitiveCollection::PrimitiveCollection(shader::StandardShader* shader)
 {
     primitives_[Primitive::Type::CUBE] = new Cube(shader);
     primitives_[Primitive::Type::TRIANGLE] = new Triangle(shader);
@@ -18,7 +22,7 @@ insight::primitive::PrimitiveCollection::PrimitiveCollection(insight::shader::St
     primitives_[Primitive::Type::TRANSFORMING_RECTANGLE] = new TransformingRectangle(shader);
 }
 
-insight::primitive::PrimitiveCollection::~PrimitiveCollection()
+PrimitiveCollection::~PrimitiveCollection()
 {
     for (std::unordered_map<Primitive::Type, Primitive*>::iterator i = primitives_.begin(); i != primitives_.end(); i++)
     {
@@ -27,7 +31,7 @@ insight::primitive::PrimitiveCollection::~PrimitiveCollection()
     }
 }
 
-bool insight::primitive::PrimitiveCollection::addPrimitive(Primitive::Type primitive_type, Primitive* primitive)
+bool PrimitiveCollection::addPrimitive(Primitive::Type primitive_type, Primitive* primitive)
 {
     if (primitives_.find(primitive_type) != primitives_.end())
     {
@@ -39,7 +43,7 @@ bool insight::primitive::PrimitiveCollection::addPrimitive(Primitive::Type primi
     return true;
 }
 
-insight::primitive::Primitive* insight::primitive::PrimitiveCollection::selectPrimitive(Primitive::Type primitive)
+Primitive* PrimitiveCollection::selectPrimitive(Primitive::Type primitive)
 {
     if (primitives_.find(primitive) == primitives_.end() || primitives_[primitive] == nullptr)
     {
@@ -51,3 +55,6 @@ insight::primitive::Primitive* insight::primitive::PrimitiveCollection::selectPr
     return primitives_[primitive];
 }
 
+
+}   // namespace primitive
+}   // namespace insight

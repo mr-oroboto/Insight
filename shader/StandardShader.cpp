@@ -4,7 +4,10 @@
 
 #include <glm/gtc/type_ptr.hpp>         // convert matrix to float
 
-bool insight::shader::StandardShader::initialise()
+namespace insight {
+namespace shader {
+    
+bool StandardShader::initialise()
 {
     try
     {
@@ -108,50 +111,50 @@ bool insight::shader::StandardShader::initialise()
     return initialised_;
 }
 
-void insight::shader::StandardShader::setCameraCoords(const glm::vec3 &world_coords)
+void StandardShader::setCameraCoords(const glm::vec3 &world_coords)
 {
     use();
     glUniform3f(uni_camera_coords_, world_coords.x, world_coords.y, world_coords.z);
 }
 
-void insight::shader::StandardShader::setLightingOn(bool on)
+void StandardShader::setLightingOn(bool on)
 {
     use();
     glUniform1i(uni_lighting_on_, on ? 1 : 0);
 }
 
-void insight::shader::StandardShader::setLightCoords(const glm::vec3 &world_coords)
+void StandardShader::setLightCoords(const glm::vec3 &world_coords)
 {
     use();
     glUniform3f(uni_light_coords_, world_coords.x, world_coords.y, world_coords.z);
 }
 
-void insight::shader::StandardShader::setLightColour(const glm::vec3 &colour, GLfloat intensity)
+void StandardShader::setLightColour(const glm::vec3 &colour, GLfloat intensity)
 {
     use();
     glUniform3f(uni_light_colour_, colour.r, colour.g, colour.b);
     glUniform1f(uni_light_intensity_, intensity);
 }
 
-void insight::shader::StandardShader::setProjectionTransform(const glm::mat4& transform)
+void StandardShader::setProjectionTransform(const glm::mat4& transform)
 {
     use();
     glUniformMatrix4fv(uni_projection_transform_, 1, GL_FALSE, glm::value_ptr(transform));
 }
 
-void insight::shader::StandardShader::setViewTransform(const glm::mat4& transform)
+void StandardShader::setViewTransform(const glm::mat4& transform)
 {
     use();
     glUniformMatrix4fv(uni_view_transform_, 1, GL_FALSE, glm::value_ptr(transform));
 }
 
-void insight::shader::StandardShader::setModelTransform(const glm::mat4& transform)
+void StandardShader::setModelTransform(const glm::mat4& transform)
 {
     use();
     glUniformMatrix4fv(uni_model_transform_, 1, GL_FALSE, glm::value_ptr(transform));
 }
 
-void insight::shader::StandardShader::setOverrideModelColour(bool override, const glm::vec3& colour)
+void StandardShader::setOverrideModelColour(bool override, const glm::vec3& colour)
 {
     use();
     if (override)
@@ -165,41 +168,41 @@ void insight::shader::StandardShader::setOverrideModelColour(bool override, cons
     }
 }
 
-void insight::shader::StandardShader::setTexturesOn(bool on)
+void StandardShader::setTexturesOn(bool on)
 {
     use();
     glUniform1i(uni_textures_on_, on ? 1 : 0);
 }
 
-void insight::shader::StandardShader::setTextureSamplerTextureUnit(GLuint texture_unit)
+void StandardShader::setTextureSamplerTextureUnit(GLuint texture_unit)
 {
     // This shader has one texture sampler, tell it which texture unit to sample from (Texture assigns the texture to that unit)
     use();
     glUniform1i(uni_texture_sampler_, texture_unit);
 }
 
-GLuint insight::shader::StandardShader::getPositionAttribute()
+GLuint StandardShader::getPositionAttribute()
 {
     return position_attribute_;
 }
 
-GLuint insight::shader::StandardShader::getNormalAttribute()
+GLuint StandardShader::getNormalAttribute()
 {
     return normal_attribute_;
 }
 
-GLuint insight::shader::StandardShader::getColourAttribute()
+GLuint StandardShader::getColourAttribute()
 {
     return colour_attribute_;
 }
 
-GLuint insight::shader::StandardShader::getTextureCoordsAttribute()
+GLuint StandardShader::getTextureCoordsAttribute()
 {
     return texture_coords_attribute_;
 }
 
 
-const char* insight::shader::StandardShader::vertex_source_ = R"glsl(
+const char* StandardShader::vertex_source_ = R"glsl(
     #version 330 core
 
     layout (location = 0) in vec3 inPosition;
@@ -239,7 +242,7 @@ const char* insight::shader::StandardShader::vertex_source_ = R"glsl(
     }
 )glsl";
 
-const char* insight::shader::StandardShader::fragment_source_ = R"glsl(
+const char* StandardShader::fragment_source_ = R"glsl(
     #version 330 core
 
     in vec3 colour;                     // object / vertex colour
@@ -296,3 +299,6 @@ const char* insight::shader::StandardShader::fragment_source_ = R"glsl(
         }
     }
 )glsl";
+
+}   // namespace shader
+}   // namespace insight

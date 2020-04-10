@@ -5,14 +5,17 @@
 #include "adt/HeapArray.h"
 #include "core/DisplayManager.h"
 
-void insight::scenario::HeapDepthFirstTraversal::run()
+namespace insight {
+namespace scenario {
+
+void HeapDepthFirstTraversal::run()
 {
     display_manager_->setUpdateSceneCallback(nullptr);
 
     run(decorator::HeapDecorator::TraverseOrder::PRE_ORDER);
 }
 
-void insight::scenario::HeapDepthFirstTraversal::run(decorator::HeapDecorator::TraverseOrder traverse_order)
+void HeapDepthFirstTraversal::run(decorator::HeapDecorator::TraverseOrder traverse_order)
 {
     std::unique_ptr<FrameQueue> frame_queue = std::make_unique<FrameQueue>(display_manager_, true);
     frame_queue->setFrameRate(1);
@@ -43,3 +46,6 @@ void insight::scenario::HeapDepthFirstTraversal::run(decorator::HeapDecorator::T
 
     delete decorator;
 }
+
+}   // namespace scenario
+}   // namespace insight

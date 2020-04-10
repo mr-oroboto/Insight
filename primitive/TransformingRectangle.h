@@ -11,7 +11,7 @@ namespace primitive {
 
 class TransformingRectangle : public Rectangle {
 public:
-    TransformingRectangle(insight::shader::StandardShader* shader);
+    TransformingRectangle(shader::StandardShader* shader);
     ~TransformingRectangle() = default;
 
     glm::mat4 getRotationTransform(const glm::mat4& model_transform);

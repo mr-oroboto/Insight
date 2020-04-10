@@ -2,25 +2,29 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-insight::primitive::TransformingRectangle::TransformingRectangle(insight::shader::StandardShader *shader)
+namespace insight {
+namespace primitive {
+
+
+TransformingRectangle::TransformingRectangle(shader::StandardShader *shader)
         : Rectangle(shader)
 {
     initialise();
 }
 
-void insight::primitive::TransformingRectangle::initialise()
+void TransformingRectangle::initialise()
 {
     type_ = Primitive::TRANSFORMING_RECTANGLE;
     supports_transforms_ = true;
 }
 
-glm::mat4 insight::primitive::TransformingRectangle::getTranslationTransform(const glm::mat4 &model_transform)
+glm::mat4 TransformingRectangle::getTranslationTransform(const glm::mat4 &model_transform)
 {
 //    std::cout << "from (" << from_world_coords_.x << "," << from_world_coords_.y << "," << from_world_coords_.z << ")" << std::endl;
     return glm::translate(model_transform, from_world_coords_);
 }
 
-glm::mat4 insight::primitive::TransformingRectangle::getRotationTransform(const glm::mat4 &model_transform)
+glm::mat4 TransformingRectangle::getRotationTransform(const glm::mat4 &model_transform)
 {
     /**
      * Rotation is achieved by re-aligning our model's y-axis. Our "model line" vertices define a unit vector
@@ -53,7 +57,7 @@ glm::mat4 insight::primitive::TransformingRectangle::getRotationTransform(const 
     return glm::rotate(model_transform, radians, rotation_axis);
 }
 
-glm::mat4 insight::primitive::TransformingRectangle::getScaleTransform(const glm::mat4 &model_transform, const glm::vec3& scale_vector)
+glm::mat4 TransformingRectangle::getScaleTransform(const glm::mat4 &model_transform, const glm::vec3& scale_vector)
 {
     glm::vec3 direction_vector = from_world_coords_ - to_world_coords_;
     glm::vec3 adjusted_scale_vector = glm::vec3(scale_vector.x, glm::length(direction_vector), scale_vector.z);
@@ -61,3 +65,6 @@ glm::mat4 insight::primitive::TransformingRectangle::getScaleTransform(const glm
     return glm::scale(model_transform, adjusted_scale_vector);
 }
 
+
+}   // namespace primitive
+}   // namespace insight

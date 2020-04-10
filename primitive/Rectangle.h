@@ -10,7 +10,7 @@ namespace primitive {
 
 class Rectangle : public Primitive {
 public:
-    Rectangle(insight::shader::StandardShader* shader);
+    Rectangle(shader::StandardShader* shader);
     ~Rectangle() = default;
 
     void draw();

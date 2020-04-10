@@ -5,7 +5,11 @@
 
 #define USE_TRANSFORMS true
 
-void insight::primitive::Line::initialise()
+namespace insight {
+namespace primitive {
+
+
+void Line::initialise()
 {
     type_ = Primitive::LINE;
     supports_transforms_ = USE_TRANSFORMS;
@@ -55,7 +59,7 @@ void insight::primitive::Line::initialise()
 
 }
 
-glm::mat4 insight::primitive::Line::getRotationTransform(const glm::mat4 &model_transform)
+glm::mat4 Line::getRotationTransform(const glm::mat4 &model_transform)
 {
     if (USE_TRANSFORMS)
     {
@@ -93,7 +97,7 @@ glm::mat4 insight::primitive::Line::getRotationTransform(const glm::mat4 &model_
     return glm::mat4(1.0f);
 }
 
-glm::mat4 insight::primitive::Line::getScaleTransform(const glm::mat4 &model_transform, const glm::vec3& scale_vector)
+glm::mat4 Line::getScaleTransform(const glm::mat4 &model_transform, const glm::vec3& scale_vector)
 {
     if (USE_TRANSFORMS)
     {
@@ -105,7 +109,7 @@ glm::mat4 insight::primitive::Line::getScaleTransform(const glm::mat4 &model_tra
     return glm::mat4(1.0f);
 }
 
-glm::mat4 insight::primitive::Line::getTranslationTransform(const glm::mat4 &model_transform)
+glm::mat4 Line::getTranslationTransform(const glm::mat4 &model_transform)
 {
     if (USE_TRANSFORMS)
     {
@@ -115,7 +119,7 @@ glm::mat4 insight::primitive::Line::getTranslationTransform(const glm::mat4 &mod
     return glm::mat4(1.0f);
 }
 
-void insight::primitive::Line::draw()
+void Line::draw()
 {
     setActive();
 
@@ -136,3 +140,7 @@ void insight::primitive::Line::draw()
 
     glDrawArrays(GL_LINES, 0, 2);
 }
+
+
+}   // namespace primitive
+}   // namespace insight

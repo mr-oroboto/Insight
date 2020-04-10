@@ -3,13 +3,17 @@
 #include "scenario/Scenario.h"
 #include "core/WindowManager.h"
 
-insight::scenario::ScenarioCollection::ScenarioCollection()
+namespace insight {
+namespace scenario {
+    
+
+ScenarioCollection::ScenarioCollection()
 {
     window_manager_ = nullptr;
     current_scenario_ = 0;
 }
 
-insight::scenario::ScenarioCollection::~ScenarioCollection()
+ScenarioCollection::~ScenarioCollection()
 {
     for (Scenario* s : scenarios_)
     {
@@ -17,17 +21,17 @@ insight::scenario::ScenarioCollection::~ScenarioCollection()
     }
 }
 
-void insight::scenario::ScenarioCollection::initialise(WindowManager* window_manager)
+void ScenarioCollection::initialise(WindowManager* window_manager)
 {
     window_manager_ = window_manager;
 }
 
-void insight::scenario::ScenarioCollection::addScenario(Scenario* scenario)
+void ScenarioCollection::addScenario(Scenario* scenario)
 {
     scenarios_.push_back(scenario);
 }
 
-insight::scenario::Scenario* insight::scenario::ScenarioCollection::getScenario(unsigned long scenario_index)
+Scenario* ScenarioCollection::getScenario(unsigned long scenario_index)
 {
     if (scenario_index < scenarios_.size())
     {
@@ -37,12 +41,12 @@ insight::scenario::Scenario* insight::scenario::ScenarioCollection::getScenario(
     return nullptr;
 }
 
-unsigned long insight::scenario::ScenarioCollection::getScenarioCount()
+unsigned long ScenarioCollection::getScenarioCount()
 {
     return scenarios_.size();
 }
 
-void insight::scenario::ScenarioCollection::nextScenario(bool reset_camera)
+void ScenarioCollection::nextScenario(bool reset_camera)
 {
     if (++current_scenario_ > scenarios_.size() - 1)
     {
@@ -52,7 +56,7 @@ void insight::scenario::ScenarioCollection::nextScenario(bool reset_camera)
     selectScenario(current_scenario_, reset_camera);
 }
 
-void insight::scenario::ScenarioCollection::previousScenario(bool reset_camera)
+void ScenarioCollection::previousScenario(bool reset_camera)
 {
     if (--current_scenario_ > scenarios_.size() - 1)
     {
@@ -62,7 +66,7 @@ void insight::scenario::ScenarioCollection::previousScenario(bool reset_camera)
     selectScenario(current_scenario_, reset_camera);
 }
 
-void insight::scenario::ScenarioCollection::selectScenario(size_t scenario, bool reset_camera)
+void ScenarioCollection::selectScenario(size_t scenario, bool reset_camera)
 {
     if (scenario >= scenarios_.size())
     {
@@ -78,7 +82,7 @@ void insight::scenario::ScenarioCollection::selectScenario(size_t scenario, bool
     scenarios_[scenario]->run();
 }
 
-insight::scenario::Scenario* insight::scenario::ScenarioCollection::getCurrentScenario()
+Scenario* ScenarioCollection::getCurrentScenario()
 {
     if (scenarios_.size() == 0)
     {
@@ -87,3 +91,7 @@ insight::scenario::Scenario* insight::scenario::ScenarioCollection::getCurrentSc
 
     return scenarios_[current_scenario_];
 }
+
+
+}   // namespace scenario
+}   // namespace insight
