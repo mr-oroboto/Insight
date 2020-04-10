@@ -15,8 +15,7 @@
 #include "shader/StandardShader.h"
 #include "TextureCollection.h"
 
-class DisplayManager
-{
+class DisplayManager {
 public:
     DisplayManager();
     ~DisplayManager();
@@ -37,7 +36,7 @@ public:
     bool registerTexture(const std::string& path, const std::string& name);
 
     PrimitiveCollection* getPrimitiveCollection();
-    StandardShader* getObjectShader();
+    insight::shader::StandardShader* getObjectShader();
 
     glm::vec3 getCameraCoords();
     glm::vec3 getCameraPointingVector();
@@ -67,7 +66,7 @@ private:
 
     GLuint wnd_width_, wnd_height_;
 
-    StandardShader* object_shader_;
+    insight::shader::StandardShader* object_shader_;
     std::unique_ptr<TextDrawer> text_drawer_;
 
     glm::vec3 camera_coords_;

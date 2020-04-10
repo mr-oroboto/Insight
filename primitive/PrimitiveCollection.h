@@ -8,10 +8,9 @@
 #include "Primitive.h"
 #include "shader/StandardShader.h"
 
-class PrimitiveCollection
-{
+class PrimitiveCollection {
 public:
-    PrimitiveCollection(StandardShader* object_shader);
+    PrimitiveCollection(insight::shader::StandardShader* object_shader);
     ~PrimitiveCollection();
 
     Primitive* selectPrimitive(Primitive::Type primitive);

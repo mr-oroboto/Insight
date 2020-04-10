@@ -3,11 +3,14 @@
 
 #include <GL/glew.h>
 
-class Shader
-{
+namespace insight {
+namespace shader {
+
+class Shader {
 public:
     virtual ~Shader();
 
+    // Make the shader active.
     void use();
 
 protected:
@@ -23,5 +26,8 @@ protected:
     GLuint vertex_shader_;
     GLuint fragment_shader_;
 };
+
+}   // namespace shader
+}   // namespace insight
 
 #endif //INSIGHT_SHADER_SHADER_H

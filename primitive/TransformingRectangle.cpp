@@ -1,18 +1,11 @@
 #include "TransformingRectangle.h"
 
-#include <iostream>
-
-#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-TransformingRectangle::TransformingRectangle(StandardShader *shader)
+TransformingRectangle::TransformingRectangle(insight::shader::StandardShader *shader)
         : Rectangle(shader)
 {
     initialise();
-}
-
-TransformingRectangle::~TransformingRectangle()
-{
 }
 
 void TransformingRectangle::initialise()

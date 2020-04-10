@@ -5,11 +5,10 @@
 
 #include "Primitive.h"
 
-class Rectangle : public Primitive
-{
+class Rectangle : public Primitive {
 public:
-    Rectangle(StandardShader* shader);
-    ~Rectangle();
+    Rectangle(insight::shader::StandardShader* shader);
+    ~Rectangle() = default;
 
     void draw();
 

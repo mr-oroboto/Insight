@@ -1,11 +1,5 @@
 #include "Triangle.h"
 
-#include <iostream>
-
-Triangle::~Triangle()
-{
-}
-
 void Triangle::initialise()
 {
     type_ = Primitive::TRIANGLE;

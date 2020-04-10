@@ -5,11 +5,10 @@
 
 #include "Primitive.h"
 
-class Quad : public Primitive
-{
+class Quad : public Primitive {
 public:
-    Quad(StandardShader *shader) : Primitive(shader) { initialise(); }
-    ~Quad();
+    Quad(insight::shader::StandardShader *shader) : Primitive(shader) { initialise(); }
+    ~Quad() = default;
 
     void draw();
 

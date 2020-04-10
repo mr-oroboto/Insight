@@ -5,11 +5,10 @@
 
 #include "Primitive.h"
 
-class Cube : public Primitive
-{
+class Cube : public Primitive {
 public:
-    Cube(StandardShader* shader) : Primitive(shader) { initialise(); }
-    ~Cube();
+    Cube(insight::shader::StandardShader* shader) : Primitive(shader) { initialise(); }
+    ~Cube() = default;
 
     void draw();
 

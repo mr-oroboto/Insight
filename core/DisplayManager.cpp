@@ -34,7 +34,7 @@ bool DisplayManager::initialise(GLuint wnd_width, GLuint wnd_height)
 
     try
     {
-        object_shader_ = new StandardShader();
+        object_shader_ = new insight::shader::StandardShader();
         if ( ! object_shader_->initialise())
         {
             throw "Can't initialise object shader";
@@ -232,7 +232,7 @@ PrimitiveCollection* DisplayManager::getPrimitiveCollection()
     return primitives_;
 }
 
-StandardShader* DisplayManager::getObjectShader()
+insight::shader::StandardShader* DisplayManager::getObjectShader()
 {
     return object_shader_;
 }

@@ -1,7 +1,5 @@
 #include "PrimitiveCollection.h"
 
-#include <iostream>
-
 #include "Cube.h"
 #include "Triangle.h"
 #include "Line.h"
@@ -11,7 +9,7 @@
 #include "TransformingRectangle.h"
 #include "shader/StandardShader.h"
 
-PrimitiveCollection::PrimitiveCollection(StandardShader* shader)
+PrimitiveCollection::PrimitiveCollection(insight::shader::StandardShader* shader)
 {
     primitives_[Primitive::Type::CUBE] = new Cube(shader);
     primitives_[Primitive::Type::TRIANGLE] = new Triangle(shader);

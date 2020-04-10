@@ -2,19 +2,19 @@
 
 #include <iostream>
 
-Shader::Shader()
+insight::shader::Shader::Shader()
 {
     initialised_ = false;
 }
 
-Shader::~Shader()
+insight::shader::Shader::~Shader()
 {
     glDeleteProgram(shader_program_);
     glDeleteShader(vertex_shader_);
     glDeleteShader(fragment_shader_);
 }
 
-bool Shader::initialise(const char* vertex_source, const char* fragment_source)
+bool insight::shader::Shader::initialise(const char* vertex_source, const char* fragment_source)
 {
     vertex_shader_ = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex_shader_, 1, &vertex_source, NULL);
@@ -42,7 +42,7 @@ bool Shader::initialise(const char* vertex_source, const char* fragment_source)
     return true;
 }
 
-bool Shader::isCompiled(GLuint shader_subprogram)
+bool insight::shader::Shader::isCompiled(GLuint shader_subprogram)
 {
     GLint shader_compile_status;
 
@@ -59,7 +59,7 @@ bool Shader::isCompiled(GLuint shader_subprogram)
     return true;
 }
 
-void Shader::use()
+void insight::shader::Shader::use()
 {
     glUseProgram(shader_program_);
 }

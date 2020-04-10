@@ -4,15 +4,7 @@
 
 #include <glm/gtc/type_ptr.hpp>         // convert matrix to float
 
-TextShader::TextShader()
-{
-}
-
-TextShader::~TextShader()
-{
-}
-
-bool TextShader::initialise()
+bool insight::shader::TextShader::initialise()
 {
     try
     {
@@ -70,36 +62,36 @@ bool TextShader::initialise()
     return initialised_;
 }
 
-GLuint TextShader::getPositionAttribute()
+GLuint insight::shader::TextShader::getPositionAttribute()
 {
     return position_attribute_;
 }
 
-GLuint TextShader::getTextureCoordsAttribute()
+GLuint insight::shader::TextShader::getTextureCoordsAttribute()
 {
     return texture_coords_attribute_;
 }
 
-void TextShader::setProjectionTransform(const glm::mat4& transform)
+void insight::shader::TextShader::setProjectionTransform(const glm::mat4& transform)
 {
     use();
     glUniformMatrix4fv(uni_projection_transform_, 1, GL_FALSE, glm::value_ptr(transform));
 }
 
-void TextShader::setViewTransform(const glm::mat4& transform)
+void insight::shader::TextShader::setViewTransform(const glm::mat4& transform)
 {
     use();
     glUniformMatrix4fv(uni_view_transform_, 1, GL_FALSE, glm::value_ptr(transform));
 }
 
-void TextShader::setTextColour(const glm::vec3& colour)
+void insight::shader::TextShader::setTextColour(const glm::vec3& colour)
 {
     use();
     glUniform3f(uni_text_colour_, colour.r, colour.g, colour.b);
 }
 
 
-const char* TextShader::vertex_source_ = R"glsl(
+const char* insight::shader::TextShader::vertex_source_ = R"glsl(
     #version 330 core
 
     in vec3 position;
@@ -117,7 +109,7 @@ const char* TextShader::vertex_source_ = R"glsl(
     }
 )glsl";
 
-const char* TextShader::fragment_source_ = R"glsl(
+const char* insight::shader::TextShader::fragment_source_ = R"glsl(
     #version 330 core
 
     in vec2 TexCoords;

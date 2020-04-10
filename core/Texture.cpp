@@ -1,11 +1,8 @@
 #include "Texture.h"
 
-#include <iostream>
-
-#include <GL/glew.h>
 #include "stb_image.h"
 
-Texture::Texture(const std::string& path, StandardShader* shader)
+Texture::Texture(const std::string& path, insight::shader::StandardShader* shader)
 {
     path_ = path;
     object_shader_ = shader;

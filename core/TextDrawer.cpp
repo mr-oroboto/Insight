@@ -38,7 +38,7 @@ bool TextDrawer::initialise(GLuint wnd_width, GLuint wnd_height)
             throw "Failed to initialise FreeType";
         }
 
-        shader_ = std::make_unique<TextShader>();
+        shader_ = std::make_unique<insight::shader::TextShader>();
         if ( ! shader_->initialise())
         {
             throw "Failed to initialise text shader";

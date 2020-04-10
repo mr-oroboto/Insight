@@ -5,11 +5,10 @@
 
 #include "Primitive.h"
 
-class Triangle : public Primitive
-{
+class Triangle : public Primitive {
 public:
-    Triangle(StandardShader* shader) : Primitive(shader) { initialise(); }
-    ~Triangle();
+    Triangle(insight::shader::StandardShader* shader) : Primitive(shader) { initialise(); }
+    ~Triangle() = default;
 
     void draw();
 

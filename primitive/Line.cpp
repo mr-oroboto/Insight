@@ -1,15 +1,9 @@
 #include "Line.h"
 
-#include <iostream>
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 #define USE_TRANSFORMS true
-
-Line::~Line()
-{
-}
 
 void Line::initialise()
 {

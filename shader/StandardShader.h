@@ -6,37 +6,40 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
-class StandardShader : public Shader
-{
+namespace insight {
+namespace shader {
+
+class StandardShader : public Shader {
 public:
-    StandardShader();
-    ~StandardShader();
+    StandardShader() = default;
+    ~StandardShader() = default;
 
     bool initialise();
 
     GLuint getPositionAttribute();
+
     GLuint getNormalAttribute();
     GLuint getColourAttribute();
     GLuint getTextureCoordsAttribute();
 
-    void setCameraCoords(const glm::vec3& world_coords);
+    void setCameraCoords(const glm::vec3 &world_coords);
 
     void setLightingOn(bool on);
-    void setLightCoords(const glm::vec3& world_coords);
+    void setLightCoords(const glm::vec3 &world_coords);
     void setLightColour(const glm::vec3 &colour, GLfloat intensity = 1.0f);
 
-    void setModelTransform(const glm::mat4& transform);
-    void setViewTransform(const glm::mat4& transform);
-    void setProjectionTransform(const glm::mat4& transform);
+    void setModelTransform(const glm::mat4 &transform);
+    void setViewTransform(const glm::mat4 &transform);
+    void setProjectionTransform(const glm::mat4 &transform);
 
-    void setOverrideModelColour(bool override, const glm::vec3& colour = glm::vec3(1.0f, 1.0f, 1.0f));
+    void setOverrideModelColour(bool override, const glm::vec3 &colour = glm::vec3(1.0f, 1.0f, 1.0f));
 
     void setTexturesOn(bool on);
     void setTextureSamplerTextureUnit(GLuint texture_unit);
 
 protected:
-    static const char* vertex_source_;
-    static const char* fragment_source_;
+    static const char *vertex_source_;
+    static const char *fragment_source_;
 
     GLuint position_attribute_;
     GLuint normal_attribute_;
@@ -60,5 +63,7 @@ protected:
     GLuint uni_texture_sampler_;
 };
 
+}   // namespace shader
+}   // namespace insight
 
 #endif //INSIGHT_SHADER_STANDARDSHADER_H

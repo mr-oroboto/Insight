@@ -1,11 +1,5 @@
 #include "Quad.h"
 
-#include <iostream>
-
-Quad::~Quad()
-{
-}
-
 void Quad::initialise()
 {
     type_ = Primitive::QUAD;

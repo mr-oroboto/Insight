@@ -16,8 +16,7 @@
 
 class DisplayManager;
 
-class TextDrawer
-{
+class TextDrawer {
 public:
     TextDrawer(DisplayManager* display_manager);    // DisplayManager is guaranteed to outlive this instance
     ~TextDrawer();
@@ -31,7 +30,7 @@ private:
     bool initialised_;
 
     DisplayManager* display_manager_;
-    std::unique_ptr<TextShader> shader_;
+    std::unique_ptr<insight::shader::TextShader> shader_;
     FT_Library freetype_;
     std::unordered_map<Font::Type, Font*> fonts_;
 

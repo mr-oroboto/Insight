@@ -1,14 +1,9 @@
 #include "Tesselation.h"
 
-#include <cstring>
 #include <iostream>
 #include <random>
 
 #define ATTRIBUTES_PER_VERTEX 11
-
-Tesselation::~Tesselation()
-{
-}
 
 void Tesselation::initialise()
 {

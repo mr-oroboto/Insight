@@ -1,18 +1,12 @@
 #include "Rectangle.h"
 
-#include <iostream>
-
-Rectangle::Rectangle(StandardShader *shader)
+Rectangle::Rectangle(insight::shader::StandardShader *shader)
         : Primitive(shader)
 {
     attributes_per_vertex_ = 11;
     total_vertices_ = 36;
 
     initialise();
-}
-
-Rectangle::~Rectangle()
-{
 }
 
 void Rectangle::initialise()

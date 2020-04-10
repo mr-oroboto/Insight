@@ -1,16 +1,15 @@
 #ifndef INSIGHT_CORE_TEXTURE_H
 #define INSIGHT_CORE_TEXTURE_H
 
-#include <iostream>
+#include <string>
 
 #include <GL/glew.h>
 
 #include "shader/StandardShader.h"
 
-class Texture
-{
+class Texture {
 public:
-    Texture(const std::string& path, StandardShader* shader);
+    Texture(const std::string& path, insight::shader::StandardShader* shader);
     ~Texture();
 
     bool initialise();
@@ -20,7 +19,7 @@ public:
 private:
     bool initialised_;
 
-    StandardShader* object_shader_;
+    insight::shader::StandardShader* object_shader_;
 
     std::string path_;
 

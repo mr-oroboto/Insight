@@ -9,11 +9,10 @@
 
 #define TESSELATION_WIDTH 6.0f
 
-class Tesselation : public Primitive
-{
+class Tesselation : public Primitive {
 public:
-    Tesselation(StandardShader* shader) : Primitive(shader) { initialise(); }
-    ~Tesselation();
+    Tesselation(insight::shader::StandardShader* shader) : Primitive(shader) { initialise(); }
+    ~Tesselation() = default;
 
     enum Type
     {

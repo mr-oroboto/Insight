@@ -6,11 +6,10 @@
 
 #include "Primitive.h"
 
-class Line : public Primitive
-{
+class Line : public Primitive {
 public:
-    Line(StandardShader* shader) : Primitive(shader) { initialise(); }
-    ~Line();
+    Line(insight::shader::StandardShader* shader) : Primitive(shader) { initialise(); }
+    ~Line() = default;
 
     glm::mat4 getRotationTransform(const glm::mat4& model_transform);
     glm::mat4 getScaleTransform(const glm::mat4& model_transform, const glm::vec3& scale_vector);

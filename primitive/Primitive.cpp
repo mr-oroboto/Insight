@@ -1,7 +1,5 @@
 #include "Primitive.h"
 
-#include <iostream>
-
 Primitive::~Primitive()
 {
     glDeleteBuffers(1, &vbo_);

@@ -1,12 +1,6 @@
 #include "Cube.h"
 
-#include <iostream>
-
 #define ATTRIBUTES_PER_VERTEX 11
-
-Cube::~Cube()
-{
-}
 
 void Cube::initialise()
 {

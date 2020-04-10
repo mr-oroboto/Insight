@@ -10,7 +10,7 @@
 class TextureCollection
 {
 public:
-    TextureCollection(StandardShader* object_shader) : object_shader_(object_shader) {}
+    TextureCollection(insight::shader::StandardShader* object_shader) : object_shader_(object_shader) {}
     ~TextureCollection();
 
     bool registerTexture(const std::string& path, const std::string& name);
@@ -18,7 +18,7 @@ public:
 
 private:
     std::unordered_map<std::string, Texture*> textures_;
-    StandardShader* object_shader_;
+    insight::shader::StandardShader* object_shader_;
 };
 
 

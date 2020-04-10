@@ -6,11 +6,10 @@
 
 #include "Rectangle.h"
 
-class TransformingRectangle : public Rectangle
-{
+class TransformingRectangle : public Rectangle {
 public:
-    TransformingRectangle(StandardShader* shader);
-    ~TransformingRectangle();
+    TransformingRectangle(insight::shader::StandardShader* shader);
+    ~TransformingRectangle() = default;
 
     glm::mat4 getRotationTransform(const glm::mat4& model_transform);
     glm::mat4 getScaleTransform(const glm::mat4& model_transform, const glm::vec3& scale_vector);
