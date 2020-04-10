@@ -2,6 +2,7 @@
 #define INSIGHT_CORE_DISPLAYMANAGER_H
 
 #include <map>
+#include <memory>
 #include <string>
 #include <functional>
 
@@ -22,7 +23,7 @@ public:
 
     bool initialise(GLuint wnd_width, GLuint wnd_height);
 
-    void setFrameQueue(FrameQueue* queue);
+    void setFrameQueue(std::unique_ptr<FrameQueue> queue);
     void setCameraCoords(const glm::vec3& world_coords);
     void setCameraUpVector(const glm::vec3& vector);
     void setCameraPointingVector(const glm::vec3& vector);
@@ -32,9 +33,10 @@ public:
     void setPerspective(GLfloat near_plane, GLfloat far_plane, GLfloat fov);
     void setUpdateSceneCallback(std::function<void(GLfloat, GLfloat, GLfloat, GLfloat)> callback);
 
+    bool registerFont(Font::Type font_type, const std::string& path);
+    bool registerTexture(const std::string& path, const std::string& name);
+
     PrimitiveCollection* getPrimitiveCollection();
-    TextureCollection* getTextureCollection();
-    TextDrawer* getTextDrawer();
     StandardShader* getObjectShader();
 
     glm::vec3 getCameraCoords();
@@ -51,19 +53,22 @@ public:
     void drawText(const std::string& text, const glm::vec3& world_coords, bool ortho = true, GLfloat scale = 1.0f, const glm::vec3& colour = glm::vec3(1.0f, 1.0f, 1.0f));
 
 private:
+    friend class SceneObject;
+
     void teardown();
+    Texture* getTexture(const std::string& texture_name);
 
     bool initialised_;
 
     PrimitiveCollection* primitives_;
-    TextureCollection* textures_;
-    FrameQueue* frame_queue_;
+    std::unique_ptr<TextureCollection> textures_;
+    std::unique_ptr<FrameQueue> frame_queue_;
     std::function<void(GLfloat, GLfloat, GLfloat, GLfloat)> update_scene_callback_;
 
     GLuint wnd_width_, wnd_height_;
 
     StandardShader* object_shader_;
-    TextDrawer* text_drawer_;
+    std::unique_ptr<TextDrawer> text_drawer_;
 
     glm::vec3 camera_coords_;
     glm::vec3 camera_pointing_vector_;

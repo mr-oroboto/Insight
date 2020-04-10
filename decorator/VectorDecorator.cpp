@@ -154,9 +154,7 @@ void Decorators::VectorDecorator::VectorDecorator::drawNode(const glm::vec3& nod
 {
     glm::vec3 node_colour = glm::vec3(0.8, 0.8, 0.8);
 
-    Texture* texture = frame_queue_->getDisplayManager()->getTextureCollection()->getTexture("slate");
-
-    current_frame_->addObject(Primitive::Type::CUBE, node_coords, node_colour, texture, CUBE_SCALE);
+    current_frame_->addObject(Primitive::Type::CUBE, node_coords, node_colour, "slate", CUBE_SCALE);
 
     if ( ! start_of_vector)
     {

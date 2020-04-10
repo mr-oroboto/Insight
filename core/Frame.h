@@ -1,15 +1,15 @@
 #ifndef INSIGHT_CORE_FRAME_H
 #define INSIGHT_CORE_FRAME_H
 
-#include <vector>
+#include <memory>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include <glm/glm.hpp>
 
 #include "SceneObject.h"
 #include "primitive/Primitive.h"
-#include "Texture.h"
 
 class DisplayManager;
 
@@ -19,7 +19,7 @@ public:
     Frame(DisplayManager* display_manager, bool draw_object_position = false, bool draw_reference_axes = false, bool draw_floor = false);
     ~Frame();
 
-    void addObject(Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour, Texture* texture = nullptr, GLfloat scale = 1.0f);
+    void addObject(Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour, const std::string& texture_name = "", GLfloat scale = 1.0f);
     void addObject(SceneObject* object);
     unsigned long addText(const std::string& text, GLfloat x, GLfloat y, GLfloat z = 0.0f, bool ortho = true, GLfloat scale = 1.0f, const glm::vec3& colour = glm::vec3(1.0f, 1.0f, 1.0f));
     void addLine(const glm::vec3& from_world_coords, const glm::vec3& to_world_coords, const glm::vec3& colour = glm::vec3(1.0f, 1.0f, 1.0f));

@@ -6,10 +6,6 @@
 #include "decorator/HeapDecorator.h"
 #include "core/FrameQueue.h"
 
-HeapDepthFirstTraversal::~HeapDepthFirstTraversal()
-{
-}
-
 void HeapDepthFirstTraversal::run()
 {
     display_manager_->setUpdateSceneCallback(nullptr);
@@ -19,10 +15,10 @@ void HeapDepthFirstTraversal::run()
 
 void HeapDepthFirstTraversal::run(Decorators::HeapDecorator::TraverseOrder traverse_order)
 {
-    FrameQueue* frame_queue = new FrameQueue(display_manager_, true);
+    std::unique_ptr<FrameQueue> frame_queue = std::make_unique<FrameQueue>(display_manager_, true);
     frame_queue->setFrameRate(1);
 
-    Decorators::HeapDecorator* decorator = new Decorators::HeapDecorator(frame_queue);
+    Decorators::HeapDecorator* decorator = new Decorators::HeapDecorator(frame_queue.get());
     MinHeapArray heap(nullptr);
     decorator->setHeap(dynamic_cast<HeapArray*>(&heap));
 
@@ -40,7 +36,11 @@ void HeapDepthFirstTraversal::run(Decorators::HeapDecorator::TraverseOrder trave
     decorator->decorateDft(traverse_order);
 
     frame_queue->setReady();
-    frame_queue->setActive();    // transfer ownership to DisplayManager
+    if (frame_queue->setActive())
+    {
+        // transfer ownership to DisplayManager
+        display_manager_->setFrameQueue(std::move(frame_queue));
+    }
 
     delete decorator;
 }

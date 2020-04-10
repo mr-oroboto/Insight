@@ -99,12 +99,12 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    if ( ! display_manager->getTextureCollection()->registerTexture(texture_path.append("/water.jpg"), "water"))
+    if ( ! display_manager->registerTexture(texture_path.append("/water.jpg"), "water"))
     {
         std::cerr << "Failed to add water texture" << std::endl;
     }
 
-    if ( ! display_manager->getTextDrawer()->registerFont(Font::Type::FONT_DEFAULT, font_path.append("/Vera.ttf")))
+    if ( ! display_manager->registerFont(Font::Type::FONT_DEFAULT, font_path.append("/Vera.ttf")))
     {
         std::cerr << "Failed to register font" << std::endl;
         return -1;

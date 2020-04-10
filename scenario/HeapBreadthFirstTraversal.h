@@ -7,7 +7,6 @@ class HeapBreadthFirstTraversal : public Scenario
 {
 public:
     HeapBreadthFirstTraversal(DisplayManager* display_manager) : Scenario(display_manager) {}
-    ~HeapBreadthFirstTraversal();
 
     void run();
 };

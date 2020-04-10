@@ -8,15 +8,11 @@
 #include "primitive/Tesselation.h"
 
 Frame::Frame(DisplayManager* display_manager, bool draw_object_position, bool draw_reference_axes, bool draw_floor)
-{
-    display_manager_ = display_manager;
-
-    draw_object_positions_ = draw_object_position;
-    draw_reference_axes_ = draw_reference_axes;
-    draw_floor_ = draw_floor;
-
-    next_text_id_ = 0;
-}
+    : display_manager_(display_manager),
+      draw_object_positions_(draw_object_position),
+      draw_reference_axes_(draw_reference_axes),
+      draw_floor_(draw_floor),
+      next_text_id_(0) {}
 
 Frame::~Frame()
 {
@@ -27,12 +23,16 @@ Frame::~Frame()
     }
 }
 
-void Frame::addObject(Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour, Texture* texture, GLfloat scale)
+void Frame::addObject(Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour, const std::string& texture_name, GLfloat scale)
 {
     SceneObject* object = new SceneObject(display_manager_, type, world_coords, colour);
 
     object->setScale(scale);
-    object->setTexture(texture);
+
+    if (texture_name.length())
+    {
+        object->setTexture(texture_name);
+    }
 
     addObject(object);
 }
@@ -88,13 +88,13 @@ void Frame::draw(GLfloat secs_since_rendering_started, GLfloat secs_since_frameq
         to = glm::vec3(0, 0, 10);
         addLine(from, to, colour);
 
-        addObject(Primitive::Type::CUBE, glm::vec3(0, 0, 0),   glm::vec3(1, 1, 1), nullptr, 0.5);
-        addObject(Primitive::Type::CUBE, glm::vec3(-10, 0, 0), glm::vec3(1, 0, 0), nullptr, 0.2);
-        addObject(Primitive::Type::CUBE, glm::vec3(10, 0, 0),  glm::vec3(0, 0, 1), nullptr, 0.2);
-        addObject(Primitive::Type::CUBE, glm::vec3(0, -10, 0), glm::vec3(1, 0, 0), nullptr, 0.2);
-        addObject(Primitive::Type::CUBE, glm::vec3(0, 10, 0),  glm::vec3(1, 1, 1), nullptr, 0.2);
-        addObject(Primitive::Type::CUBE, glm::vec3(0, 0, -10), glm::vec3(1, 0, 0), nullptr, 0.2);
-        addObject(Primitive::Type::CUBE, glm::vec3(0, 0, 10),  glm::vec3(1, 1, 0), nullptr, 0.2);
+        addObject(Primitive::Type::CUBE, glm::vec3(0, 0, 0),   glm::vec3(1, 1, 1), "", 0.5);
+        addObject(Primitive::Type::CUBE, glm::vec3(-10, 0, 0), glm::vec3(1, 0, 0), "", 0.2);
+        addObject(Primitive::Type::CUBE, glm::vec3(10, 0, 0),  glm::vec3(0, 0, 1), "", 0.2);
+        addObject(Primitive::Type::CUBE, glm::vec3(0, -10, 0), glm::vec3(1, 0, 0), "", 0.2);
+        addObject(Primitive::Type::CUBE, glm::vec3(0, 10, 0),  glm::vec3(1, 1, 1), "", 0.2);
+        addObject(Primitive::Type::CUBE, glm::vec3(0, 0, -10), glm::vec3(1, 0, 0), "", 0.2);
+        addObject(Primitive::Type::CUBE, glm::vec3(0, 0, 10),  glm::vec3(1, 1, 0), "", 0.2);
     }
 
     // We must first render all objects before we render any text
@@ -159,8 +159,7 @@ void Frame::drawTesselatedFloor()
             SceneObject* object = new SceneObject(display_manager_, Primitive::Type::TESSELATION, glm::vec3(x, y_pos, z), glm::vec3(1, 1, 1));
             Tesselation* tile = dynamic_cast<Tesselation*>(object->getPrimitive());
 
-            Texture* texture = display_manager_->getTextureCollection()->getTexture("water");
-            object->setTexture(texture);
+            object->setTexture("water");
 
             tile->setRandomisePeaks(false);
             tile->setType(Tesselation::Type::RANDOM);

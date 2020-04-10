@@ -9,22 +9,15 @@
 #include "primitive/Line.h"
 
 SceneObject::SceneObject(DisplayManager* display_manager, Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour)
-{
-    display_manager_ = display_manager;
-
-    primitive_ = display_manager_->getPrimitiveCollection()->selectPrimitive(type);
-    texture_ = nullptr;
-
-    world_coords_ = world_coords;
-    additional_world_coords_ = world_coords;
-    scale_x_ = scale_y_ = scale_z_ = 1.0f;
-
-    colour_ = colour;
-}
-
-SceneObject::~SceneObject()
-{
-}
+    : display_manager_(display_manager),
+      primitive_(display_manager->getPrimitiveCollection()->selectPrimitive(type)),
+      texture_(nullptr),
+      world_coords_(world_coords),
+      additional_world_coords_(world_coords),
+      scale_x_(1.0f),
+      scale_y_(1.0f),
+      scale_z_(1.0f),
+      colour_(colour) {}
 
 void SceneObject::setScale(GLfloat s)
 {
@@ -38,9 +31,9 @@ void SceneObject::setScale(GLfloat x, GLfloat y, GLfloat z)
     scale_z_ = z;
 }
 
-void SceneObject::setTexture(Texture* texture)
+void SceneObject::setTexture(const std::string& texture_name)
 {
-    texture_ = texture;
+    texture_ = display_manager_->getTexture(texture_name);
 }
 
 void SceneObject::setColour(const glm::vec3& colour)
@@ -126,7 +119,7 @@ SceneObject* SceneObject::clone()
 {
     SceneObject* clone = new SceneObject(display_manager_, primitive_->getType(), world_coords_, colour_);
 
-    clone->setTexture(texture_);
+    clone->texture_ = texture_;
     clone->setAdditionalCoords(additional_world_coords_);
     clone->setScale(scale_x_, scale_y_, scale_z_);
 

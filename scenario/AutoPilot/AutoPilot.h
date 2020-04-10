@@ -9,7 +9,6 @@ class AutoPilot : public Scenario
 {
 public:
     AutoPilot(DisplayManager* display_manager) : Scenario(display_manager) {}
-    ~AutoPilot();
 
     void run();
 

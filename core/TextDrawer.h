@@ -1,11 +1,12 @@
 #ifndef INSIGHT_CORE_TEXTDRAWER_H
 #define INSIGHT_CORE_TEXTDRAWER_H
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 
-#include <glm/glm.hpp>
 #include <GL/glew.h>
+#include <glm/glm.hpp>
 #include <ft2build.h>
 #include "freetype/freetype.h"
 #include FT_FREETYPE_H
@@ -18,7 +19,7 @@ class DisplayManager;
 class TextDrawer
 {
 public:
-    TextDrawer(DisplayManager* display_manager);
+    TextDrawer(DisplayManager* display_manager);    // DisplayManager is guaranteed to outlive this instance
     ~TextDrawer();
 
     bool initialise(GLuint wnd_width, GLuint wnd_height);
@@ -30,7 +31,7 @@ private:
     bool initialised_;
 
     DisplayManager* display_manager_;
-    TextShader* shader_;
+    std::unique_ptr<TextShader> shader_;
     FT_Library freetype_;
     std::unordered_map<Font::Type, Font*> fonts_;
 

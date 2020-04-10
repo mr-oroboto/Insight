@@ -6,16 +6,12 @@
 #include "decorator/HeapDecorator.h"
 #include "core/FrameQueue.h"
 
-HeapBreadthFirstTraversal::~HeapBreadthFirstTraversal()
-{
-}
-
 void HeapBreadthFirstTraversal::run()
 {
-    FrameQueue* frame_queue = new FrameQueue(display_manager_, true);
+    std::unique_ptr<FrameQueue> frame_queue = std::make_unique<FrameQueue>(display_manager_, true);
     frame_queue->setFrameRate(1);
 
-    Decorators::HeapDecorator* decorator = new Decorators::HeapDecorator(frame_queue);
+    Decorators::HeapDecorator* decorator = new Decorators::HeapDecorator(frame_queue.get());
     MinHeapArray heap(nullptr);
     decorator->setHeap(dynamic_cast<HeapArray*>(&heap));
 
@@ -33,7 +29,11 @@ void HeapBreadthFirstTraversal::run()
     decorator->decorateBft();
 
     frame_queue->setReady();
-    frame_queue->setActive();    // transfer ownership to DisplayManager
+    if (frame_queue->setActive())
+    {
+        // transfer ownership to DisplayManager
+        display_manager_->setFrameQueue(std::move(frame_queue));
+    }
 
     delete decorator;
 }

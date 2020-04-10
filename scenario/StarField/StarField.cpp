@@ -14,10 +14,6 @@
 #define MIN_Z -30
 #define MAX_Z 30
 
-StarField::~StarField()
-{
-}
-
 void StarField::run()
 {
     /**
@@ -27,7 +23,7 @@ void StarField::run()
      * 4. Register a callback to be used to update SceneObjects
      * 5. Run the FrameQueue
      */
-    FrameQueue* frame_queue = new FrameQueue(display_manager_, true);
+    std::unique_ptr<FrameQueue> frame_queue = std::make_unique<FrameQueue>(display_manager_, true);
     frame_queue->setFrameRate(1);
 
     frame_ = frame_queue->newFrame();
@@ -54,7 +50,11 @@ void StarField::run()
     display_manager_->setUpdateSceneCallback(std::bind(&StarField::updateSceneCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
 
     frame_queue->setReady();
-    frame_queue->setActive();    // transfer ownership to DisplayManager
+    if (frame_queue->setActive())
+    {
+        // transfer ownership to DisplayManager
+        display_manager_->setFrameQueue(std::move(frame_queue));
+    }
 }
 
 void StarField::updateSceneCallback(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame)

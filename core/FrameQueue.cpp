@@ -6,13 +6,12 @@
 #include "DisplayManager.h"
 
 FrameQueue::FrameQueue(DisplayManager* display_manager, bool repeats)
+    : ready_(false),
+      active_(false),
+      display_manager_(display_manager),
+      repeating_(repeats)
 {
-    ready_ = false;
-
     setFrameRate(FRAMEQUEUE_DEFAULT_FPS);
-
-    display_manager_ = display_manager;
-    repeating_ = repeats;
 }
 
 FrameQueue::~FrameQueue()
@@ -34,7 +33,6 @@ FrameQueue::~FrameQueue()
 Frame* FrameQueue::newFrame(bool draw_object_position, bool draw_reference_axes, bool draw_floor)
 {
     Frame* frame = new Frame(display_manager_, draw_object_position, draw_reference_axes, draw_floor);
-
     return frame;
 }
 
@@ -57,11 +55,6 @@ bool FrameQueue::enqueueFrame(Frame* frame)
     return true;
 }
 
-DisplayManager* FrameQueue::getDisplayManager()
-{
-    return display_manager_;
-}
-
 /**
  * Sets this FrameQueue as the active FrameQueue for the DisplayManager.
  *
@@ -76,9 +69,14 @@ bool FrameQueue::setActive()
         return false;
     }
 
-    display_manager_->setFrameQueue(this);
+    active_ = true;
 
     return true;
+}
+
+bool FrameQueue::isActive()
+{
+    return active_;
 }
 
 /**

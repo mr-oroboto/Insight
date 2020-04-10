@@ -1,23 +1,15 @@
 #include "TextDrawer.h"
 
 #include <iostream>
+#include <utility>
 
-#include <glm/glm.hpp>
-#include <GL/glew.h>
 #include <glm/gtc/matrix_transform.hpp>
-#include "freetype/freetype.h"
 
 #include "core/DisplayManager.h"
-#include "shader/TextShader.h"
-#include "Font.h"
 
 TextDrawer::TextDrawer(DisplayManager* display_manager)
-{
-    initialised_ = false;
-
-    shader_ = nullptr;
-    display_manager_ = display_manager;
-}
+        : initialised_(false),
+          display_manager_(display_manager) {}
 
 TextDrawer::~TextDrawer()
 {
@@ -29,11 +21,6 @@ TextDrawer::~TextDrawer()
         {
             delete it->second;
         }
-    }
-
-    if (shader_ != nullptr)
-    {
-        delete shader_;
     }
 }
 
@@ -51,7 +38,7 @@ bool TextDrawer::initialise(GLuint wnd_width, GLuint wnd_height)
             throw "Failed to initialise FreeType";
         }
 
-        shader_ = new TextShader();
+        shader_ = std::make_unique<TextShader>();
         if ( ! shader_->initialise())
         {
             throw "Failed to initialise text shader";

@@ -8,13 +8,9 @@
 #define FORWARD_UNITS_PER_SEC 120.0f
 #define CAMERA_ROLL_DEGREES_PER_SEC 25.0f
 
-AutoPilot::~AutoPilot()
-{
-}
-
 void AutoPilot::run()
 {
-    FrameQueue* frame_queue = new FrameQueue(display_manager_, true);
+    std::unique_ptr<FrameQueue> frame_queue = std::make_unique<FrameQueue>(display_manager_, true);
     frame_queue->setFrameRate(1);
 
     frame_ = frame_queue->newFrame();
@@ -42,7 +38,11 @@ void AutoPilot::run()
     display_manager_->setUpdateSceneCallback(std::bind(&AutoPilot::updateSceneCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
 
     frame_queue->setReady();
-    frame_queue->setActive();    // transfer ownership to DisplayManager
+    if (frame_queue->setActive())
+    {
+        // transfer ownership to DisplayManager
+        display_manager_->setFrameQueue(std::move(frame_queue));
+    }
 }
 
 void AutoPilot::setupStarField(GLuint num_stars, const glm::vec3& origin, GLfloat x_spread, GLfloat y_spread, GLfloat z_spread)
@@ -151,8 +151,7 @@ void AutoPilot::drawFloor(GLfloat floor_z_start, GLfloat floor_z_end)
             SceneObject* object = new SceneObject(display_manager_, Primitive::Type::TESSELATION, glm::vec3(x, y_pos, z), glm::vec3(1, 1, 1));
             Tesselation* tile = dynamic_cast<Tesselation*>(object->getPrimitive());
 
-            Texture* texture = display_manager_->getTextureCollection()->getTexture("water");
-            object->setTexture(texture);
+            object->setTexture("water");
 
             tile->setRandomisePeaks(true);
             tile->setType(Tesselation::Type::RANDOM);

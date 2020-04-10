@@ -153,19 +153,17 @@ void Decorators::HeapDecorator::drawNode(size_t node_index, const glm::vec3& nod
         node_colour = glm::vec3(0.8, 0.8, 0.8);
     }
 
-    Texture* texture = frame_queue_->getDisplayManager()->getTextureCollection()->getTexture("slate");
-
     if (prototype_frame)
     {
         // We're decorating the DFT itself, do this by creating a new frame that highlights the current node
         Frame* frame = prototype_frame->clone();
         frame->deleteObjectsAtPosition(node_position, Primitive::Type::CUBE);
-        frame->addObject(Primitive::Type::CUBE, node_position, glm::vec3(1, 0, 0), nullptr, 1.5);
+        frame->addObject(Primitive::Type::CUBE, node_position, glm::vec3(1, 0, 0), "", 1.5);
         frame_queue_->enqueueFrame(frame);
     }
     else
     {
-        current_frame_->addObject(Primitive::Type::CUBE, node_position, node_colour, texture, 1.5);
+        current_frame_->addObject(Primitive::Type::CUBE, node_position, node_colour, "slate", 1.5);
 
         if (node_index != 0)
         {
@@ -249,13 +247,12 @@ void Decorators::HeapDecorator::bft(Frame* prototype_frame)
         {
             Frame *frame = prototype_frame->clone();
             frame->deleteObjectsAtPosition(node_position, Primitive::Type::CUBE);
-            frame->addObject(Primitive::Type::CUBE, node_position, glm::vec3(1, 0, 0), nullptr, 1.5);
+            frame->addObject(Primitive::Type::CUBE, node_position, glm::vec3(1, 0, 0), "", 1.5);
             frame_queue_->enqueueFrame(frame);
         }
         else
         {
-            Texture* texture = frame_queue_->getDisplayManager()->getTextureCollection()->getTexture("slate");
-            current_frame_->addObject(Primitive::Type::CUBE, node_position, glm::vec3(0.8, 0.8, 0.8), texture, 1.5);
+            current_frame_->addObject(Primitive::Type::CUBE, node_position, glm::vec3(0.8, 0.8, 0.8), "slate", 1.5);
 
             if (details.node_index != 0)
             {

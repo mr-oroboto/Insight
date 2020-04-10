@@ -6,12 +6,12 @@
 
 void MergeSort::run()
 {
-    FrameQueue* frame_queue = new FrameQueue(display_manager_, true);
+    std::unique_ptr<FrameQueue> frame_queue = std::make_unique<FrameQueue>(display_manager_, true);
     frame_queue->setFrameRate(1);
 
     glm::vec3 start_coords = glm::vec3(-8, 10, 0);
 
-    decorator_ = new Decorators::VectorDecorator::VectorDecorator(frame_queue);
+    decorator_ = new Decorators::VectorDecorator::VectorDecorator(frame_queue.get());
     decorator_->setStartCoords(start_coords);
     decorator_->setInheritPreviousFrameVectors(true);
 
@@ -28,7 +28,11 @@ void MergeSort::run()
     decorator_->decorate();
 
     frame_queue->setReady();
-    frame_queue->setActive();    // transfer ownership to DisplayManager
+    if (frame_queue->setActive())
+    {
+        // transfer ownership to DisplayManager
+        display_manager_->setFrameQueue(std::move(frame_queue));
+    }
 
     delete decorator_;
 }

@@ -8,7 +8,6 @@ class StarField : public Scenario
 {
 public:
     StarField(DisplayManager* display_manager) : Scenario(display_manager) {}
-    ~StarField();
 
     void run();
 

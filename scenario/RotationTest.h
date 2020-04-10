@@ -8,7 +8,6 @@ class RotationTest : public Scenario
 {
 public:
     RotationTest(DisplayManager* display_manager) : Scenario(display_manager) {}
-    ~RotationTest();
 
     void run();
 };

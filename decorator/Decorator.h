@@ -14,8 +14,8 @@ namespace Decorators {
         virtual void decorate() = 0;
 
     protected:
-        FrameQueue *frame_queue_;
-        Frame *current_frame_;
+        FrameQueue* frame_queue_;
+        Frame* current_frame_;
     };
 
 }

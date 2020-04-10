@@ -8,7 +8,6 @@ class HeapDepthFirstTraversal : public Scenario
 {
 public:
     HeapDepthFirstTraversal(DisplayManager* display_manager) : Scenario(display_manager) {}
-    ~HeapDepthFirstTraversal();
 
     void run();
     void run(Decorators::HeapDecorator::TraverseOrder traverse_order);

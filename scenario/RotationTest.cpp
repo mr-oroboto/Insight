@@ -4,13 +4,9 @@
 
 #include "core/FrameQueue.h"
 
-RotationTest::~RotationTest()
-{
-}
-
 void RotationTest::run()
 {
-    FrameQueue* frame_queue = new FrameQueue(display_manager_, true);
+    std::unique_ptr<FrameQueue> frame_queue = std::make_unique<FrameQueue>(display_manager_, true);
     frame_queue->setFrameRate(1);
 
     Frame* current_frame = frame_queue->newFrame();
@@ -20,5 +16,9 @@ void RotationTest::run()
     frame_queue->enqueueFrame(current_frame);
 
     frame_queue->setReady();
-    frame_queue->setActive();    // transfer ownership to DisplayManager
+    if (frame_queue->setActive())
+    {
+        // transfer ownership to DisplayManager
+        display_manager_->setFrameQueue(std::move(frame_queue));
+    }
 }

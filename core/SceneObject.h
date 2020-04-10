@@ -1,23 +1,25 @@
 #ifndef INSIGHT_CORE_SCENEOBJECT_H
 #define INSIGHT_CORE_SCENEOBJECT_H
 
+#include <string>
+
 #include <glm/glm.hpp>
 
 #include "primitive/Primitive.h"
-#include "Texture.h"
 
 class DisplayManager;
+class Texture;
 
 class SceneObject
 {
 public:
     SceneObject(DisplayManager* display_manager, Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour);
-    virtual ~SceneObject();
+    virtual ~SceneObject() = default;
 
     void setScale(GLfloat scale);
     void setScale(GLfloat x, GLfloat y, GLfloat z);
     void setAdditionalCoords(const glm::vec3& world_coords);
-    void setTexture(Texture* texture);
+    void setTexture(const std::string& texture_name);
     void setColour(const glm::vec3& colour);
 
     glm::vec3 getPosition();

@@ -1,6 +1,7 @@
 #include "DisplayManager.h"
 
 #include <iostream>
+#include <utility>
 
 #include <glm/gtc/matrix_transform.hpp> // makes view and projection matrices easier to generate
 
@@ -8,17 +9,10 @@
 #include "TextDrawer.h"
 
 DisplayManager::DisplayManager()
-{
-    initialised_ = false;
-
-    frame_queue_ = nullptr;
-    primitives_ = nullptr;
-    textures_ = nullptr;
-    update_scene_callback_ = nullptr;
-
-    object_shader_ = nullptr;
-    text_drawer_ = nullptr;
-}
+    : initialised_(false),
+      primitives_(nullptr),
+      update_scene_callback_(nullptr),
+      object_shader_(nullptr) {}
 
 DisplayManager::~DisplayManager()
 {
@@ -46,14 +40,14 @@ bool DisplayManager::initialise(GLuint wnd_width, GLuint wnd_height)
             throw "Can't initialise object shader";
         }
 
-        text_drawer_ = new TextDrawer(this);
+        text_drawer_ = std::make_unique<TextDrawer>(this);
         if ( ! text_drawer_->initialise(wnd_width, wnd_height))
         {
             throw "Can't initialise text drawer";
         }
 
         primitives_ = new PrimitiveCollection(object_shader_);
-        textures_ = new TextureCollection(object_shader_);
+        textures_ = std::make_unique<TextureCollection>(object_shader_);
 
         setPerspective(0.1f, 100.0f, 45.0f);
 
@@ -84,17 +78,8 @@ void DisplayManager::teardown()
         primitives_ = nullptr;
     }
 
-    if (textures_)
-    {
-        delete textures_;
-        textures_ = nullptr;
-    }
-
-    if (frame_queue_)
-    {
-        delete frame_queue_;
-        frame_queue_ = nullptr;
-    }
+    textures_.reset();
+    frame_queue_.reset();
 
     if (object_shader_)
     {
@@ -102,11 +87,7 @@ void DisplayManager::teardown()
         object_shader_ = nullptr;
     }
 
-    if (text_drawer_)
-    {
-        delete text_drawer_;
-        text_drawer_ = nullptr;
-    }
+    text_drawer_.reset();
 
     initialised_ = false;
 }
@@ -161,6 +142,36 @@ void DisplayManager::setPerspective(GLfloat near_plane, GLfloat far_plane, GLflo
     object_shader_->setProjectionTransform(projection_transform_);
 }
 
+bool DisplayManager::registerFont(Font::Type font_type, const std::string& path)
+{
+    if ( ! text_drawer_)
+    {
+        return false;
+    }
+
+    return text_drawer_->registerFont(font_type, path);
+}
+
+bool DisplayManager::registerTexture(const std::string& path, const std::string& name)
+{
+    if ( ! textures_)
+    {
+        return false;
+    }
+
+    return textures_->registerTexture(path, name);
+}
+
+Texture* DisplayManager::getTexture(const std::string& texture_name)
+{
+    if ( ! textures_)
+    {
+        return nullptr;
+    }
+
+    return textures_->getTexture(texture_name);
+}
+
 void DisplayManager::drawScene(GLfloat secs_since_rendering_started, GLfloat secs_since_last_renderloop)
 {
     if ( ! initialised_)
@@ -198,15 +209,17 @@ void DisplayManager::drawText(const std::string& text, const glm::vec3& world_co
     text_drawer_->print(text, world_coords, ortho, Font::Type::FONT_DEFAULT, scale, colour);
 }
 
-void DisplayManager::setFrameQueue(FrameQueue* queue)
+void DisplayManager::setFrameQueue(std::unique_ptr<FrameQueue> queue)
 {
+    assert(queue->isActive());
+
     // If we already have a FrameQueue, destroy it.
     if (frame_queue_)
     {
-        delete frame_queue_;
+        frame_queue_.reset();
     }
 
-    frame_queue_ = queue;
+    frame_queue_ = std::move(queue);
 }
 
 void DisplayManager::setUpdateSceneCallback(std::function<void(GLfloat, GLfloat, GLfloat, GLfloat)> callback)
@@ -217,16 +230,6 @@ void DisplayManager::setUpdateSceneCallback(std::function<void(GLfloat, GLfloat,
 PrimitiveCollection* DisplayManager::getPrimitiveCollection()
 {
     return primitives_;
-}
-
-TextureCollection* DisplayManager::getTextureCollection()
-{
-    return textures_;
-}
-
-TextDrawer* DisplayManager::getTextDrawer()
-{
-    return text_drawer_;
 }
 
 StandardShader* DisplayManager::getObjectShader()
