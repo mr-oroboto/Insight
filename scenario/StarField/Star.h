@@ -10,7 +10,7 @@ namespace scenario {
 
 class Star : public SceneObject {
 public:
-    Star(DisplayManager* display_manager, Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour);
+    Star(DisplayManager* display_manager, primitive::Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour);
     ~Star() = default;
 
     enum Colour

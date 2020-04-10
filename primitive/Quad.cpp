@@ -1,6 +1,6 @@
 #include "Quad.h"
 
-void Quad::initialise()
+void insight::primitive::Quad::initialise()
 {
     type_ = Primitive::QUAD;
 
@@ -54,7 +54,7 @@ void Quad::initialise()
 
 }
 
-void Quad::draw()
+void insight::primitive::Quad::draw()
 {
     setActive();
     glDrawArrays(GL_TRIANGLES, 0, 6);

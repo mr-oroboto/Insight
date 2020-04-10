@@ -46,7 +46,7 @@ bool DisplayManager::initialise(GLuint wnd_width, GLuint wnd_height)
             throw "Can't initialise text drawer";
         }
 
-        primitives_ = new PrimitiveCollection(object_shader_);
+        primitives_ = new insight::primitive::PrimitiveCollection(object_shader_);
         textures_ = std::make_unique<TextureCollection>(object_shader_);
 
         setPerspective(0.1f, 100.0f, 45.0f);
@@ -227,7 +227,7 @@ void DisplayManager::setUpdateSceneCallback(std::function<void(GLfloat, GLfloat,
     update_scene_callback_ = callback;
 }
 
-PrimitiveCollection* DisplayManager::getPrimitiveCollection()
+insight::primitive::PrimitiveCollection* DisplayManager::getPrimitiveCollection()
 {
     return primitives_;
 }

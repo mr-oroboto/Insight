@@ -1,6 +1,6 @@
 #include "Triangle.h"
 
-void Triangle::initialise()
+void insight::primitive::Triangle::initialise()
 {
     type_ = Primitive::TRIANGLE;
 
@@ -47,7 +47,7 @@ void Triangle::initialise()
 
 }
 
-void Triangle::draw()
+void insight::primitive::Triangle::draw()
 {
     setActive();
     glDrawArrays(GL_TRIANGLES, 0, 3);

@@ -13,7 +13,7 @@ class Texture;
 class SceneObject
 {
 public:
-    SceneObject(DisplayManager* display_manager, Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour);
+    SceneObject(DisplayManager* display_manager, insight::primitive::Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour);
     virtual ~SceneObject() = default;
 
     void setScale(GLfloat scale);
@@ -24,7 +24,7 @@ public:
 
     glm::vec3 getPosition();
     glm::vec3 getScale();
-    Primitive* getPrimitive();
+    insight::primitive::Primitive* getPrimitive();
 
     virtual void draw(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame, bool use_colour = true);
     virtual void update(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame, void* context);
@@ -34,7 +34,7 @@ public:
 protected:
     DisplayManager* display_manager_;
 
-    Primitive* primitive_;
+    insight::primitive::Primitive* primitive_;
     Texture* texture_;
 
     glm::vec3 world_coords_;

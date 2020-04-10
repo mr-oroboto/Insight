@@ -2,7 +2,8 @@
 
 #include "core/SceneObject.h"
 
-insight::scenario::Star::Star(DisplayManager* display_manager, Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour) : SceneObject(display_manager, type, world_coords, colour)
+insight::scenario::Star::Star(DisplayManager* display_manager, primitive::Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour)
+        : SceneObject(display_manager, type, world_coords, colour)
 {
     setForwardUnitsPerSec(20.0f);
     setNearAndFarPlane(30.0f, -30.0f);

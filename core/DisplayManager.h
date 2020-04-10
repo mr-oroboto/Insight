@@ -35,7 +35,7 @@ public:
     bool registerFont(Font::Type font_type, const std::string& path);
     bool registerTexture(const std::string& path, const std::string& name);
 
-    PrimitiveCollection* getPrimitiveCollection();
+    insight::primitive::PrimitiveCollection* getPrimitiveCollection();
     insight::shader::StandardShader* getObjectShader();
 
     glm::vec3 getCameraCoords();
@@ -59,7 +59,7 @@ private:
 
     bool initialised_;
 
-    PrimitiveCollection* primitives_;
+    insight::primitive::PrimitiveCollection* primitives_;
     std::unique_ptr<TextureCollection> textures_;
     std::unique_ptr<FrameQueue> frame_queue_;
     std::function<void(GLfloat, GLfloat, GLfloat, GLfloat)> update_scene_callback_;

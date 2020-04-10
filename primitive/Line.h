@@ -6,6 +6,9 @@
 
 #include "Primitive.h"
 
+namespace insight {
+namespace primitive {
+
 class Line : public Primitive {
 public:
     Line(insight::shader::StandardShader* shader) : Primitive(shader) { initialise(); }
@@ -20,5 +23,8 @@ public:
 protected:
     void initialise();
 };
+
+}   // namespace primitive
+}   // namespace insight
 
 #endif //INSIGHT_PRIMITIVE_LINE_H

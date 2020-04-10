@@ -40,7 +40,7 @@ void insight::scenario::StarField::run()
     for (size_t i = 0; i < NUM_STARS; i++)
     {
         glm::vec3 world_coords = glm::vec3(x_distribution(gen), y_distribution(gen), z_distribution(gen));
-        Star* star = new Star(display_manager_, Primitive::Type::CUBE, world_coords, glm::vec3(1, 1, 1));
+        Star* star = new Star(display_manager_, primitive::Primitive::Type::CUBE, world_coords, glm::vec3(1, 1, 1));
         star->setScale(0.1);
         frame_->addObject(star);
     }

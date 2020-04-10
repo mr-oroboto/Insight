@@ -60,7 +60,7 @@ void insight::scenario::AutoPilot::setupStarField(GLuint num_stars, const glm::v
     for (size_t i = 0; i < num_stars; i++)
     {
         glm::vec3 world_coords = glm::vec3(x_distribution(gen), y_distribution(gen), z_distribution(gen));
-        Star* star = new Star(display_manager_, Primitive::Type::CUBE, world_coords, glm::vec3(1, 1, 1));
+        Star* star = new Star(display_manager_, primitive::Primitive::Type::CUBE, world_coords, glm::vec3(1, 1, 1));
 
         if (i % 3 == 0)
         {
@@ -109,7 +109,7 @@ void insight::scenario::AutoPilot::updateSceneCallback(GLfloat secs_since_render
         drawFloor(floor_drawn_from_z_ - 6.0f, floor_drawn_from_z_);
         floor_drawn_from_z_ -= 6.0f;
 
-        frame_->deleteObjectsOutsideBoundary(glm::vec3(0, 0, z_), initial_floor_length_z_, Primitive::Type::TESSELATION);
+        frame_->deleteObjectsOutsideBoundary(glm::vec3(0, 0, z_), initial_floor_length_z_, primitive::Primitive::Type::TESSELATION);
     }
 
     for (Star* star : stars_)
@@ -148,13 +148,13 @@ void insight::scenario::AutoPilot::drawFloor(GLfloat floor_z_start, GLfloat floo
 
         for (x = floor_x_start; x < (floor_x_start + floor_width_x); x += tile_dimension)
         {
-            SceneObject* object = new SceneObject(display_manager_, Primitive::Type::TESSELATION, glm::vec3(x, y_pos, z), glm::vec3(1, 1, 1));
-            Tesselation* tile = dynamic_cast<Tesselation*>(object->getPrimitive());
+            SceneObject* object = new SceneObject(display_manager_, primitive::Primitive::Type::TESSELATION, glm::vec3(x, y_pos, z), glm::vec3(1, 1, 1));
+            primitive::Tesselation* tile = dynamic_cast<primitive::Tesselation*>(object->getPrimitive());
 
             object->setTexture("water");
 
             tile->setRandomisePeaks(true);
-            tile->setType(Tesselation::Type::RANDOM);
+            tile->setType(primitive::Tesselation::Type::RANDOM);
             tile->setYFreeSeed(0);
             tile->resetSeamVertices();
             tile->initVertices();

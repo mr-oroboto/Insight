@@ -2,7 +2,7 @@
 
 #define ATTRIBUTES_PER_VERTEX 11
 
-void Cube::initialise()
+void insight::primitive::Cube::initialise()
 {
     type_ = Primitive::CUBE;
 
@@ -97,7 +97,7 @@ void Cube::initialise()
                           (void*)(9 * sizeof(float)) /* offset: the colour block starts 3 floats (x,y,z) into the array */);
 }
 
-void Cube::draw()
+void insight::primitive::Cube::draw()
 {
     setActive();
     glDrawArrays(GL_TRIANGLES, 0, 36);

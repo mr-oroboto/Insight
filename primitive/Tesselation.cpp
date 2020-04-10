@@ -5,7 +5,7 @@
 
 #define ATTRIBUTES_PER_VERTEX 11
 
-void Tesselation::initialise()
+void insight::primitive::Tesselation::initialise()
 {
     type_ = Primitive::TESSELATION;
 
@@ -87,7 +87,7 @@ void Tesselation::initialise()
     initVertices();
 }
 
-void Tesselation::resetSeamVertices()
+void insight::primitive::Tesselation::resetSeamVertices()
 {
     current_row_bottom_right_y_.clear();
     previous_row_bottom_right_y_.clear();
@@ -108,7 +108,7 @@ void Tesselation::resetSeamVertices()
     }
 }
 
-void Tesselation::initVertices()
+void insight::primitive::Tesselation::initVertices()
 {
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -305,19 +305,19 @@ void Tesselation::initVertices()
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * total_vertices_ * ATTRIBUTES_PER_VERTEX, vertices_, GL_STATIC_DRAW);
 }
 
-void Tesselation::setPreviousBottomRowBottomRightY(const std::vector<GLfloat>& initial_previous_bottom_row_bottom_right_y)
+void insight::primitive::Tesselation::setPreviousBottomRowBottomRightY(const std::vector<GLfloat>& initial_previous_bottom_row_bottom_right_y)
 {
     previous_row_bottom_right_y_ = initial_previous_bottom_row_bottom_right_y;
     setBorderTop(false);
 }
 
-void Tesselation::setPreviousRightColumnBottomRightY(const std::vector<GLfloat>& initial_previous_right_column_bottom_right_y)
+void insight::primitive::Tesselation::setPreviousRightColumnBottomRightY(const std::vector<GLfloat>& initial_previous_right_column_bottom_right_y)
 {
     previous_right_column_bottom_right_y_ = initial_previous_right_column_bottom_right_y;
     setBorderLeft(false);
 }
 
-void Tesselation::setIsolated()
+void insight::primitive::Tesselation::setIsolated()
 {
     setBorderLeft(true);
     setBorderRight(true);
@@ -325,57 +325,57 @@ void Tesselation::setIsolated()
     setBorderBottom(true);
 }
 
-void Tesselation::setBorderLeft(bool border)
+void insight::primitive::Tesselation::setBorderLeft(bool border)
 {
     is_border_left_ = border;
 }
 
-void Tesselation::setBorderRight(bool border)
+void insight::primitive::Tesselation::setBorderRight(bool border)
 {
     is_border_right_ = border;
 }
 
-void Tesselation::setBorderTop(bool border)
+void insight::primitive::Tesselation::setBorderTop(bool border)
 {
     is_border_top_ = border;
 }
 
-void Tesselation::setBorderBottom(bool border)
+void insight::primitive::Tesselation::setBorderBottom(bool border)
 {
     is_border_bottom_ = border;
 }
 
-void Tesselation::setYFreeSeed(GLfloat seed_value)
+void insight::primitive::Tesselation::setYFreeSeed(GLfloat seed_value)
 {
     y_free_seed_ = seed_value;
 }
 
-GLfloat Tesselation::getYFree()
+GLfloat insight::primitive::Tesselation::getYFree()
 {
     return y_free_;
 }
 
-std::vector<GLfloat> Tesselation::getBottomRowBottomRightY()
+std::vector<GLfloat> insight::primitive::Tesselation::getBottomRowBottomRightY()
 {
     return current_row_bottom_right_y_;
 }
 
-std::vector<GLfloat> Tesselation::getRightColumnBottomRightY()
+std::vector<GLfloat> insight::primitive::Tesselation::getRightColumnBottomRightY()
 {
     return current_right_column_bottom_right_y_;
 }
 
-void Tesselation::setRandomisePeaks(bool peaks)
+void insight::primitive::Tesselation::setRandomisePeaks(bool peaks)
 {
     randomise_peaks_ = peaks;
 }
 
-void Tesselation::setType(Type type)
+void insight::primitive::Tesselation::setType(Type type)
 {
     tesselation_type_ = type;
 }
 
-void Tesselation::draw()
+void insight::primitive::Tesselation::draw()
 {
     setActive();
     glDrawArrays(GL_TRIANGLES, 0, total_vertices_);

@@ -5,6 +5,9 @@
 
 #include "Primitive.h"
 
+namespace insight {
+namespace primitive {
+
 class Cube : public Primitive {
 public:
     Cube(insight::shader::StandardShader* shader) : Primitive(shader) { initialise(); }
@@ -15,5 +18,8 @@ public:
 protected:
     void initialise();
 };
+
+}   // namespace primitive
+}   // namespace insight
 
 #endif //INSIGHT_PRIMITIVE_CUBE_H

@@ -1,6 +1,6 @@
 #include "Rectangle.h"
 
-Rectangle::Rectangle(insight::shader::StandardShader *shader)
+insight::primitive::Rectangle::Rectangle(insight::shader::StandardShader *shader)
         : Primitive(shader)
 {
     attributes_per_vertex_ = 11;
@@ -9,7 +9,7 @@ Rectangle::Rectangle(insight::shader::StandardShader *shader)
     initialise();
 }
 
-void Rectangle::initialise()
+void insight::primitive::Rectangle::initialise()
 {
     type_ = Primitive::RECTANGLE;
 
@@ -104,7 +104,7 @@ void Rectangle::initialise()
                           (void*)(9 * sizeof(float)) /* offset: the colour block starts 3 floats (x,y,z) into the array */);
 }
 
-void Rectangle::draw()
+void insight::primitive::Rectangle::draw()
 {
     setActive();
     glDrawArrays(GL_TRIANGLES, 0, total_vertices_);

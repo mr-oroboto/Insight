@@ -8,7 +8,7 @@
 #include "DisplayManager.h"
 #include "primitive/Line.h"
 
-SceneObject::SceneObject(DisplayManager* display_manager, Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour)
+SceneObject::SceneObject(DisplayManager* display_manager, insight::primitive::Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour)
     : display_manager_(display_manager),
       primitive_(display_manager->getPrimitiveCollection()->selectPrimitive(type)),
       texture_(nullptr),
@@ -110,7 +110,7 @@ glm::vec3 SceneObject::getScale()
     return glm::vec3(scale_x_, scale_y_, scale_z_);
 }
 
-Primitive* SceneObject::getPrimitive()
+insight::primitive::Primitive* SceneObject::getPrimitive()
 {
     return primitive_;
 }

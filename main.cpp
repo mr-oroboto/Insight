@@ -93,7 +93,8 @@ int main(int argc, char *argv[])
     }
 
     DisplayManager* display_manager = window_manager.getDisplayManager();
-    if ( ! display_manager->getPrimitiveCollection()->addPrimitive(Primitive::Type::TESSELATION, new Tesselation(window_manager.getDisplayManager()->getObjectShader())))
+    if ( ! display_manager->getPrimitiveCollection()->addPrimitive(insight::primitive::Primitive::Type::TESSELATION,
+                                                                   new insight::primitive::Tesselation(window_manager.getDisplayManager()->getObjectShader())))
     {
         std::cerr << "Failed to add Tesselation primitive" << std::endl;
         return -1;

@@ -1,6 +1,6 @@
 #include "Primitive.h"
 
-Primitive::~Primitive()
+insight::primitive::Primitive::~Primitive()
 {
     glDeleteBuffers(1, &vbo_);
     glDeleteVertexArrays(1, &vao_);
@@ -11,43 +11,38 @@ Primitive::~Primitive()
     }
 }
 
-void Primitive::setActive()
+void insight::primitive::Primitive::setActive()
 {
     glBindVertexArray(vao_);
 }
 
-Primitive::Type Primitive::getType()
+insight::primitive::Primitive::Type insight::primitive::Primitive::getType()
 {
     return type_;
 }
 
-void Primitive::initialise()
-{
-
-}
-
-bool Primitive::getSupportsTransforms()
+bool insight::primitive::Primitive::getSupportsTransforms()
 {
     return supports_transforms_;
 }
 
-void Primitive::setCoords(const glm::vec3& from_coords, const glm::vec3& to_coords)
+void insight::primitive::Primitive::setCoords(const glm::vec3& from_coords, const glm::vec3& to_coords)
 {
     from_world_coords_ = from_coords;
     to_world_coords_ = to_coords;
 }
 
-glm::mat4 Primitive::getRotationTransform(const glm::mat4& model_transform)
+glm::mat4 insight::primitive::Primitive::getRotationTransform(const glm::mat4& model_transform)
 {
     return glm::mat4(1.0f);
 }
 
-glm::mat4 Primitive::getScaleTransform(const glm::mat4& model_transform, const glm::vec3& scale_vector)
+glm::mat4 insight::primitive::Primitive::getScaleTransform(const glm::mat4& model_transform, const glm::vec3& scale_vector)
 {
     return glm::mat4(1.0f);
 }
 
-glm::mat4 Primitive::getTranslationTransform(const glm::mat4& model_transform)
+glm::mat4 insight::primitive::Primitive::getTranslationTransform(const glm::mat4& model_transform)
 {
     return glm::mat4(1.0f);
 }

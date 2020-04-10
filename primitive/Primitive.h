@@ -5,6 +5,9 @@
 
 #include "shader/StandardShader.h"
 
+namespace insight {
+namespace primitive {
+
 class Primitive {
 public:
     virtual ~Primitive();
@@ -50,5 +53,8 @@ protected:
     glm::vec3 from_world_coords_;
     glm::vec3 to_world_coords_;
 };
+
+}   // namespace primitive
+}   // namespace insight
 
 #endif //INSIGHT_PRIMITIVE_PRIMITIVE_H

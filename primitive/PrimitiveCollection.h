@@ -8,6 +8,9 @@
 #include "Primitive.h"
 #include "shader/StandardShader.h"
 
+namespace insight {
+namespace primitive {
+
 class PrimitiveCollection {
 public:
     PrimitiveCollection(insight::shader::StandardShader* object_shader);
@@ -19,5 +22,8 @@ public:
 private:
     std::unordered_map<Primitive::Type, Primitive*> primitives_;
 };
+
+}   // namespace primitive
+}   // namespace insight
 
 #endif //INSIGHT_PRIMITIVE_PRIMITIVECOLLECTION_H

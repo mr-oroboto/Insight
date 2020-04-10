@@ -9,6 +9,9 @@
 
 #define TESSELATION_WIDTH 6.0f
 
+namespace insight {
+namespace primitive {
+
 class Tesselation : public Primitive {
 public:
     Tesselation(insight::shader::StandardShader* shader) : Primitive(shader) { initialise(); }
@@ -75,5 +78,8 @@ protected:
     GLuint vertices_per_subtile_;
     GLuint sub_tiles_per_row_;
 };
+
+}   // namespace primitive
+}   // namespace insight
 
 #endif //INSIGHT_PRIMITIVE_TESSELATION_H

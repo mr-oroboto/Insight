@@ -9,7 +9,7 @@ void insight::scenario::RotationTest::run()
 
     std::shared_ptr<Frame> current_frame = frame_queue->newFrame();
 
-    current_frame->addObject(Primitive::Type::RECTANGLE, glm::vec3(0, 0, 0), glm::vec3(1, 1, 1));
+    current_frame->addObject(primitive::Primitive::Type::RECTANGLE, glm::vec3(0, 0, 0), glm::vec3(1, 1, 1));
 
     frame_queue->enqueueFrame(current_frame);
 

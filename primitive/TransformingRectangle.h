@@ -6,6 +6,9 @@
 
 #include "Rectangle.h"
 
+namespace insight {
+namespace primitive {
+
 class TransformingRectangle : public Rectangle {
 public:
     TransformingRectangle(insight::shader::StandardShader* shader);
@@ -18,5 +21,8 @@ public:
 protected:
     void initialise();
 };
+
+}   // namespace primitive
+}   // namespace insight
 
 #endif //INSIGHT_PRIMITIVE_TRANSFORMINGRECTANGLE_H
