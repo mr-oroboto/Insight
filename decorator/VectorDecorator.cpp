@@ -6,7 +6,7 @@
 #define VECTOR_SPACING 3.0f
 #define CUBE_SCALE 1.5f
 
-Decorators::VectorDecorator::VectorFrame::~VectorFrame()
+insight::decorator::vector::VectorFrame::~VectorFrame()
 {
     for (VectorDetail* v : vector_details_)
     {
@@ -14,7 +14,7 @@ Decorators::VectorDecorator::VectorFrame::~VectorFrame()
     }
 }
 
-Decorators::VectorDecorator::VectorDecorator::~VectorDecorator()
+insight::decorator::vector::VectorDecorator::~VectorDecorator()
 {
     for (std::map<unsigned int, VectorFrame*>::iterator i = vector_frames_.begin(); i != vector_frames_.end(); i++)
     {
@@ -22,7 +22,10 @@ Decorators::VectorDecorator::VectorDecorator::~VectorDecorator()
     }
 }
 
-Decorators::VectorDecorator::VectorDetail* Decorators::VectorDecorator::VectorDecorator::addVector(unsigned int frame, const std::vector<int>& v, Decorators::VectorDecorator::VectorDetail* parent, Decorators::VectorDecorator::VectorDetail::RelationshipToParent child_type)
+insight::decorator::vector::VectorDetail* insight::decorator::vector::VectorDecorator::addVector(unsigned int frame,
+                                                                                                 const std::vector<int>& v,
+                                                                                                 VectorDetail* parent,
+                                                                                                 VectorDetail::RelationshipToParent child_type)
 {
     if (vector_frames_.find(frame) == vector_frames_.end())
     {
@@ -41,20 +44,17 @@ Decorators::VectorDecorator::VectorDetail* Decorators::VectorDecorator::VectorDe
     return vector_detail;
 }
 
-void Decorators::VectorDecorator::VectorDecorator::setStartCoords(const glm::vec3 &start_coords)
+void insight::decorator::vector::VectorDecorator::setStartCoords(const glm::vec3 &start_coords)
 {
     start_coords_ = start_coords;
 }
 
-void Decorators::VectorDecorator::VectorDecorator::setInheritPreviousFrameVectors(bool inherit_previous_frame_vectors)
+void insight::decorator::vector::VectorDecorator::setInheritPreviousFrameVectors(bool inherit_previous_frame_vectors)
 {
     inherit_previous_frame_vectors_ = inherit_previous_frame_vectors;
 }
 
-/**
- * Create a Frame for each VectorFrame defined in the decorator and draw the frame's vectors onto it.
- */
-void Decorators::VectorDecorator::VectorDecorator::decorate()
+void insight::decorator::vector::VectorDecorator::decorate()
 {
     glm::vec3 start_coords = start_coords_;
 
@@ -83,7 +83,7 @@ void Decorators::VectorDecorator::VectorDecorator::decorate()
     }
 }
 
-void Decorators::VectorDecorator::VectorDecorator::drawVectorFrame(VectorFrame* vector_frame, const glm::vec3& start_coords)
+void insight::decorator::vector::VectorDecorator::drawVectorFrame(VectorFrame* vector_frame, const glm::vec3& start_coords)
 {
     glm::vec3 node_coords = start_coords;
     bool is_first_vector = true;
@@ -150,7 +150,7 @@ void Decorators::VectorDecorator::VectorDecorator::drawVectorFrame(VectorFrame* 
     }
 }
 
-void Decorators::VectorDecorator::VectorDecorator::drawNode(const glm::vec3& node_coords, const glm::vec3& last_node_coords, int node_value, bool start_of_vector)
+void insight::decorator::vector::VectorDecorator::drawNode(const glm::vec3& node_coords, const glm::vec3& last_node_coords, int node_value, bool start_of_vector)
 {
     glm::vec3 node_colour = glm::vec3(0.8, 0.8, 0.8);
 

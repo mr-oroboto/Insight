@@ -9,7 +9,7 @@ void insight::scenario::MergeSort::run()
 
     glm::vec3 start_coords = glm::vec3(-8, 10, 0);
 
-    decorator_ = new Decorators::VectorDecorator::VectorDecorator(frame_queue.get());
+    decorator_ = new decorator::vector::VectorDecorator(frame_queue.get());
     decorator_->setStartCoords(start_coords);
     decorator_->setInheritPreviousFrameVectors(true);
 
@@ -20,8 +20,8 @@ void insight::scenario::MergeSort::run()
     std::vector<int> v = std::vector<int>(values, values + sizeof(values) / sizeof(int));
 
     deepest_depth_ = 0;
-    Decorators::VectorDecorator::VectorDetail* parent_vector = nullptr;
-    sort(v, 0, nullptr, Decorators::VectorDecorator::VectorDetail::CHILD_IS_ONE_OF_MANY, parent_vector);
+    decorator::vector::VectorDetail* parent_vector = nullptr;
+    sort(v, 0, nullptr, decorator::vector::VectorDetail::CHILD_IS_ONE_OF_MANY, parent_vector);
 
     decorator_->decorate();
 
@@ -43,7 +43,10 @@ void insight::scenario::MergeSort::run()
  *       offset of the parent array that the left and right portion are coming from (see the 2, 1 and 90,32 split for
  *       an example).
  */
-std::vector<int> insight::scenario::MergeSort::sort(const std::vector<int>& v, unsigned int depth, Decorators::VectorDecorator::VectorDetail* parent_vector, Decorators::VectorDecorator::VectorDetail::RelationshipToParent child_type, Decorators::VectorDecorator::VectorDetail*& vector_detail)
+std::vector<int> insight::scenario::MergeSort::sort(const std::vector<int>& v, unsigned int depth,
+                                                    decorator::vector::VectorDetail* parent_vector,
+                                                    decorator::vector::VectorDetail::RelationshipToParent child_type,
+                                                    decorator::vector::VectorDetail*& vector_detail)
 {
     if (depth > deepest_depth_)
     {
@@ -63,15 +66,15 @@ std::vector<int> insight::scenario::MergeSort::sort(const std::vector<int>& v, u
     std::vector<int> right_unsorted = std::vector<int>(v.begin() + (len / 2), v.end());
 
     // Sort the two halves
-    Decorators::VectorDecorator::VectorDetail* left_vector_detail, *right_vector_detail;
-    std::vector<int> left_sorted = sort(left_unsorted, depth + 1, vector_detail, Decorators::VectorDecorator::VectorDetail::CHILD_IS_LEFT, left_vector_detail);
-    std::vector<int> right_sorted = sort(right_unsorted, depth + 1, vector_detail, Decorators::VectorDecorator::VectorDetail::CHILD_IS_RIGHT, right_vector_detail);
+    decorator::vector::VectorDetail* left_vector_detail, *right_vector_detail;
+    std::vector<int> left_sorted = sort(left_unsorted, depth + 1, vector_detail, decorator::vector::VectorDetail::CHILD_IS_LEFT, left_vector_detail);
+    std::vector<int> right_sorted = sort(right_unsorted, depth + 1, vector_detail, decorator::vector::VectorDetail::CHILD_IS_RIGHT, right_vector_detail);
 
     // Merge the two sorted halves
     std::vector<int> sorted = merge(left_sorted, right_sorted);
 
     unsigned int frame_number = deepest_depth_ + (deepest_depth_ - depth);
-    decorator_->addVector(frame_number, sorted, left_vector_detail, Decorators::VectorDecorator::VectorDetail::CHILD_IS_RIGHT);
+    decorator_->addVector(frame_number, sorted, left_vector_detail, decorator::vector::VectorDetail::CHILD_IS_RIGHT);
 
     return sorted;
 }

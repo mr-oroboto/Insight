@@ -12,7 +12,7 @@ public:
     HeapDepthFirstTraversal(DisplayManager* display_manager) : Scenario(display_manager) {}
 
     void run();
-    void run(Decorators::HeapDecorator::TraverseOrder traverse_order);
+    void run(decorator::HeapDecorator::TraverseOrder traverse_order);
 };
 
 }   // namespace scenario

@@ -13,7 +13,7 @@ void insight::scenario::MinHeap::run()
     std::unique_ptr<FrameQueue> frame_queue = std::make_unique<FrameQueue>(display_manager_, true);
     frame_queue->setFrameRate(1);
 
-    Decorators::HeapDecorator* decorator = new Decorators::HeapDecorator(frame_queue.get());
+    decorator::HeapDecorator* decorator = new decorator::HeapDecorator(frame_queue.get());
     MinHeapArray heap(decorator);
 
     int heap_values[] = {

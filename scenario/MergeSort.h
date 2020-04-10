@@ -18,10 +18,13 @@ public:
     void run();
 
 private:
-    std::vector<int> sort(const std::vector<int>& v, unsigned int depth, Decorators::VectorDecorator::VectorDetail* parent_vector, Decorators::VectorDecorator::VectorDetail::RelationshipToParent child_type, Decorators::VectorDecorator::VectorDetail*& vector_detail);
+    std::vector<int> sort(const std::vector<int>& v, unsigned int depth,
+                          decorator::vector::VectorDetail* parent_vector,
+                          decorator::vector::VectorDetail::RelationshipToParent child_type,
+                          decorator::vector::VectorDetail*& vector_detail);
     std::vector<int> merge(const std::vector<int>& left, const std::vector<int>& right);
 
-    Decorators::VectorDecorator::VectorDecorator* decorator_;
+    decorator::vector::VectorDecorator* decorator_;
     unsigned int deepest_depth_;
 };
 

@@ -9,15 +9,15 @@ void insight::scenario::HeapDepthFirstTraversal::run()
 {
     display_manager_->setUpdateSceneCallback(nullptr);
 
-    run(Decorators::HeapDecorator::TraverseOrder::PRE_ORDER);
+    run(decorator::HeapDecorator::TraverseOrder::PRE_ORDER);
 }
 
-void insight::scenario::HeapDepthFirstTraversal::run(Decorators::HeapDecorator::TraverseOrder traverse_order)
+void insight::scenario::HeapDepthFirstTraversal::run(decorator::HeapDecorator::TraverseOrder traverse_order)
 {
     std::unique_ptr<FrameQueue> frame_queue = std::make_unique<FrameQueue>(display_manager_, true);
     frame_queue->setFrameRate(1);
 
-    Decorators::HeapDecorator* decorator = new Decorators::HeapDecorator(frame_queue.get());
+    decorator::HeapDecorator* decorator = new decorator::HeapDecorator(frame_queue.get());
     MinHeapArray heap(nullptr);
     decorator->setHeap(dynamic_cast<HeapArray*>(&heap));
 

@@ -6,11 +6,16 @@
 
 #include "decorator/HeapDecorator.h"
 
-class HeapArray
-{
+class HeapArray {
 public:
-    HeapArray(Decorators::HeapDecorator* decorator = nullptr);
+    HeapArray(insight::decorator::HeapDecorator* decorator = nullptr);
 
+    // Insert a new value into the heap.
+    //
+    // This involves finding the next insertion position, putting the value there and then bubbling it up the heap
+    // until the heap property (min or max) is restored.
+    //
+    // In our array implementation the next insertion position is the element after the last element of the array.
     void insert(int value);
     bool validate();
 
@@ -23,23 +28,27 @@ public:
     unsigned long getNodeCount();
 
 protected:
-    int extractRoot();          // extract root (min or max)
+    // Find the root and remove it.
+    //
+    // To remove the root we find the bottom-most, right-most element, put it at the top of the heap (the old min/max
+    // value), remove the node we just took the value from and then bubble the "new" root down the tree until the heap
+    // property is restored.
+    int extractRoot();
 
     virtual bool shouldSwapInHeapifyUp(int node_value, int comparison_node_value) = 0;
     virtual bool shouldSwapInHeapifyDown(int node_value, int comparison_node_value) = 0;
 
     std::vector<int> store_;
-    Decorators::HeapDecorator* decorator_;
+    insight::decorator::HeapDecorator* decorator_;
 
 private:
     void heapifyUp(size_t node_index);
     void heapifyDown(size_t node_index);
 };
 
-class MaxHeapArray : public HeapArray
-{
+class MaxHeapArray : public HeapArray {
 public:
-    MaxHeapArray(Decorators::HeapDecorator* decorator) : HeapArray(decorator) {}
+    MaxHeapArray(insight::decorator::HeapDecorator* decorator) : HeapArray(decorator) {}
 
     int max();
     int extractMax() { return extractRoot(); }
@@ -49,10 +58,9 @@ protected:
     bool shouldSwapInHeapifyDown(int node_value, int comparison_node_value);
 };
 
-class MinHeapArray : public HeapArray
-{
+class MinHeapArray : public HeapArray {
 public:
-    MinHeapArray(Decorators::HeapDecorator* decorator) : HeapArray(decorator) {}
+    MinHeapArray(insight::decorator::HeapDecorator* decorator) : HeapArray(decorator) {}
 
     int min();
     int extractMin() { return extractRoot(); }

@@ -1,6 +1,6 @@
 #include "HeapArray.h"
 
-HeapArray::HeapArray(Decorators::HeapDecorator* decorator)
+HeapArray::HeapArray(insight::decorator::HeapDecorator* decorator)
 {
     decorator_ = decorator;
 
@@ -72,14 +72,6 @@ int HeapArray::getRightIndex(size_t node_index)
     return right_index;
 }
 
-/**
- * Insert a new value into the heap.
- *
- * This involves finding the next insertion position, putting the value there and then bubbling it up the heap until
- * the heap property (min or max) is restored.
- *
- * In our array implementation the next insertion position is the element after the last element of the array.
- */
 void HeapArray::insert(int value)
 {
     size_t insert_index = store_.size();
@@ -171,13 +163,6 @@ bool MinHeapArray::shouldSwapInHeapifyDown(int node_value, int comparison_node_v
     return node_value > comparison_node_value;
 }
 
-/**
- * Find the root and remove it.
- *
- * To remove the root we find the bottom-most, right-most element, put it at the top of the heap (the old min/max value),
- * remove the node we just took the value from and then bubble the "new" root down the tree until the heap property is
- * restored.
- */
 int HeapArray::extractRoot()
 {
     assert(store_.size());
