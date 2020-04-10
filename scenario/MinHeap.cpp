@@ -3,10 +3,10 @@
 #include <iostream>
 
 #include "adt/HeapArray.h"
+#include "core/DisplayManager.h"
 #include "decorator/HeapDecorator.h"
-#include "core/FrameQueue.h"
 
-void MinHeap::run()
+void insight::scenario::MinHeap::run()
 {
     display_manager_->setUpdateSceneCallback(nullptr);
 

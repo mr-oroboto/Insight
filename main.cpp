@@ -14,7 +14,7 @@
 #define WINDOW_X_SIZE 2560
 #define WINDOW_Y_SIZE 1440
 
-ScenarioCollection scenarios;
+insight::scenario::ScenarioCollection scenarios;
 
 /**********************************************************************************************************************
  * Command-line argument parsing
@@ -112,12 +112,12 @@ int main(int argc, char *argv[])
 
     scenarios.initialise(&window_manager);
 
-    scenarios.addScenario(new AutoPilot(display_manager));
-    scenarios.addScenario(new MergeSort(display_manager));
-    scenarios.addScenario(new MinHeap(display_manager));
-    scenarios.addScenario(new HeapDepthFirstTraversal(display_manager));
-    scenarios.addScenario(new HeapBreadthFirstTraversal(display_manager));
-    scenarios.addScenario(new StarField(display_manager));
+    scenarios.addScenario(new insight::scenario::AutoPilot(display_manager));
+    scenarios.addScenario(new insight::scenario::MergeSort(display_manager));
+    scenarios.addScenario(new insight::scenario::MinHeap(display_manager));
+    scenarios.addScenario(new insight::scenario::HeapDepthFirstTraversal(display_manager));
+    scenarios.addScenario(new insight::scenario::HeapBreadthFirstTraversal(display_manager));
+    scenarios.addScenario(new insight::scenario::StarField(display_manager));
 
     window_manager.setHandleKeystrokeCallback(std::bind(&handleKeystroke, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
     scenarios.nextScenario();

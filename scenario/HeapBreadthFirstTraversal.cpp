@@ -3,10 +3,10 @@
 #include <iostream>
 
 #include "adt/HeapArray.h"
+#include "core/DisplayManager.h"
 #include "decorator/HeapDecorator.h"
-#include "core/FrameQueue.h"
 
-void HeapBreadthFirstTraversal::run()
+void insight::scenario::HeapBreadthFirstTraversal::run()
 {
     std::unique_ptr<FrameQueue> frame_queue = std::make_unique<FrameQueue>(display_manager_, true);
     frame_queue->setFrameRate(1);

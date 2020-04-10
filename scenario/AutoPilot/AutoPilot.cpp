@@ -1,14 +1,14 @@
 #include "AutoPilot.h"
 
-#include <iostream>
 #include <random>
 
+#include "core/DisplayManager.h"
 #include "primitive/Tesselation.h"
 
 #define FORWARD_UNITS_PER_SEC 120.0f
 #define CAMERA_ROLL_DEGREES_PER_SEC 25.0f
 
-void AutoPilot::run()
+void insight::scenario::AutoPilot::run()
 {
     std::unique_ptr<FrameQueue> frame_queue = std::make_unique<FrameQueue>(display_manager_, true);
     frame_queue->setFrameRate(1);
@@ -45,7 +45,7 @@ void AutoPilot::run()
     }
 }
 
-void AutoPilot::setupStarField(GLuint num_stars, const glm::vec3& origin, GLfloat x_spread, GLfloat y_spread, GLfloat z_spread)
+void insight::scenario::AutoPilot::setupStarField(GLuint num_stars, const glm::vec3& origin, GLfloat x_spread, GLfloat y_spread, GLfloat z_spread)
 {
     stars_.clear();
 
@@ -79,7 +79,7 @@ void AutoPilot::setupStarField(GLuint num_stars, const glm::vec3& origin, GLfloa
     }
 }
 
-void AutoPilot::updateSceneCallback(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame)
+void insight::scenario::AutoPilot::updateSceneCallback(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame)
 {
     camera_roll_degrees_ -= (camera_roll_increment_ * secs_since_last_renderloop);
 
@@ -120,7 +120,7 @@ void AutoPilot::updateSceneCallback(GLfloat secs_since_rendering_started, GLfloa
     frame_->updateObjects(secs_since_rendering_started, secs_since_framequeue_started, secs_since_last_renderloop, secs_since_last_frame, nullptr);
 }
 
-void AutoPilot::drawFloor(GLfloat floor_z_start, GLfloat floor_z_end)
+void insight::scenario::AutoPilot::drawFloor(GLfloat floor_z_start, GLfloat floor_z_end)
 {
     GLfloat y_pos = -3.0f;
 

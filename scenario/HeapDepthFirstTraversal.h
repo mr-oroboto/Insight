@@ -4,8 +4,10 @@
 #include "Scenario.h"
 #include "decorator/HeapDecorator.h"
 
-class HeapDepthFirstTraversal : public Scenario
-{
+namespace insight {
+namespace scenario {
+
+class HeapDepthFirstTraversal : public Scenario {
 public:
     HeapDepthFirstTraversal(DisplayManager* display_manager) : Scenario(display_manager) {}
 
@@ -13,5 +15,7 @@ public:
     void run(Decorators::HeapDecorator::TraverseOrder traverse_order);
 };
 
+}   // namespace scenario
+}   // namespace insight
 
 #endif //INSIGHT_SCENARIO_HEAPDEPTHFIRSTTRAVERSAL_H

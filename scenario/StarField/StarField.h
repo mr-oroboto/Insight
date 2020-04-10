@@ -1,11 +1,19 @@
 #ifndef INSIGHT_SCENARIO_STARFIELD_H
 #define INSIGHT_SCENARIO_STARFIELD_H
 
-#include "scenario/Scenario.h"
-#include "core/DisplayManager.h"
+#include <memory>
 
-class StarField : public Scenario
-{
+#include <GL/glew.h>
+
+#include "scenario/Scenario.h"
+
+class DisplayManager;
+class Frame;
+
+namespace insight {
+namespace scenario {
+
+class StarField : public Scenario {
 public:
     StarField(DisplayManager* display_manager) : Scenario(display_manager) {}
 
@@ -17,5 +25,7 @@ private:
     std::shared_ptr<Frame> frame_;
 };
 
+}   // namespace scenario
+}   // namespace insight
 
 #endif //INSIGHT_SCENARIO_STARFIELD_H

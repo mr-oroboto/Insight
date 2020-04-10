@@ -1,6 +1,8 @@
 #include "RotationTest.h"
 
-void RotationTest::run()
+#include "core/DisplayManager.h"
+
+void insight::scenario::RotationTest::run()
 {
     std::unique_ptr<FrameQueue> frame_queue = std::make_unique<FrameQueue>(display_manager_, true);
     frame_queue->setFrameRate(1);

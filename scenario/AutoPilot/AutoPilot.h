@@ -1,12 +1,21 @@
 #ifndef INSIGHT_SCENARIO_AUTOPILOT_H
 #define INSIGHT_SCENARIO_AUTOPILOT_H
 
+#include <memory>
+#include <vector>
+
 #include "scenario/Scenario.h"
-#include "core/DisplayManager.h"
 #include "scenario/StarField/Star.h"
 
-class AutoPilot : public Scenario
-{
+class DisplayManager;
+class Frame;
+
+namespace insight {
+namespace scenario {
+
+class Star;
+
+class AutoPilot : public Scenario {
 public:
     AutoPilot(DisplayManager* display_manager) : Scenario(display_manager) {}
 
@@ -32,5 +41,8 @@ private:
 
     std::vector<Star*> stars_;
 };
+
+}   // namespace scenario
+}   // namespace insight
 
 #endif //INSIGHT_SCENARIO_AUTOPILOT_H

@@ -4,11 +4,14 @@
 #include <vector>
 
 #include "Scenario.h"
-#include "core/DisplayManager.h"
 #include "decorator/VectorDecorator.h"
 
-class MergeSort : public Scenario
-{
+class DisplayManager;
+
+namespace insight {
+namespace scenario {
+
+class MergeSort : public Scenario {
 public:
     MergeSort(DisplayManager* display_manager) : Scenario(display_manager) {}
 
@@ -22,5 +25,7 @@ private:
     unsigned int deepest_depth_;
 };
 
+}   // namespace scenario
+}   // namespace insight
 
 #endif //INSIGHT_SCENARIO_MERGESORT_H

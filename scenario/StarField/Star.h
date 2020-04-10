@@ -3,11 +3,15 @@
 
 #include "core/SceneObject.h"
 
-class Star : public SceneObject
-{
+class DisplayManager;
+
+namespace insight {
+namespace scenario {
+
+class Star : public SceneObject {
 public:
     Star(DisplayManager* display_manager, Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour);
-    ~Star();
+    ~Star() = default;
 
     enum Colour
     {
@@ -30,5 +34,7 @@ private:
     GLfloat fov_far_z_;                 // rear of screen (where stars appear)
 };
 
+}   // namespace scenario
+}   // namespace insight
 
 #endif //INSIGHT_SCENARIO_STARFIELD_STAR_H

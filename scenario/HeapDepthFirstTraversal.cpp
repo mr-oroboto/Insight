@@ -3,17 +3,16 @@
 #include <iostream>
 
 #include "adt/HeapArray.h"
-#include "decorator/HeapDecorator.h"
-#include "core/FrameQueue.h"
+#include "core/DisplayManager.h"
 
-void HeapDepthFirstTraversal::run()
+void insight::scenario::HeapDepthFirstTraversal::run()
 {
     display_manager_->setUpdateSceneCallback(nullptr);
 
     run(Decorators::HeapDecorator::TraverseOrder::PRE_ORDER);
 }
 
-void HeapDepthFirstTraversal::run(Decorators::HeapDecorator::TraverseOrder traverse_order)
+void insight::scenario::HeapDepthFirstTraversal::run(Decorators::HeapDecorator::TraverseOrder traverse_order)
 {
     std::unique_ptr<FrameQueue> frame_queue = std::make_unique<FrameQueue>(display_manager_, true);
     frame_queue->setFrameRate(1);

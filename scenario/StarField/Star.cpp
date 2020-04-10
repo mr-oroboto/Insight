@@ -1,32 +1,26 @@
 #include "Star.h"
 
-#include <iostream>
-
 #include "core/SceneObject.h"
 
-Star::Star(DisplayManager* display_manager, Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour) : SceneObject(display_manager, type, world_coords, colour)
+insight::scenario::Star::Star(DisplayManager* display_manager, Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour) : SceneObject(display_manager, type, world_coords, colour)
 {
     setForwardUnitsPerSec(20.0f);
     setNearAndFarPlane(30.0f, -30.0f);
     setStarColour(Star::Colour::WHITE);
 }
 
-Star::~Star()
-{
-}
-
-void Star::setNearAndFarPlane(GLfloat near, GLfloat far)
+void insight::scenario::Star::setNearAndFarPlane(GLfloat near, GLfloat far)
 {
     fov_near_z_ = near;
     fov_far_z_ = far;
 }
 
-void Star::setForwardUnitsPerSec(GLfloat forward_units_per_sec)
+void insight::scenario::Star::setForwardUnitsPerSec(GLfloat forward_units_per_sec)
 {
     forward_units_per_sec_ = forward_units_per_sec;
 }
 
-void Star::setStarColour(Star::Colour colour)
+void insight::scenario::Star::setStarColour(Star::Colour colour)
 {
     star_colour_ = colour;
 
@@ -45,7 +39,7 @@ void Star::setStarColour(Star::Colour colour)
     }
 }
 
-void Star::update(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame, void* context)
+void insight::scenario::Star::update(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame, void* context)
 {
     world_coords_.z += (forward_units_per_sec_ * secs_since_last_renderloop);
 
