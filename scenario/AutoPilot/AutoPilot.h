@@ -18,7 +18,7 @@ private:
     void drawFloor(GLfloat floor_z_start, GLfloat floor_z_end);
     void updateSceneCallback(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame);
 
-    Frame* frame_;
+    std::shared_ptr<Frame> frame_;
 
     GLfloat z_;
     GLfloat floor_drawn_from_z_;        // where is the floor drawn "from" (from here out toward the viewer)

@@ -15,7 +15,7 @@ namespace Decorators {
 
     protected:
         FrameQueue* frame_queue_;
-        Frame* current_frame_;
+        std::shared_ptr<Frame> current_frame_;
     };
 
 }

@@ -33,7 +33,7 @@ void AutoPilot::run()
 
     drawFloor(floor_drawn_from_z_, initial_z);
 
-    frame_queue->enqueueFrame(frame_);                          // @todo we should use a shared pointer so we also retain ownership
+    frame_queue->enqueueFrame(frame_);
 
     display_manager_->setUpdateSceneCallback(std::bind(&AutoPilot::updateSceneCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
 

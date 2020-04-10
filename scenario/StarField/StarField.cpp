@@ -45,7 +45,7 @@ void StarField::run()
         frame_->addObject(star);
     }
 
-    frame_queue->enqueueFrame(frame_);  // @todo we should use a shared pointer so we also retain ownership
+    frame_queue->enqueueFrame(frame_);
 
     display_manager_->setUpdateSceneCallback(std::bind(&StarField::updateSceneCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
 

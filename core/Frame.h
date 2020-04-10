@@ -27,7 +27,7 @@ public:
     void draw(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame);
     void updateObjects(GLfloat secs_since_rendering_started, GLfloat secs_since_framequeue_started, GLfloat secs_since_last_renderloop, GLfloat secs_since_last_frame, void* context);
 
-    Frame* clone();     // prefer to copy ctor so subclasses of Frame keep control
+    std::shared_ptr<Frame> clone();     // prefer to copy ctor so subclasses of Frame keep control
 
     GLuint deleteObjectsAtPosition(const glm::vec3& world_coords, Primitive::Type primitive_type);
     GLuint deleteObjectsOutsideBoundary(const glm::vec3 &world_coords, GLfloat bounding_width, Primitive::Type primitive_type);

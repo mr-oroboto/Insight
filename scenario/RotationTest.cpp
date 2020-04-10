@@ -1,15 +1,11 @@
 #include "RotationTest.h"
 
-#include <iostream>
-
-#include "core/FrameQueue.h"
-
 void RotationTest::run()
 {
     std::unique_ptr<FrameQueue> frame_queue = std::make_unique<FrameQueue>(display_manager_, true);
     frame_queue->setFrameRate(1);
 
-    Frame* current_frame = frame_queue->newFrame();
+    std::shared_ptr<Frame> current_frame = frame_queue->newFrame();
 
     current_frame->addObject(Primitive::Type::RECTANGLE, glm::vec3(0, 0, 0), glm::vec3(1, 1, 1));
 

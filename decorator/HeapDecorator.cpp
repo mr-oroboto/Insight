@@ -63,13 +63,13 @@ void Decorators::HeapDecorator::decorateDft(TraverseOrder traverse_order)
     // in each frame highlight the node that the DFT is currently traversing. Queue up all frames and then delete the
     // prototype frame (or keep it with nothing highlighted, doesn't matter).
 
-    dft(0, heap_levels + 1, last_node_coords, false, traverse_order);                   // draw all the nodes first
+    dft(0, heap_levels + 1, last_node_coords, false, traverse_order, nullptr);          // draw all the nodes first
     dft(0, heap_levels + 1, last_node_coords, false, traverse_order, current_frame_);   // now decorate the DFT itself
 
     frame_queue_->enqueueFrame(current_frame_);
 }
 
-void Decorators::HeapDecorator::dft(size_t node_index, unsigned long node_level, const glm::vec3& last_node_coords, bool is_left_of_parent, TraverseOrder traverse_order, Frame* prototype_frame)
+void Decorators::HeapDecorator::dft(size_t node_index, unsigned long node_level, const glm::vec3& last_node_coords, bool is_left_of_parent, TraverseOrder traverse_order, std::shared_ptr<Frame> prototype_frame)
 {
     int left_index = heap_->getLeftIndex(node_index);
     int right_index = heap_->getRightIndex(node_index);
@@ -139,7 +139,7 @@ void Decorators::HeapDecorator::dft(size_t node_index, unsigned long node_level,
     }
 }
 
-void Decorators::HeapDecorator::drawNode(size_t node_index, const glm::vec3& node_position, const glm::vec3& last_node_coords, Frame* prototype_frame)
+void Decorators::HeapDecorator::drawNode(size_t node_index, const glm::vec3& node_position, const glm::vec3& last_node_coords, std::shared_ptr<Frame> prototype_frame)
 {
     int node_value = heap_->getNodeValue(node_index);
     glm::vec3 node_colour;
@@ -156,7 +156,7 @@ void Decorators::HeapDecorator::drawNode(size_t node_index, const glm::vec3& nod
     if (prototype_frame)
     {
         // We're decorating the DFT itself, do this by creating a new frame that highlights the current node
-        Frame* frame = prototype_frame->clone();
+        std::shared_ptr<Frame> frame = prototype_frame->clone();
         frame->deleteObjectsAtPosition(node_position, Primitive::Type::CUBE);
         frame->addObject(Primitive::Type::CUBE, node_position, glm::vec3(1, 0, 0), "", 1.5);
         frame_queue_->enqueueFrame(frame);
@@ -198,7 +198,7 @@ void Decorators::HeapDecorator::decorateBft()
     frame_queue_->enqueueFrame(current_frame_);
 }
 
-void Decorators::HeapDecorator::bft(Frame* prototype_frame)
+void Decorators::HeapDecorator::bft(std::shared_ptr<Frame> prototype_frame)
 {
     struct NodeDetails {
         size_t node_index;
@@ -245,7 +245,7 @@ void Decorators::HeapDecorator::bft(Frame* prototype_frame)
 
         if (prototype_frame)
         {
-            Frame *frame = prototype_frame->clone();
+            std::shared_ptr<Frame> frame = prototype_frame->clone();
             frame->deleteObjectsAtPosition(node_position, Primitive::Type::CUBE);
             frame->addObject(Primitive::Type::CUBE, node_position, glm::vec3(1, 0, 0), "", 1.5);
             frame_queue_->enqueueFrame(frame);

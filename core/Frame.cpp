@@ -246,9 +246,9 @@ void Frame::drawTesselatedFloorWithIsolatedTiles()
     }
 }
 
-Frame* Frame::clone()
+std::shared_ptr<Frame> Frame::clone()
 {
-    Frame* clone = new Frame(display_manager_, draw_object_positions_, draw_reference_axes_, draw_floor_);
+    std::shared_ptr<Frame> clone = std::make_shared<Frame>(display_manager_, draw_object_positions_, draw_reference_axes_, draw_floor_);
 
     for (SceneObject* object : objects_)
     {
