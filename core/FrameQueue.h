@@ -9,10 +9,12 @@
 
 #define FRAMEQUEUE_DEFAULT_FPS 30
 
+namespace insight {
+
+
 class DisplayManager;
 
-class FrameQueue
-{
+class FrameQueue {
 public:
     FrameQueue(DisplayManager* display_manager, bool repeats);
     ~FrameQueue();
@@ -65,5 +67,8 @@ protected:
     DisplayManager* display_manager_;
     std::queue<std::shared_ptr<Frame>> queue_;
 };
+
+
+}   // namespace insight
 
 #endif //INSIGHT_CORE_FRAMEQUEUE_H

@@ -5,8 +5,8 @@
 
 #include <glm/gtc/matrix_transform.hpp> // makes view and projection matrices easier to generate
 
-#include "shader/StandardShader.h"
-#include "TextDrawer.h"
+namespace insight {
+
 
 DisplayManager::DisplayManager()
     : initialised_(false),
@@ -34,7 +34,7 @@ bool DisplayManager::initialise(GLuint wnd_width, GLuint wnd_height)
 
     try
     {
-        object_shader_ = new insight::shader::StandardShader();
+        object_shader_ = new shader::StandardShader();
         if ( ! object_shader_->initialise())
         {
             throw "Can't initialise object shader";
@@ -46,7 +46,7 @@ bool DisplayManager::initialise(GLuint wnd_width, GLuint wnd_height)
             throw "Can't initialise text drawer";
         }
 
-        primitives_ = new insight::primitive::PrimitiveCollection(object_shader_);
+        primitives_ = new primitive::PrimitiveCollection(object_shader_);
         textures_ = std::make_unique<TextureCollection>(object_shader_);
 
         setPerspective(0.1f, 100.0f, 45.0f);
@@ -227,12 +227,12 @@ void DisplayManager::setUpdateSceneCallback(std::function<void(GLfloat, GLfloat,
     update_scene_callback_ = callback;
 }
 
-insight::primitive::PrimitiveCollection* DisplayManager::getPrimitiveCollection()
+primitive::PrimitiveCollection* DisplayManager::getPrimitiveCollection()
 {
     return primitives_;
 }
 
-insight::shader::StandardShader* DisplayManager::getObjectShader()
+shader::StandardShader* DisplayManager::getObjectShader()
 {
     return object_shader_;
 }
@@ -288,13 +288,6 @@ GLuint DisplayManager::getWindowHeight()
     return wnd_height_;
 }
 
-/**
- * Generate a ray from the camera (origin) to a picked mouse position (ray casting).
- *
- * http://antongerdelan.net/opengl/raycasting.html
- * https://stackoverflow.com/questions/29997209/opengl-c-mouse-ray-picking-glmunproject
- * http://www.iquilezles.org/www/articles/intersectors/intersectors.htm
- */
 glm::vec3 DisplayManager::getRayFromCamera(GLuint to_mouse_x, GLuint to_mouse_y)
 {
     GLfloat ndc_mouse_x = to_mouse_x / (getWindowWidth()  * 0.5f) - 1.0f;     // NDC (-1.0 to 1.0)
@@ -311,3 +304,6 @@ glm::vec3 DisplayManager::getRayFromCamera(GLuint to_mouse_x, GLuint to_mouse_y)
 
     return ray_direction;
 }
+
+
+}   // namespace insight

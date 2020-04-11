@@ -5,6 +5,9 @@
 
 #include "DisplayManager.h"
 
+namespace insight {
+
+
 FrameQueue::FrameQueue(DisplayManager* display_manager, bool repeats)
     : ready_(false),
       active_(false),
@@ -106,3 +109,6 @@ void FrameQueue::drawCurrentFrame(GLfloat secs_since_rendering_started, GLfloat&
         }
     }
 }
+
+
+}   // namespace insight

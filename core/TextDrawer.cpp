@@ -1,11 +1,13 @@
 #include "TextDrawer.h"
 
 #include <iostream>
-#include <utility>
 
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "core/DisplayManager.h"
+
+namespace insight {
+
 
 TextDrawer::TextDrawer(DisplayManager* display_manager)
         : initialised_(false),
@@ -38,7 +40,7 @@ bool TextDrawer::initialise(GLuint wnd_width, GLuint wnd_height)
             throw "Failed to initialise FreeType";
         }
 
-        shader_ = std::make_unique<insight::shader::TextShader>();
+        shader_ = std::make_unique<shader::TextShader>();
         if ( ! shader_->initialise())
         {
             throw "Failed to initialise text shader";
@@ -152,3 +154,6 @@ void TextDrawer::print(const std::string& text, const glm::vec3& world_coords, b
 
     glDisable(GL_BLEND);
 }
+
+
+}   // namespace insight

@@ -1,5 +1,8 @@
 #include "TextureCollection.h"
 
+namespace insight {
+
+
 TextureCollection::~TextureCollection()
 {
     for (std::unordered_map<std::string, Texture*>::iterator it = textures_.begin(); it != textures_.end(); it++)
@@ -40,3 +43,6 @@ Texture* TextureCollection::getTexture(const std::string &name)
 
     return textures_[name];
 }
+
+
+}   // namespace insight

@@ -1,12 +1,13 @@
 #include "WindowManager.h"
 
-#include <chrono>
 #include <cmath>
 #include <iostream>
 
 #include <SDL2/SDL_mouse.h>
-#include <GL/glew.h>                    // must be included before gl.h (which is via SDL_opengl.h)
 #include <glm/gtc/matrix_transform.hpp> // makes view and projection matrices easier to generate
+
+namespace insight {
+
 
 WindowManager::WindowManager(GLuint wnd_size_x, GLuint wnd_size_y, bool fullscreen, const glm::vec3& initial_camera_coords)
 {
@@ -379,3 +380,6 @@ void WindowManager::handleMouse(SDL_Event mouse_event, GLfloat secs_since_last_r
         update_camera_pointing_vector = true;
     }
 }
+
+
+}   // namespace insight

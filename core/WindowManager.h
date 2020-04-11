@@ -8,8 +8,10 @@
 
 #include "DisplayManager.h"
 
-class WindowManager
-{
+namespace insight {
+
+
+class WindowManager {
 public:
     WindowManager(GLuint wnd_size_x, GLuint wnd_size_y, bool fullscreen = false, const glm::vec3& initial_camera_coords = glm::vec3(0, 5, 31));
     ~WindowManager();
@@ -66,5 +68,8 @@ private:
     GLfloat light_radius_;
     GLfloat light_angle_degrees_;
 };
+
+
+}   // namespace insight
 
 #endif //INSIGHT_CORE_WINDOWMANAGER_H

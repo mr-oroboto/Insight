@@ -3,10 +3,12 @@
 
 #include "Scenario.h"
 
+namespace insight {
+
 class DisplayManager;
 
-namespace insight {
 namespace scenario {
+
 
 class MinHeap : public Scenario {
 public:

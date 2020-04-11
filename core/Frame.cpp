@@ -7,6 +7,9 @@
 #include "DisplayManager.h"
 #include "primitive/Tesselation.h"
 
+namespace insight {
+
+
 Frame::Frame(DisplayManager* display_manager, bool draw_object_position, bool draw_reference_axes, bool draw_floor)
     : display_manager_(display_manager),
       draw_object_positions_(draw_object_position),
@@ -23,7 +26,7 @@ Frame::~Frame()
     }
 }
 
-void Frame::addObject(insight::primitive::Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour, const std::string& texture_name, GLfloat scale)
+void Frame::addObject(primitive::Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour, const std::string& texture_name, GLfloat scale)
 {
     SceneObject* object = new SceneObject(display_manager_, type, world_coords, colour);
 
@@ -44,7 +47,7 @@ void Frame::addObject(SceneObject* object)
 
 void Frame::addLine(const glm::vec3& from_world_coords, const glm::vec3& to_world_coords, const glm::vec3& colour)
 {
-    SceneObject* object = new SceneObject(display_manager_, insight::primitive::Primitive::Type::LINE, from_world_coords, colour);
+    SceneObject* object = new SceneObject(display_manager_, primitive::Primitive::Type::LINE, from_world_coords, colour);
     object->setAdditionalCoords(to_world_coords);
     objects_.push_back(object);
 }
@@ -88,13 +91,13 @@ void Frame::draw(GLfloat secs_since_rendering_started, GLfloat secs_since_frameq
         to = glm::vec3(0, 0, 10);
         addLine(from, to, colour);
 
-        addObject(insight::primitive::Primitive::Type::CUBE, glm::vec3(0, 0, 0),   glm::vec3(1, 1, 1), "", 0.5);
-        addObject(insight::primitive::Primitive::Type::CUBE, glm::vec3(-10, 0, 0), glm::vec3(1, 0, 0), "", 0.2);
-        addObject(insight::primitive::Primitive::Type::CUBE, glm::vec3(10, 0, 0),  glm::vec3(0, 0, 1), "", 0.2);
-        addObject(insight::primitive::Primitive::Type::CUBE, glm::vec3(0, -10, 0), glm::vec3(1, 0, 0), "", 0.2);
-        addObject(insight::primitive::Primitive::Type::CUBE, glm::vec3(0, 10, 0),  glm::vec3(1, 1, 1), "", 0.2);
-        addObject(insight::primitive::Primitive::Type::CUBE, glm::vec3(0, 0, -10), glm::vec3(1, 0, 0), "", 0.2);
-        addObject(insight::primitive::Primitive::Type::CUBE, glm::vec3(0, 0, 10),  glm::vec3(1, 1, 0), "", 0.2);
+        addObject(primitive::Primitive::Type::CUBE, glm::vec3(0, 0, 0),   glm::vec3(1, 1, 1), "", 0.5);
+        addObject(primitive::Primitive::Type::CUBE, glm::vec3(-10, 0, 0), glm::vec3(1, 0, 0), "", 0.2);
+        addObject(primitive::Primitive::Type::CUBE, glm::vec3(10, 0, 0),  glm::vec3(0, 0, 1), "", 0.2);
+        addObject(primitive::Primitive::Type::CUBE, glm::vec3(0, -10, 0), glm::vec3(1, 0, 0), "", 0.2);
+        addObject(primitive::Primitive::Type::CUBE, glm::vec3(0, 10, 0),  glm::vec3(1, 1, 1), "", 0.2);
+        addObject(primitive::Primitive::Type::CUBE, glm::vec3(0, 0, -10), glm::vec3(1, 0, 0), "", 0.2);
+        addObject(primitive::Primitive::Type::CUBE, glm::vec3(0, 0, 10),  glm::vec3(1, 1, 0), "", 0.2);
     }
 
     // We must first render all objects before we render any text
@@ -156,13 +159,13 @@ void Frame::drawTesselatedFloor()
 
         for (x = floor_x_start; x < (floor_x_start + floor_width_x); x += tile_dimension)
         {
-            SceneObject* object = new SceneObject(display_manager_, insight::primitive::Primitive::Type::TESSELATION, glm::vec3(x, y_pos, z), glm::vec3(1, 1, 1));
-            insight::primitive::Tesselation* tile = dynamic_cast<insight::primitive::Tesselation*>(object->getPrimitive());
+            SceneObject* object = new SceneObject(display_manager_, primitive::Primitive::Type::TESSELATION, glm::vec3(x, y_pos, z), glm::vec3(1, 1, 1));
+            primitive::Tesselation* tile = dynamic_cast<primitive::Tesselation*>(object->getPrimitive());
 
             object->setTexture("water");
 
             tile->setRandomisePeaks(false);
-            tile->setType(insight::primitive::Tesselation::Type::RANDOM);
+            tile->setType(primitive::Tesselation::Type::RANDOM);
             tile->setYFreeSeed(0);
             tile->resetSeamVertices();
             tile->initVertices();
@@ -230,12 +233,12 @@ void Frame::drawTesselatedFloorWithIsolatedTiles()
     {
         for (x = floor_x_start; x < (floor_x_start + floor_length); x += tile_dimension)
         {
-            SceneObject* object = new SceneObject(display_manager_, insight::primitive::Primitive::Type::TESSELATION, glm::vec3(x, y_pos, z),  glm::vec3(0.5, 0.5, 0.5));
-            insight::primitive::Tesselation* tile = dynamic_cast<insight::primitive::Tesselation*>(object->getPrimitive());
+            SceneObject* object = new SceneObject(display_manager_, primitive::Primitive::Type::TESSELATION, glm::vec3(x, y_pos, z),  glm::vec3(0.5, 0.5, 0.5));
+            primitive::Tesselation* tile = dynamic_cast<primitive::Tesselation*>(object->getPrimitive());
 
             tile->setRandomisePeaks(false);
             tile->setYFreeSeed(0);
-            tile->setType(insight::primitive::Tesselation::Type::RAMPED);
+            tile->setType(primitive::Tesselation::Type::RAMPED);
             tile->setIsolated();
             tile->initVertices();
 
@@ -264,7 +267,7 @@ std::shared_ptr<Frame> Frame::clone()
     return clone;
 }
 
-GLuint Frame::deleteObjectsAtPosition(const glm::vec3 &world_coords, insight::primitive::Primitive::Type primitive_type)
+GLuint Frame::deleteObjectsAtPosition(const glm::vec3 &world_coords, primitive::Primitive::Type primitive_type)
 {
     bool object_deleted = false;
     GLuint objects_deleted = 0;
@@ -291,7 +294,7 @@ GLuint Frame::deleteObjectsAtPosition(const glm::vec3 &world_coords, insight::pr
     return objects_deleted;
 }
 
-GLuint Frame::deleteObjectsOutsideBoundary(const glm::vec3 &world_coords, GLfloat bounding_width, insight::primitive::Primitive::Type primitive_type)
+GLuint Frame::deleteObjectsOutsideBoundary(const glm::vec3 &world_coords, GLfloat bounding_width, primitive::Primitive::Type primitive_type)
 {
     bool object_deleted = false;
     GLuint objects_deleted = 0;
@@ -346,3 +349,6 @@ void Frame::updateObjects(GLfloat secs_since_rendering_started, GLfloat secs_sin
         object->update(secs_since_rendering_started, secs_since_framequeue_started, secs_since_last_renderloop, secs_since_last_frame, context);
     }
 }
+
+
+}   // namespace insight

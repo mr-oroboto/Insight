@@ -11,15 +11,17 @@
 #include "SceneObject.h"
 #include "primitive/Primitive.h"
 
+namespace insight {
+
+
 class DisplayManager;
 
-class Frame
-{
+class Frame {
 public:
     Frame(DisplayManager* display_manager, bool draw_object_position = false, bool draw_reference_axes = false, bool draw_floor = false);
     ~Frame();
 
-    void addObject(insight::primitive::Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour, const std::string& texture_name = "", GLfloat scale = 1.0f);
+    void addObject(primitive::Primitive::Type type, const glm::vec3& world_coords, const glm::vec3& colour, const std::string& texture_name = "", GLfloat scale = 1.0f);
     void addObject(SceneObject* object);
     unsigned long addText(const std::string& text, GLfloat x, GLfloat y, GLfloat z = 0.0f, bool ortho = true, GLfloat scale = 1.0f, const glm::vec3& colour = glm::vec3(1.0f, 1.0f, 1.0f));
     void addLine(const glm::vec3& from_world_coords, const glm::vec3& to_world_coords, const glm::vec3& colour = glm::vec3(1.0f, 1.0f, 1.0f));
@@ -29,8 +31,8 @@ public:
 
     std::shared_ptr<Frame> clone();     // prefer to copy ctor so subclasses of Frame keep control
 
-    GLuint deleteObjectsAtPosition(const glm::vec3& world_coords, insight::primitive::Primitive::Type primitive_type);
-    GLuint deleteObjectsOutsideBoundary(const glm::vec3 &world_coords, GLfloat bounding_width, insight::primitive::Primitive::Type primitive_type);
+    GLuint deleteObjectsAtPosition(const glm::vec3& world_coords, primitive::Primitive::Type primitive_type);
+    GLuint deleteObjectsOutsideBoundary(const glm::vec3 &world_coords, GLfloat bounding_width, primitive::Primitive::Type primitive_type);
     void deleteText(unsigned long text_id);
     bool coordinatesAreOutsideBoundary(const glm::vec3& world_coords, const glm::vec3& reference_coords, GLfloat bounding_width);
 
@@ -56,5 +58,8 @@ private:
     unsigned long next_text_id_;
     std::unordered_map<unsigned long, Text> texts_;
 };
+
+
+}   // namespace insight
 
 #endif //INSIGHT_CORE_FRAME_H

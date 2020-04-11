@@ -5,14 +5,13 @@
 #include <ft2build.h>
 #include "freetype/freetype.h"
 
+namespace insight {
+
+
 Font::Font(const std::string& path, FT_Library freetype)
 {
     path_ = path;
     freetype_ = freetype;
-}
-
-Font::~Font()
-{
 }
 
 bool Font::initialise()
@@ -101,3 +100,6 @@ GLuint Font::drawCharacter(char c, GLuint vbo, const glm::vec3& world_coords, GL
 
     return ch.advance;
 }
+
+
+}   // namespace insight

@@ -2,7 +2,10 @@
 
 #include "stb_image.h"
 
-Texture::Texture(const std::string& path, insight::shader::StandardShader* shader)
+namespace insight {
+
+
+Texture::Texture(const std::string& path, shader::StandardShader* shader)
 {
     path_ = path;
     object_shader_ = shader;
@@ -69,3 +72,6 @@ void Texture::use(GLuint texture_unit)
     // Bind this texture to the texture unit (which is implicitly referenced by the sampler in the fragment shader)
     glBindTexture(GL_TEXTURE_2D, texture_id_);
 }
+
+
+}   // namespace insight

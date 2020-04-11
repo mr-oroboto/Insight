@@ -15,6 +15,9 @@
 #include "shader/StandardShader.h"
 #include "TextureCollection.h"
 
+namespace insight {
+
+
 class DisplayManager {
 public:
     DisplayManager();
@@ -35,12 +38,14 @@ public:
     bool registerFont(Font::Type font_type, const std::string& path);
     bool registerTexture(const std::string& path, const std::string& name);
 
-    insight::primitive::PrimitiveCollection* getPrimitiveCollection();
-    insight::shader::StandardShader* getObjectShader();
+    primitive::PrimitiveCollection* getPrimitiveCollection();
+    shader::StandardShader* getObjectShader();
 
     glm::vec3 getCameraCoords();
     glm::vec3 getCameraPointingVector();
     glm::vec3 getCameraUpVector();
+
+    // Generate a ray from the camera (origin) to a picked mouse position (ray casting).
     glm::vec3 getRayFromCamera(GLuint to_mouse_x, GLuint to_mouse_y);
 
     glm::mat4 getViewTransform();
@@ -59,14 +64,14 @@ private:
 
     bool initialised_;
 
-    insight::primitive::PrimitiveCollection* primitives_;
+    primitive::PrimitiveCollection* primitives_;
     std::unique_ptr<TextureCollection> textures_;
     std::unique_ptr<FrameQueue> frame_queue_;
     std::function<void(GLfloat, GLfloat, GLfloat, GLfloat)> update_scene_callback_;
 
     GLuint wnd_width_, wnd_height_;
 
-    insight::shader::StandardShader* object_shader_;
+    shader::StandardShader* object_shader_;
     std::unique_ptr<TextDrawer> text_drawer_;
 
     glm::vec3 camera_coords_;
@@ -80,5 +85,8 @@ private:
     glm::vec3 light_coords_;
     GLfloat light_intensity_;
 };
+
+
+}   // namespace insight
 
 #endif //INSIGHT_CORE_DISPLAYMANAGER_H

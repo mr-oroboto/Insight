@@ -161,13 +161,13 @@ void HeapDecorator::drawNode(size_t node_index, const glm::vec3& node_position, 
     {
         // We're decorating the DFT itself, do this by creating a new frame that highlights the current node
         std::shared_ptr<Frame> frame = prototype_frame->clone();
-        frame->deleteObjectsAtPosition(node_position, insight::primitive::Primitive::Type::CUBE);
-        frame->addObject(insight::primitive::Primitive::Type::CUBE, node_position, glm::vec3(1, 0, 0), "", 1.5);
+        frame->deleteObjectsAtPosition(node_position, primitive::Primitive::Type::CUBE);
+        frame->addObject(primitive::Primitive::Type::CUBE, node_position, glm::vec3(1, 0, 0), "", 1.5);
         frame_queue_->enqueueFrame(frame);
     }
     else
     {
-        current_frame_->addObject(insight::primitive::Primitive::Type::CUBE, node_position, node_colour, "slate", 1.5);
+        current_frame_->addObject(primitive::Primitive::Type::CUBE, node_position, node_colour, "slate", 1.5);
 
         if (node_index != 0)
         {
@@ -250,13 +250,13 @@ void HeapDecorator::bft(std::shared_ptr<Frame> prototype_frame)
         if (prototype_frame)
         {
             std::shared_ptr<Frame> frame = prototype_frame->clone();
-            frame->deleteObjectsAtPosition(node_position, insight::primitive::Primitive::Type::CUBE);
-            frame->addObject(insight::primitive::Primitive::Type::CUBE, node_position, glm::vec3(1, 0, 0), "", 1.5);
+            frame->deleteObjectsAtPosition(node_position, primitive::Primitive::Type::CUBE);
+            frame->addObject(primitive::Primitive::Type::CUBE, node_position, glm::vec3(1, 0, 0), "", 1.5);
             frame_queue_->enqueueFrame(frame);
         }
         else
         {
-            current_frame_->addObject(insight::primitive::Primitive::Type::CUBE, node_position, glm::vec3(0.8, 0.8, 0.8), "slate", 1.5);
+            current_frame_->addObject(primitive::Primitive::Type::CUBE, node_position, glm::vec3(0.8, 0.8, 0.8), "slate", 1.5);
 
             if (details.node_index != 0)
             {

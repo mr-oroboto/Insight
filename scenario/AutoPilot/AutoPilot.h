@@ -7,13 +7,15 @@
 #include "scenario/Scenario.h"
 #include "scenario/StarField/Star.h"
 
+namespace insight {
+
 class DisplayManager;
 class Frame;
 
-namespace insight {
 namespace scenario {
 
 class Star;
+
 
 class AutoPilot : public Scenario {
 public:

@@ -3,12 +3,14 @@
 
 #include <vector>
 
+namespace insight {
+
 class WindowManager;
 
-namespace insight {
 namespace scenario {
 
 class Scenario;
+
 
 class ScenarioCollection {
 public:

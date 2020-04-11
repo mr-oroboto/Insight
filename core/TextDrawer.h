@@ -14,6 +14,9 @@
 #include "shader/TextShader.h"
 #include "Font.h"
 
+namespace insight {
+
+
 class DisplayManager;
 
 class TextDrawer {
@@ -30,7 +33,7 @@ private:
     bool initialised_;
 
     DisplayManager* display_manager_;
-    std::unique_ptr<insight::shader::TextShader> shader_;
+    std::unique_ptr<shader::TextShader> shader_;
     FT_Library freetype_;
     std::unordered_map<Font::Type, Font*> fonts_;
 
@@ -40,5 +43,7 @@ private:
     glm::mat4 ortho_projection_transform_;
 };
 
+
+}   // namespace insight
 
 #endif //INSIGHT_CORE_TEXTDRAWER_H

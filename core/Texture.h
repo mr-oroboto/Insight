@@ -7,9 +7,12 @@
 
 #include "shader/StandardShader.h"
 
+namespace insight {
+
+
 class Texture {
 public:
-    Texture(const std::string& path, insight::shader::StandardShader* shader);
+    Texture(const std::string& path, shader::StandardShader* shader);
     ~Texture();
 
     bool initialise();
@@ -19,7 +22,7 @@ public:
 private:
     bool initialised_;
 
-    insight::shader::StandardShader* object_shader_;
+    shader::StandardShader* object_shader_;
 
     std::string path_;
 
@@ -28,5 +31,7 @@ private:
     GLuint channels_;
 };
 
+
+}   // namespace insight
 
 #endif //INSIGHT_TEXTURE_H

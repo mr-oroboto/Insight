@@ -6,10 +6,12 @@
 #include "Scenario.h"
 #include "decorator/VectorDecorator.h"
 
+namespace insight {
+
 class DisplayManager;
 
-namespace insight {
 namespace scenario {
+
 
 class MergeSort : public Scenario {
 public:

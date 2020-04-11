@@ -1,10 +1,12 @@
 #ifndef INSIGHT_SCENARIO_SCENARIO_H
 #define INSIGHT_SCENARIO_SCENARIO_H
 
+namespace insight {
+
 class DisplayManager;
 
-namespace insight {
 namespace scenario {
+
 
 class Scenario {
 public:

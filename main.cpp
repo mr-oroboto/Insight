@@ -62,7 +62,7 @@ static argp parser = {
  * WindowManager callbacks
  **********************************************************************************************************************/
 
-bool handleKeystroke(WindowManager* window_manager, SDL_Event keystroke_event, GLfloat secs_since_last_renderloop)
+bool handleKeystroke(insight::WindowManager* window_manager, SDL_Event keystroke_event, GLfloat secs_since_last_renderloop)
 {
     bool continue_processing_keystrokes = true;
 
@@ -85,14 +85,14 @@ int main(int argc, char *argv[])
 {
     argp_parse(&parser, argc, argv, 0, 0, NULL);
 
-    WindowManager window_manager(WINDOW_X_SIZE, WINDOW_Y_SIZE, WINDOW_FULLSCREEN, glm::vec3(0, 5, 31));
+    insight::WindowManager window_manager(WINDOW_X_SIZE, WINDOW_Y_SIZE, WINDOW_FULLSCREEN, glm::vec3(0, 5, 31));
     if ( ! window_manager.initialise())
     {
         std::cerr << "Failed to initialise WindowManager" << std::endl;
         return -1;
     }
 
-    DisplayManager* display_manager = window_manager.getDisplayManager();
+    insight::DisplayManager* display_manager = window_manager.getDisplayManager();
     if ( ! display_manager->getPrimitiveCollection()->addPrimitive(insight::primitive::Primitive::Type::TESSELATION,
                                                                    new insight::primitive::Tesselation(window_manager.getDisplayManager()->getObjectShader())))
     {
@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
         std::cerr << "Failed to add water texture" << std::endl;
     }
 
-    if ( ! display_manager->registerFont(Font::Type::FONT_DEFAULT, font_path.append("/Vera.ttf")))
+    if ( ! display_manager->registerFont(insight::Font::Type::FONT_DEFAULT, font_path.append("/Vera.ttf")))
     {
         std::cerr << "Failed to register font" << std::endl;
         return -1;

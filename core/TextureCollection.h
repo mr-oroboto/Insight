@@ -7,10 +7,11 @@
 #include "shader/StandardShader.h"
 #include "Texture.h"
 
-class TextureCollection
-{
+namespace insight {
+
+class TextureCollection {
 public:
-    TextureCollection(insight::shader::StandardShader* object_shader) : object_shader_(object_shader) {}
+    TextureCollection(shader::StandardShader* object_shader) : object_shader_(object_shader) {}
     ~TextureCollection();
 
     bool registerTexture(const std::string& path, const std::string& name);
@@ -18,8 +19,10 @@ public:
 
 private:
     std::unordered_map<std::string, Texture*> textures_;
-    insight::shader::StandardShader* object_shader_;
+    shader::StandardShader* object_shader_;
 };
 
+
+}   // namespace insight
 
 #endif //INSIGHT_CORE_TEXTURECOLLECTION_H

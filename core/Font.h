@@ -10,8 +10,10 @@
 #include "freetype/freetype.h"
 #include FT_FREETYPE_H
 
-class Font
-{
+namespace insight {
+
+
+class Font {
 public:
     enum Type
     {
@@ -19,7 +21,7 @@ public:
     };
 
     Font(const std::string& path, FT_Library freetype);
-    ~Font();
+    ~Font() = default;
 
     bool initialise();
 
@@ -41,5 +43,8 @@ private:
 
     std::map<GLchar, Character> characters_;
 };
+
+
+}   // namespace insight
 
 #endif //INSIGHT_CORE_FONT_H
