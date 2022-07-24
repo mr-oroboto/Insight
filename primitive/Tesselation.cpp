@@ -1,5 +1,6 @@
 #include "Tesselation.h"
 
+#include <cstring>
 #include <iostream>
 #include <random>
 

@@ -25,15 +25,19 @@ public:
 
     bool initialise(GLuint wnd_width, GLuint wnd_height);
 
+    void resetCamera(const glm::vec3& camera_world_coords = glm::vec3(0, 5, 31), const glm::vec3& up_vector = glm::vec3(0.0f, 1.0f, 0.0f), const glm::vec3& pointing_vector = glm::vec3(0, 0, -1) /* pointing into screen */);
+
     void setFrameQueue(std::unique_ptr<FrameQueue> queue);
     void setCameraCoords(const glm::vec3& world_coords);
     void setCameraUpVector(const glm::vec3& vector);
     void setCameraPointingVector(const glm::vec3& vector);
     void setLightingOn(bool on);
+    void toggleLighting();
     void setLightCoords(const glm::vec3& world_coords);
     void setLightColour(const glm::vec3& colour, GLfloat intensity = 1.0);
     void setPerspective(GLfloat near_plane, GLfloat far_plane, GLfloat fov);
     void setUpdateSceneCallback(std::function<void(GLfloat, GLfloat, GLfloat, GLfloat)> callback);
+    void setResetCameraCallback(std::function<void(const glm::vec3&, const glm::vec3&, const glm::vec3&)> callback);
 
     bool registerFont(Font::Type font_type, const std::string& path);
     bool registerTexture(const std::string& path, const std::string& name);
@@ -74,9 +78,13 @@ private:
     shader::StandardShader* object_shader_;
     std::unique_ptr<TextDrawer> text_drawer_;
 
+    glm::vec3 initial_camera_coords_;
+
     glm::vec3 camera_coords_;
     glm::vec3 camera_pointing_vector_;
     glm::vec3 camera_up_vector_;
+
+    std::function<void(const glm::vec3&, const glm::vec3&, const glm::vec3&)> reset_camera_callback_;
 
     glm::mat4 projection_transform_;
 

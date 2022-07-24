@@ -2,37 +2,37 @@
 #define INSIGHT_CORE_WINDOWMANAGER_H
 
 #include <chrono>
+#include <vector>
 
 #include <SDL2/SDL.h>
 #include <GL/glew.h>                    // must be included before gl.h (which is via SDL_opengl.h)
 
 #include "DisplayManager.h"
+#include "DefaultInputHandler.h"
+#include "InputHandler.h"
 
 namespace insight {
 
 
 class WindowManager {
 public:
-    WindowManager(GLuint wnd_size_x, GLuint wnd_size_y, bool fullscreen = false, const glm::vec3& initial_camera_coords = glm::vec3(0, 5, 31));
+    WindowManager(GLuint wnd_size_x, GLuint wnd_size_y, bool fullscreen = false);
     ~WindowManager();
 
     bool initialise();
 
-    void setHandleKeystrokeCallback(std::function<bool(WindowManager*, SDL_Event, GLfloat)> callback);
-    void setHandleMouseCallback(std::function<bool(WindowManager*, SDL_Event, GLfloat)> callback);
-
-    void resetCamera();
-    void setCameraCoords(const glm::vec3& world_coords);
-    void setCameraPointingVector(const glm::vec3& vector);
-
     DisplayManager* getDisplayManager();
-
     bool run();
+    void stop();
+
+    void pushInputHandler(InputHandler* input_handler);
+    void popInputHandler();
+
+    // Called by DisplayManager when the camera is reset, allows us to propagate to input handlers.
+    void resetCameraCallback(const glm::vec3& camera_world_coords, const glm::vec3& up_vector, const glm::vec3& pointing_vector);
 
 private:
-    bool processEvents(GLfloat secs_since_last_renderloop);
-    bool handleKeystroke(SDL_Event keystroke_event, GLfloat secs_since_last_renderloop, bool& update_camera_coords, bool& update_camera_pointing_vector);
-    void handleMouse(SDL_Event mouse_event, GLfloat secs_since_last_renderloop, bool& update_camera_coords, bool& update_camera_pointing_vector);
+    void processEvents(GLfloat secs_since_last_renderloop);
 
     SDL_Window* window_;
     SDL_GLContext opengl_context_;
@@ -43,26 +43,13 @@ private:
     GLuint wnd_pos_x_, wnd_pos_y_;
     bool fullscreen_;
 
-    bool tracking_mouse_;
-    GLfloat mouse_start_x_, mouse_start_y_;
-    GLfloat mouse_sensitivity_;
-    std::function<bool(WindowManager*, SDL_Event, GLfloat)> handle_keystroke_callback_;
-    std::function<bool(WindowManager*, SDL_Event, GLfloat)> handle_mouse_callback_;
-
+    bool continue_rendering_;
     std::chrono::high_resolution_clock::time_point t_last_renderloop_at_;
     std::chrono::high_resolution_clock::time_point t_rendering_started_at_;
 
-    glm::vec3 camera_coords_;
-    glm::vec3 initial_camera_coords_;
-    glm::vec3 camera_pointing_vector_;
-    GLfloat camera_pitch_degrees_;
-    GLfloat camera_yaw_degrees_;
+    std::vector<InputHandler*> input_handlers_;     // unowned and must outlive this class
+    DefaultInputHandler* default_input_handler_;
 
-    GLfloat camera_speed_;
-    GLfloat pitch_speed_;           // how fast camera pitches (degrees / sec)
-    GLfloat yaw_speed_;             // how fast camera yaws (degrees / sec)
-
-    bool lighting_on_;
     bool rotate_light_;             // does the light rotate around the origin? (helps to visualise lighting)
     glm::vec3 light_coords_;
     GLfloat light_radius_;

@@ -12,6 +12,7 @@ DisplayManager::DisplayManager()
     : initialised_(false),
       primitives_(nullptr),
       update_scene_callback_(nullptr),
+      reset_camera_callback_(nullptr),
       object_shader_(nullptr) {}
 
 DisplayManager::~DisplayManager()
@@ -92,6 +93,18 @@ void DisplayManager::teardown()
     initialised_ = false;
 }
 
+void DisplayManager::resetCamera(const glm::vec3& camera_world_coords, const glm::vec3& up_vector, const glm::vec3& pointing_vector)
+{
+    setCameraUpVector(up_vector);
+    setCameraCoords(camera_world_coords);
+    setCameraPointingVector(pointing_vector);
+
+    if (reset_camera_callback_)
+    {
+        reset_camera_callback_(camera_coords_, camera_up_vector_, camera_pointing_vector_);
+    }
+}
+
 void DisplayManager::setCameraCoords(const glm::vec3& world_coords)
 {
     camera_coords_ = world_coords;
@@ -106,6 +119,12 @@ void DisplayManager::setCameraPointingVector(const glm::vec3 &vector)
 void DisplayManager::setCameraUpVector(const glm::vec3 &vector)
 {
     camera_up_vector_ = vector;
+}
+
+void DisplayManager::toggleLighting()
+{
+    lighting_on_ = !lighting_on_;
+    setLightingOn(lighting_on_);
 }
 
 void DisplayManager::setLightingOn(bool on)
@@ -225,6 +244,11 @@ void DisplayManager::setFrameQueue(std::unique_ptr<FrameQueue> queue)
 void DisplayManager::setUpdateSceneCallback(std::function<void(GLfloat, GLfloat, GLfloat, GLfloat)> callback)
 {
     update_scene_callback_ = callback;
+}
+
+void DisplayManager::setResetCameraCallback(std::function<void(const glm::vec3&, const glm::vec3&, const glm::vec3&)> callback)
+{
+    reset_camera_callback_ = callback;
 }
 
 primitive::PrimitiveCollection* DisplayManager::getPrimitiveCollection()
